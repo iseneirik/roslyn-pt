@@ -37,7 +37,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.Equal(SyntaxKind.TemplateDeclaration, file.Members[0].Kind());
             var t = (TemplateDeclarationSyntax) file.Members[0];
             Assert.NotNull(t.TemplateKeyword);
-            Assert.NotNull(t.name);
+            Assert.NotNull(t.Name);
             Assert.Equal("a", t.Name.ToString());
             Assert.NotNull(t.OpenBraceToken);
             Assert.Equal(0, t.Members.Count);

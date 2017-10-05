@@ -33611,6 +33611,213 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
     }
   }
 
+  internal sealed partial class TemplateDeclarationSyntax : MemberDeclarationSyntax
+  {
+    internal readonly SyntaxToken templateKeyword;
+    internal readonly NameSyntax name;
+    internal readonly SyntaxToken openBraceToken;
+    internal readonly GreenNode members;
+    internal readonly SyntaxToken closeBraceToken;
+    internal readonly SyntaxToken semicolonToken;
+
+    internal TemplateDeclarationSyntax(SyntaxKind kind, SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, GreenNode members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+        : base(kind, diagnostics, annotations)
+    {
+        this.SlotCount = 6;
+        this.AdjustFlagsAndWidth(templateKeyword);
+        this.templateKeyword = templateKeyword;
+        this.AdjustFlagsAndWidth(name);
+        this.name = name;
+        this.AdjustFlagsAndWidth(openBraceToken);
+        this.openBraceToken = openBraceToken;
+        if (members != null)
+        {
+            this.AdjustFlagsAndWidth(members);
+            this.members = members;
+        }
+        this.AdjustFlagsAndWidth(closeBraceToken);
+        this.closeBraceToken = closeBraceToken;
+        if (semicolonToken != null)
+        {
+            this.AdjustFlagsAndWidth(semicolonToken);
+            this.semicolonToken = semicolonToken;
+        }
+    }
+
+
+    internal TemplateDeclarationSyntax(SyntaxKind kind, SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, GreenNode members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken, SyntaxFactoryContext context)
+        : base(kind)
+    {
+        this.SetFactoryContext(context);
+        this.SlotCount = 6;
+        this.AdjustFlagsAndWidth(templateKeyword);
+        this.templateKeyword = templateKeyword;
+        this.AdjustFlagsAndWidth(name);
+        this.name = name;
+        this.AdjustFlagsAndWidth(openBraceToken);
+        this.openBraceToken = openBraceToken;
+        if (members != null)
+        {
+            this.AdjustFlagsAndWidth(members);
+            this.members = members;
+        }
+        this.AdjustFlagsAndWidth(closeBraceToken);
+        this.closeBraceToken = closeBraceToken;
+        if (semicolonToken != null)
+        {
+            this.AdjustFlagsAndWidth(semicolonToken);
+            this.semicolonToken = semicolonToken;
+        }
+    }
+
+
+    internal TemplateDeclarationSyntax(SyntaxKind kind, SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, GreenNode members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+        : base(kind)
+    {
+        this.SlotCount = 6;
+        this.AdjustFlagsAndWidth(templateKeyword);
+        this.templateKeyword = templateKeyword;
+        this.AdjustFlagsAndWidth(name);
+        this.name = name;
+        this.AdjustFlagsAndWidth(openBraceToken);
+        this.openBraceToken = openBraceToken;
+        if (members != null)
+        {
+            this.AdjustFlagsAndWidth(members);
+            this.members = members;
+        }
+        this.AdjustFlagsAndWidth(closeBraceToken);
+        this.closeBraceToken = closeBraceToken;
+        if (semicolonToken != null)
+        {
+            this.AdjustFlagsAndWidth(semicolonToken);
+            this.semicolonToken = semicolonToken;
+        }
+    }
+
+    public SyntaxToken TemplateKeyword { get { return this.templateKeyword; } }
+    public NameSyntax Name { get { return this.name; } }
+    public SyntaxToken OpenBraceToken { get { return this.openBraceToken; } }
+    public Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<MemberDeclarationSyntax> Members { get { return new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<MemberDeclarationSyntax>(this.members); } }
+    public SyntaxToken CloseBraceToken { get { return this.closeBraceToken; } }
+    /// <summary>Gets the optional semicolon token.</summary>
+    public SyntaxToken SemicolonToken { get { return this.semicolonToken; } }
+
+    internal override GreenNode GetSlot(int index)
+    {
+        switch (index)
+        {
+            case 0: return this.templateKeyword;
+            case 1: return this.name;
+            case 2: return this.openBraceToken;
+            case 3: return this.members;
+            case 4: return this.closeBraceToken;
+            case 5: return this.semicolonToken;
+            default: return null;
+        }
+    }
+
+    internal override SyntaxNode CreateRed(SyntaxNode parent, int position)
+    {
+      return new CSharp.Syntax.TemplateDeclarationSyntax(this, parent, position);
+    }
+
+    public override TResult Accept<TResult>(CSharpSyntaxVisitor<TResult> visitor)
+    {
+        return visitor.VisitTemplateDeclaration(this);
+    }
+
+    public override void Accept(CSharpSyntaxVisitor visitor)
+    {
+        visitor.VisitTemplateDeclaration(this);
+    }
+
+    public TemplateDeclarationSyntax Update(SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    {
+        if (templateKeyword != this.TemplateKeyword || name != this.Name || openBraceToken != this.OpenBraceToken || members != this.Members || closeBraceToken != this.CloseBraceToken || semicolonToken != this.SemicolonToken)
+        {
+            var newNode = SyntaxFactory.TemplateDeclaration(templateKeyword, name, openBraceToken, members, closeBraceToken, semicolonToken);
+            var diags = this.GetDiagnostics();
+            if (diags != null && diags.Length > 0)
+               newNode = newNode.WithDiagnosticsGreen(diags);
+            var annotations = this.GetAnnotations();
+            if (annotations != null && annotations.Length > 0)
+               newNode = newNode.WithAnnotationsGreen(annotations);
+            return newNode;
+        }
+
+        return this;
+    }
+
+    internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+    {
+         return new TemplateDeclarationSyntax(this.Kind, this.templateKeyword, this.name, this.openBraceToken, this.members, this.closeBraceToken, this.semicolonToken, diagnostics, GetAnnotations());
+    }
+
+    internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+    {
+         return new TemplateDeclarationSyntax(this.Kind, this.templateKeyword, this.name, this.openBraceToken, this.members, this.closeBraceToken, this.semicolonToken, GetDiagnostics(), annotations);
+    }
+
+    internal TemplateDeclarationSyntax(ObjectReader reader)
+        : base(reader)
+    {
+      this.SlotCount = 6;
+      var templateKeyword = (SyntaxToken)reader.ReadValue();
+      if (templateKeyword != null)
+      {
+         AdjustFlagsAndWidth(templateKeyword);
+         this.templateKeyword = templateKeyword;
+      }
+      var name = (NameSyntax)reader.ReadValue();
+      if (name != null)
+      {
+         AdjustFlagsAndWidth(name);
+         this.name = name;
+      }
+      var openBraceToken = (SyntaxToken)reader.ReadValue();
+      if (openBraceToken != null)
+      {
+         AdjustFlagsAndWidth(openBraceToken);
+         this.openBraceToken = openBraceToken;
+      }
+      var members = (GreenNode)reader.ReadValue();
+      if (members != null)
+      {
+         AdjustFlagsAndWidth(members);
+         this.members = members;
+      }
+      var closeBraceToken = (SyntaxToken)reader.ReadValue();
+      if (closeBraceToken != null)
+      {
+         AdjustFlagsAndWidth(closeBraceToken);
+         this.closeBraceToken = closeBraceToken;
+      }
+      var semicolonToken = (SyntaxToken)reader.ReadValue();
+      if (semicolonToken != null)
+      {
+         AdjustFlagsAndWidth(semicolonToken);
+         this.semicolonToken = semicolonToken;
+      }
+    }
+
+    internal override void WriteTo(ObjectWriter writer)
+    {
+      base.WriteTo(writer);
+      writer.WriteValue(this.templateKeyword);
+      writer.WriteValue(this.name);
+      writer.WriteValue(this.openBraceToken);
+      writer.WriteValue(this.members);
+      writer.WriteValue(this.closeBraceToken);
+      writer.WriteValue(this.semicolonToken);
+    }
+
+    static TemplateDeclarationSyntax()
+    {
+       ObjectBinder.RegisterTypeReader(typeof(TemplateDeclarationSyntax), r => new TemplateDeclarationSyntax(r));
+    }
+  }
+
   internal partial class CSharpSyntaxVisitor<TResult>
   {
     public virtual TResult VisitIdentifierName(IdentifierNameSyntax node)
@@ -34629,6 +34836,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
     }
 
     public virtual TResult VisitShebangDirectiveTrivia(ShebangDirectiveTriviaSyntax node)
+    {
+      return this.DefaultVisit(node);
+    }
+
+    public virtual TResult VisitTemplateDeclaration(TemplateDeclarationSyntax node)
     {
       return this.DefaultVisit(node);
     }
@@ -35653,6 +35865,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
     }
 
     public virtual void VisitShebangDirectiveTrivia(ShebangDirectiveTriviaSyntax node)
+    {
+      this.DefaultVisit(node);
+    }
+
+    public virtual void VisitTemplateDeclaration(TemplateDeclarationSyntax node)
     {
       this.DefaultVisit(node);
     }
@@ -37406,6 +37623,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
       var exclamationToken = (SyntaxToken)this.Visit(node.ExclamationToken);
       var endOfDirectiveToken = (SyntaxToken)this.Visit(node.EndOfDirectiveToken);
       return node.Update(hashToken, exclamationToken, endOfDirectiveToken, node.IsActive);
+    }
+
+    public override CSharpSyntaxNode VisitTemplateDeclaration(TemplateDeclarationSyntax node)
+    {
+      var templateKeyword = (SyntaxToken)this.Visit(node.TemplateKeyword);
+      var name = (NameSyntax)this.Visit(node.Name);
+      var openBraceToken = (SyntaxToken)this.Visit(node.OpenBraceToken);
+      var members = this.VisitList(node.Members);
+      var closeBraceToken = (SyntaxToken)this.Visit(node.CloseBraceToken);
+      var semicolonToken = (SyntaxToken)this.Visit(node.SemicolonToken);
+      return node.Update(templateKeyword, name, openBraceToken, members, closeBraceToken, semicolonToken);
     }
   }
 
@@ -44339,6 +44567,54 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
       return new ShebangDirectiveTriviaSyntax(SyntaxKind.ShebangDirectiveTrivia, hashToken, exclamationToken, endOfDirectiveToken, isActive, this.context);
     }
+
+    public TemplateDeclarationSyntax TemplateDeclaration(SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    {
+#if DEBUG
+      if (templateKeyword == null)
+        throw new ArgumentNullException(nameof(templateKeyword));
+      switch (templateKeyword.Kind)
+      {
+        case SyntaxKind.TemplateKeyword:
+          break;
+        default:
+          throw new ArgumentException("templateKeyword");
+      }
+      if (name == null)
+        throw new ArgumentNullException(nameof(name));
+      if (openBraceToken == null)
+        throw new ArgumentNullException(nameof(openBraceToken));
+      switch (openBraceToken.Kind)
+      {
+        case SyntaxKind.OpenBraceToken:
+          break;
+        default:
+          throw new ArgumentException("openBraceToken");
+      }
+      if (closeBraceToken == null)
+        throw new ArgumentNullException(nameof(closeBraceToken));
+      switch (closeBraceToken.Kind)
+      {
+        case SyntaxKind.CloseBraceToken:
+          break;
+        default:
+          throw new ArgumentException("closeBraceToken");
+      }
+      if (semicolonToken != null)
+      {
+      switch (semicolonToken.Kind)
+      {
+        case SyntaxKind.SemicolonToken:
+        case SyntaxKind.None:
+          break;
+        default:
+          throw new ArgumentException("semicolonToken");
+      }
+      }
+#endif
+
+      return new TemplateDeclarationSyntax(SyntaxKind.TemplateDeclaration, templateKeyword, name, openBraceToken, members.Node, closeBraceToken, semicolonToken, this.context);
+    }
   }
 
   internal static partial class SyntaxFactory
@@ -51265,6 +51541,54 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
       return new ShebangDirectiveTriviaSyntax(SyntaxKind.ShebangDirectiveTrivia, hashToken, exclamationToken, endOfDirectiveToken, isActive);
     }
 
+    public static TemplateDeclarationSyntax TemplateDeclaration(SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    {
+#if DEBUG
+      if (templateKeyword == null)
+        throw new ArgumentNullException(nameof(templateKeyword));
+      switch (templateKeyword.Kind)
+      {
+        case SyntaxKind.TemplateKeyword:
+          break;
+        default:
+          throw new ArgumentException("templateKeyword");
+      }
+      if (name == null)
+        throw new ArgumentNullException(nameof(name));
+      if (openBraceToken == null)
+        throw new ArgumentNullException(nameof(openBraceToken));
+      switch (openBraceToken.Kind)
+      {
+        case SyntaxKind.OpenBraceToken:
+          break;
+        default:
+          throw new ArgumentException("openBraceToken");
+      }
+      if (closeBraceToken == null)
+        throw new ArgumentNullException(nameof(closeBraceToken));
+      switch (closeBraceToken.Kind)
+      {
+        case SyntaxKind.CloseBraceToken:
+          break;
+        default:
+          throw new ArgumentException("closeBraceToken");
+      }
+      if (semicolonToken != null)
+      {
+      switch (semicolonToken.Kind)
+      {
+        case SyntaxKind.SemicolonToken:
+        case SyntaxKind.None:
+          break;
+        default:
+          throw new ArgumentException("semicolonToken");
+      }
+      }
+#endif
+
+      return new TemplateDeclarationSyntax(SyntaxKind.TemplateDeclaration, templateKeyword, name, openBraceToken, members.Node, closeBraceToken, semicolonToken);
+    }
+
     internal static IEnumerable<Type> GetNodeTypes()
     {
         return new Type[] {
@@ -51471,7 +51795,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
            typeof(PragmaChecksumDirectiveTriviaSyntax),
            typeof(ReferenceDirectiveTriviaSyntax),
            typeof(LoadDirectiveTriviaSyntax),
-           typeof(ShebangDirectiveTriviaSyntax)
+           typeof(ShebangDirectiveTriviaSyntax),
+           typeof(TemplateDeclarationSyntax)
         };
     }
   }

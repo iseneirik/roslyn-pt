@@ -568,8 +568,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         // Kinds below are used for Package Temaplates (PT)
 
         // Keywords (8385-8404)
-        // TemplateKeyword = 8385,
-        
+        TemplateKeyword = 8385,
         
         // Statements (8860-8863)
         TemplateDeclaration = 8860,
