@@ -314,6 +314,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             var body = new NamespaceBodyBuilder(_pool);
             try
             {
+                // TODO: Package Templates -> Are templates global members? can we try to parse a template body here? or should this be done inside ParseNamespaceBody?
                 this.ParseNamespaceBody(ref tmp, ref body, ref initialBadNodes, SyntaxKind.CompilationUnit);
 
                 var eof = this.EatToken(SyntaxKind.EndOfFileToken);
@@ -510,6 +511,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 {
                     switch (this.CurrentToken.Kind)
                     {
+                        // TODO: Package Templates -> Alternative 1: Add case SyntaxKind.TemplateKeyword and parse template
                         case SyntaxKind.NamespaceKeyword:
                             // incomplete members must be processed before we add any nodes to the body:
                             AddIncompleteMembers(ref pendingIncompleteMembers, ref body);
@@ -631,6 +633,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                             goto default;
 
                         default:
+                            // TODO: Package Templates -> Alternative 2: Add parsing of templates here
                             var memberOrStatement = this.ParseMemberDeclarationOrStatement(parentKind);
                             if (memberOrStatement == null)
                             {

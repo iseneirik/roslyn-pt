@@ -951,6 +951,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return SyntaxKind.ImplicitKeyword;
                 case "explicit":
                     return SyntaxKind.ExplicitKeyword;
+                #region Package Template GetKeywordKind
+                case "template":
+                    return SyntaxKind.TemplateKeyword;
+                #endregion
                 default:
                     return SyntaxKind.None;
             }
@@ -1522,6 +1526,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return "r";
                 case SyntaxKind.LoadKeyword:
                     return "load";
+                #region Package Template GetText
+                case SyntaxKind.TemplateKeyword:
+                    return "template";
+                #endregion
 
                 // contextual keywords
                 case SyntaxKind.YieldKeyword:
