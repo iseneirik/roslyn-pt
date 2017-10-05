@@ -21,6 +21,31 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             return SyntaxFactory.ParseSyntaxTree(text, options ?? TestOptions.Regular);
         }
 
+        #region Package Template Declaration Parsing Tests
+        
+        [Fact]
+        public void TestTemplate()
+        {
+            var text = "template a { }";
+            var file = this.ParseFile(text);
+
+            Assert.NotNull(file);
+            Assert.Equal(1, file.Members.Count);
+            Assert.Equal(text, file.ToString());
+            Assert.Equal(0, file.Errors().Length);
+
+            Assert.Equal(SyntaxKind.TemplateDeclaration, file.Members[0].Kind());
+            var t = (TemplateDeclarationSyntax) file.Members[0];
+            Assert.NotNull(t.TemplateKeyword);
+            Assert.NotNull(t.name);
+            Assert.Equal("a", t.Name.ToString());
+            Assert.NotNull(t.OpenBraceToken);
+            Assert.Equal(0, t.Members.Count);
+            Assert.NotNull(t.CloseBraceToken);
+        }
+
+        #endregion
+
         [Fact]
         public void TestExternAlias()
         {
