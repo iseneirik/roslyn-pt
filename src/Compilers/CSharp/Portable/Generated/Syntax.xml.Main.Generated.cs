@@ -1239,6 +1239,12 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
       return this.DefaultVisit(node);
     }
+
+    /// <summary>Called when the visitor visits a TemplateDeclarationSyntax node.</summary>
+    public virtual TResult VisitTemplateDeclaration(TemplateDeclarationSyntax node)
+    {
+      return this.DefaultVisit(node);
+    }
   }
 
   public partial class CSharpSyntaxVisitor
@@ -2463,6 +2469,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
     /// <summary>Called when the visitor visits a ShebangDirectiveTriviaSyntax node.</summary>
     public virtual void VisitShebangDirectiveTrivia(ShebangDirectiveTriviaSyntax node)
+    {
+      this.DefaultVisit(node);
+    }
+
+    /// <summary>Called when the visitor visits a TemplateDeclarationSyntax node.</summary>
+    public virtual void VisitTemplateDeclaration(TemplateDeclarationSyntax node)
     {
       this.DefaultVisit(node);
     }
@@ -4216,6 +4228,17 @@ namespace Microsoft.CodeAnalysis.CSharp
       var exclamationToken = this.VisitToken(node.ExclamationToken);
       var endOfDirectiveToken = this.VisitToken(node.EndOfDirectiveToken);
       return node.Update(hashToken, exclamationToken, endOfDirectiveToken, node.IsActive);
+    }
+
+    public override SyntaxNode VisitTemplateDeclaration(TemplateDeclarationSyntax node)
+    {
+      var templateKeyword = this.VisitToken(node.TemplateKeyword);
+      var name = (NameSyntax)this.Visit(node.Name);
+      var openBraceToken = this.VisitToken(node.OpenBraceToken);
+      var members = this.VisitList(node.Members);
+      var closeBraceToken = this.VisitToken(node.CloseBraceToken);
+      var semicolonToken = this.VisitToken(node.SemicolonToken);
+      return node.Update(templateKeyword, name, openBraceToken, members, closeBraceToken, semicolonToken);
     }
   }
 
@@ -10868,6 +10891,56 @@ namespace Microsoft.CodeAnalysis.CSharp
     public static ShebangDirectiveTriviaSyntax ShebangDirectiveTrivia(bool isActive)
     {
       return SyntaxFactory.ShebangDirectiveTrivia(SyntaxFactory.Token(SyntaxKind.HashToken), SyntaxFactory.Token(SyntaxKind.ExclamationToken), SyntaxFactory.Token(SyntaxKind.EndOfDirectiveToken), isActive);
+    }
+
+    /// <summary>Creates a new TemplateDeclarationSyntax instance.</summary>
+    public static TemplateDeclarationSyntax TemplateDeclaration(SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    {
+      switch (templateKeyword.Kind())
+      {
+        case SyntaxKind.TemplateKeyword:
+          break;
+        default:
+          throw new ArgumentException("templateKeyword");
+      }
+      if (name == null)
+        throw new ArgumentNullException(nameof(name));
+      switch (openBraceToken.Kind())
+      {
+        case SyntaxKind.OpenBraceToken:
+          break;
+        default:
+          throw new ArgumentException("openBraceToken");
+      }
+      switch (closeBraceToken.Kind())
+      {
+        case SyntaxKind.CloseBraceToken:
+          break;
+        default:
+          throw new ArgumentException("closeBraceToken");
+      }
+      switch (semicolonToken.Kind())
+      {
+        case SyntaxKind.SemicolonToken:
+        case SyntaxKind.None:
+          break;
+        default:
+          throw new ArgumentException("semicolonToken");
+      }
+      return (TemplateDeclarationSyntax)Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.TemplateDeclaration((Syntax.InternalSyntax.SyntaxToken)templateKeyword.Node, name == null ? null : (Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.NameSyntax)name.Green, (Syntax.InternalSyntax.SyntaxToken)openBraceToken.Node, members.Node.ToGreenList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.MemberDeclarationSyntax>(), (Syntax.InternalSyntax.SyntaxToken)closeBraceToken.Node, (Syntax.InternalSyntax.SyntaxToken)semicolonToken.Node).CreateRed();
+    }
+
+
+    /// <summary>Creates a new TemplateDeclarationSyntax instance.</summary>
+    public static TemplateDeclarationSyntax TemplateDeclaration(NameSyntax name, SyntaxList<MemberDeclarationSyntax> members)
+    {
+      return SyntaxFactory.TemplateDeclaration(SyntaxFactory.Token(SyntaxKind.TemplateKeyword), name, SyntaxFactory.Token(SyntaxKind.OpenBraceToken), members, SyntaxFactory.Token(SyntaxKind.CloseBraceToken), default(SyntaxToken));
+    }
+
+    /// <summary>Creates a new TemplateDeclarationSyntax instance.</summary>
+    public static TemplateDeclarationSyntax TemplateDeclaration(NameSyntax name)
+    {
+      return SyntaxFactory.TemplateDeclaration(SyntaxFactory.Token(SyntaxKind.TemplateKeyword), name, SyntaxFactory.Token(SyntaxKind.OpenBraceToken), default(SyntaxList<MemberDeclarationSyntax>), SyntaxFactory.Token(SyntaxKind.CloseBraceToken), default(SyntaxToken));
     }
   }
 }

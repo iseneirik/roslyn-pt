@@ -21278,4 +21278,137 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         return this.Update(this.HashToken, this.ExclamationToken, this.EndOfDirectiveToken, isActive);
     }
   }
+
+  public sealed partial class TemplateDeclarationSyntax : MemberDeclarationSyntax
+  {
+    private NameSyntax name;
+    private SyntaxNode members;
+
+    internal TemplateDeclarationSyntax(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.CSharpSyntaxNode green, SyntaxNode parent, int position)
+        : base(green, parent, position)
+    {
+    }
+
+    public SyntaxToken TemplateKeyword 
+    {
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.TemplateDeclarationSyntax)this.Green).templateKeyword, this.Position, 0); }
+    }
+
+    public NameSyntax Name 
+    {
+        get
+        {
+            return this.GetRed(ref this.name, 1);
+        }
+    }
+
+    public SyntaxToken OpenBraceToken 
+    {
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.TemplateDeclarationSyntax)this.Green).openBraceToken, this.GetChildPosition(2), this.GetChildIndex(2)); }
+    }
+
+    public SyntaxList<MemberDeclarationSyntax> Members 
+    {
+        get
+        {
+            return new SyntaxList<MemberDeclarationSyntax>(this.GetRed(ref this.members, 3));
+        }
+    }
+
+    public SyntaxToken CloseBraceToken 
+    {
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.TemplateDeclarationSyntax)this.Green).closeBraceToken, this.GetChildPosition(4), this.GetChildIndex(4)); }
+    }
+
+    /// <summary>Gets the optional semicolon token.</summary>
+    public SyntaxToken SemicolonToken 
+    {
+        get
+        {
+            var slot = ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.TemplateDeclarationSyntax)this.Green).semicolonToken;
+            if (slot != null)
+                return new SyntaxToken(this, slot, this.GetChildPosition(5), this.GetChildIndex(5));
+
+            return default(SyntaxToken);
+        }
+    }
+
+    internal override SyntaxNode GetNodeSlot(int index)
+    {
+        switch (index)
+        {
+            case 1: return this.GetRed(ref this.name, 1);
+            case 3: return this.GetRed(ref this.members, 3);
+            default: return null;
+        }
+    }
+    internal override SyntaxNode GetCachedSlot(int index)
+    {
+        switch (index)
+        {
+            case 1: return this.name;
+            case 3: return this.members;
+            default: return null;
+        }
+    }
+
+    public override TResult Accept<TResult>(CSharpSyntaxVisitor<TResult> visitor)
+    {
+        return visitor.VisitTemplateDeclaration(this);
+    }
+
+    public override void Accept(CSharpSyntaxVisitor visitor)
+    {
+        visitor.VisitTemplateDeclaration(this);
+    }
+
+    public TemplateDeclarationSyntax Update(SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    {
+        if (templateKeyword != this.TemplateKeyword || name != this.Name || openBraceToken != this.OpenBraceToken || members != this.Members || closeBraceToken != this.CloseBraceToken || semicolonToken != this.SemicolonToken)
+        {
+            var newNode = SyntaxFactory.TemplateDeclaration(templateKeyword, name, openBraceToken, members, closeBraceToken, semicolonToken);
+            var annotations = this.GetAnnotations();
+            if (annotations != null && annotations.Length > 0)
+               return newNode.WithAnnotations(annotations);
+            return newNode;
+        }
+
+        return this;
+    }
+
+    public TemplateDeclarationSyntax WithTemplateKeyword(SyntaxToken templateKeyword)
+    {
+        return this.Update(templateKeyword, this.Name, this.OpenBraceToken, this.Members, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public TemplateDeclarationSyntax WithName(NameSyntax name)
+    {
+        return this.Update(this.TemplateKeyword, name, this.OpenBraceToken, this.Members, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public TemplateDeclarationSyntax WithOpenBraceToken(SyntaxToken openBraceToken)
+    {
+        return this.Update(this.TemplateKeyword, this.Name, openBraceToken, this.Members, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public TemplateDeclarationSyntax WithMembers(SyntaxList<MemberDeclarationSyntax> members)
+    {
+        return this.Update(this.TemplateKeyword, this.Name, this.OpenBraceToken, members, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public TemplateDeclarationSyntax WithCloseBraceToken(SyntaxToken closeBraceToken)
+    {
+        return this.Update(this.TemplateKeyword, this.Name, this.OpenBraceToken, this.Members, closeBraceToken, this.SemicolonToken);
+    }
+
+    public TemplateDeclarationSyntax WithSemicolonToken(SyntaxToken semicolonToken)
+    {
+        return this.Update(this.TemplateKeyword, this.Name, this.OpenBraceToken, this.Members, this.CloseBraceToken, semicolonToken);
+    }
+
+    public TemplateDeclarationSyntax AddMembers(params MemberDeclarationSyntax[] items)
+    {
+        return this.WithMembers(this.Members.AddRange(items));
+    }
+  }
 }

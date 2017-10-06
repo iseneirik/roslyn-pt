@@ -563,5 +563,15 @@ namespace Microsoft.CodeAnalysis.CSharp
         RefExpression = 9050,
         RefType = 9051,
         ThrowExpression = 9052,
+
+        #region Package Template SyntaxKind
+        // Kinds below are used for Package Temaplates (PT)
+
+        // Keywords (8385-8404)
+        TemplateKeyword = 8385,
+        
+        // Statements (8860-8863)
+        TemplateDeclaration = 8860,
+        #endregion
     }
 }

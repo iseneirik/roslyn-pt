@@ -4302,4 +4302,29 @@
     </Field>
     <Field Name="IsActive" Type="bool" Override="true"/>
   </Node>
+  
+  <!-- #region Package Template Syntax -->
+  <Node Name="TemplateDeclarationSyntax" Base="MemberDeclarationSyntax">
+    <Kind Name="TemplateDeclaration"/>
+    <Field Name="TemplateKeyword" Type="SyntaxToken">
+      <Kind Name="TemplateKeyword"/>
+    </Field>
+    <Field Name="Name" Type="NameSyntax"/>
+    <Field Name="OpenBraceToken" Type="SyntaxToken">
+      <Kind Name="OpenBraceToken"/>
+    </Field>
+    <Field Name="Members" Type="SyntaxList&lt;MemberDeclarationSyntax&gt;"/>
+    <Field Name="CloseBraceToken" Type="SyntaxToken">
+      <Kind Name="CloseBraceToken"/>
+    </Field>
+    <!-- as with namespaces/classes/structs/etc. I added an optional semicolon token -->
+    <Field Name="SemicolonToken" Type="SyntaxToken" Optional="true">
+      <PropertyComment>
+        <summary>Gets the optional semicolon token.</summary>
+      </PropertyComment>
+      <Kind Name="SemicolonToken"/>
+    </Field>
+  </Node>
+  <!-- #endregion -->
+  
 </Tree>
