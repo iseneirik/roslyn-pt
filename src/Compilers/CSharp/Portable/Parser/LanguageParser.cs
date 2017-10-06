@@ -314,7 +314,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             var body = new NamespaceBodyBuilder(_pool);
             try
             {
-                // TODO: Package Templates -> Are templates global members? can we try to parse a template body here? or should this be done inside ParseNamespaceBody?
                 this.ParseNamespaceBody(ref tmp, ref body, ref initialBadNodes, SyntaxKind.CompilationUnit);
 
                 var eof = this.EatToken(SyntaxKind.EndOfFileToken);
@@ -511,7 +510,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 {
                     switch (this.CurrentToken.Kind)
                     {
-                        // TODO: Package Templates -> Alternative 1: Add case SyntaxKind.TemplateKeyword and parse template
                         case SyntaxKind.NamespaceKeyword:
                             // incomplete members must be processed before we add any nodes to the body:
                             AddIncompleteMembers(ref pendingIncompleteMembers, ref body);
@@ -633,7 +631,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                             goto default;
 
                         default:
-                            // TODO: Package Templates -> Alternative 2: Add parsing of templates here
+                            /* TODO: Package Templates -> Alternative 2: Add parsing of templates here
+                             *  Adding package templates as a member of a namespace seems more correct.
+                             *  In C#, namespaces simply help differ between names, so having templates
+                             *  as a namespace member, can let us create different templates with the same
+                             *  name and having them in different namespaces.
+                             */
                             var memberOrStatement = this.ParseMemberDeclarationOrStatement(parentKind);
                             if (memberOrStatement == null)
                             {
@@ -1429,6 +1432,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             switch (this.CurrentToken.Kind)
             {
+                case SyntaxKind.TemplateKeyword:
+                    return this.ParseTemplateDeclaration();
+
                 case SyntaxKind.ClassKeyword:
                     // report use of "static class" if feature is unsupported 
                     CheckForVersionSpecificModifiers(modifiers, SyntaxKind.StaticKeyword, MessageID.IDS_FeatureStaticClasses);
@@ -1451,6 +1457,86 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
                 default:
                     throw ExceptionUtilities.UnexpectedValue(this.CurrentToken.Kind);
+            }
+        }
+
+        private MemberDeclarationSyntax ParseTemplateDeclaration()
+        {
+            // "top-level" expressions and statements should never occur inside an asynchronous 
+            Debug.Assert(this.CurrentToken.Kind == SyntaxKind.TemplateKeyword);
+            Debug.Assert(!IsInAsync);
+
+            var templateToken = this.EatToken();
+            var name = this.ParseName();
+
+            // Parse template body
+            bool parseMembers = true;
+            SyntaxListBuilder<MemberDeclarationSyntax> members = default(SyntaxListBuilder<MemberDeclarationSyntax>);
+            try
+            {
+                var openBrace = this.EatToken(SyntaxKind.OpenBraceToken);
+
+                // ignore members if missing type name or missing open brace
+                if (name.IsMissing || openBrace.IsMissing)
+                {
+                    parseMembers = false;
+                }
+
+                if (parseMembers)
+                {
+                    members = _pool.Allocate<MemberDeclarationSyntax>();
+
+                    while (true)
+                    {
+                        SyntaxKind kind = this.CurrentToken.Kind;
+
+                        // Package Templates only support classes and inst-statements as members
+                        // TODO: Make method for this, eg. CanStartTemplateMember(kind)
+                        if (kind == SyntaxKind.ClassKeyword)
+                        {
+                            // TODO: Parse class
+                            throw new NotImplementedException("Parsing Classes within Package Templates not yet implemented!");
+                        }
+                        else if (kind == SyntaxKind.CloseBraceToken || kind == SyntaxKind.EndOfFileToken || this.IsTerminator())
+                        {
+                            // This marks the end of the template
+                            break;
+                        }
+                        else
+                        {
+                            // TODO: Skip bad code and try to continue
+                            throw new NotImplementedException("Only Classes are supported as members of Package Templates at this moment!");
+                        }
+                    }
+                }
+
+                SyntaxToken closeBrace;
+                if (openBrace.IsMissing)
+                {
+                    closeBrace = SyntaxFactory.MissingToken(SyntaxKind.CloseBraceToken);
+                    closeBrace = WithAdditionalDiagnostics(closeBrace, this.GetExpectedTokenError(SyntaxKind.CloseBraceToken, this.CurrentToken.Kind));
+                }
+                else
+                {
+                    closeBrace = this.EatToken(SyntaxKind.CloseBraceToken);
+                }
+
+                SyntaxToken semicolon = null;
+                if (this.CurrentToken.Kind == SyntaxKind.SemicolonToken)
+                {
+                    semicolon = this.EatToken();
+                }
+
+                // Generate a TemplateDeclaration from the given info
+                return _syntaxFactory.TemplateDeclaration(templateToken, name, openBrace, members, closeBrace,
+                    semicolon);
+            }
+            finally
+            {
+                if (!members.IsNull)
+                {
+                    _pool.Free(members);
+                }
             }
         }
 
@@ -1961,6 +2047,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             }
         }
 
+        private bool IsTemplateDeclarationStart()
+        {
+            return this.CurrentToken.Kind == SyntaxKind.TemplateKeyword;
+        }
+
         private bool IsTypeDeclarationStart()
         {
             switch (this.CurrentToken.Kind)
@@ -2187,7 +2278,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 }
 
                 // It's valid to have a type declaration here -- check for those
-                if (IsTypeDeclarationStart())
+                if (IsTypeDeclarationStart() || IsTemplateDeclarationStart())
                 {
                     return this.ParseTypeDeclaration(attributes, modifiers);
                 }
