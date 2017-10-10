@@ -1460,6 +1460,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             }
         }
 
+        #region Package Template ParseTemplateDeclaration()
         private MemberDeclarationSyntax ParseTemplateDeclaration()
         {
             // "top-level" expressions and statements should never occur inside an asynchronous 
@@ -1491,11 +1492,24 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                         SyntaxKind kind = this.CurrentToken.Kind;
 
                         // Package Templates only support classes and inst-statements as members
-                        // TODO: Make method for this, eg. CanStartTemplateMember(kind)
-                        if (kind == SyntaxKind.ClassKeyword)
+                        if (CanStartTemplateMember(kind))
                         {
-                            // TODO: Parse class
-                            throw new NotImplementedException("Parsing Classes within Package Templates not yet implemented!");
+                            // This token can start a template member, parse it
+                            var saveTerm = _termState;
+                            _termState |= TerminatorState.IsPossibleMemberStartOrStop;
+
+                            var memberOrStatement = this.ParseTemplateMemberDeclarationOrStatement(templateToken.Kind);
+                            if (memberOrStatement != null)
+                            {
+                                members.Add(memberOrStatement);
+                            }
+                            else
+                            {
+                                // Error encountered, find the next meaningfull code and resume
+                                this.SkipBadTemplateMemberListTokens(ref openBrace, members);
+                            }
+
+                            _termState = saveTerm;
                         }
                         else if (kind == SyntaxKind.CloseBraceToken || kind == SyntaxKind.EndOfFileToken || this.IsTerminator())
                         {
@@ -1504,8 +1518,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                         }
                         else
                         {
-                            // TODO: Skip bad code and try to continue
-                            throw new NotImplementedException("Only Classes are supported as members of Package Templates at this moment!");
+                            // Error encountered, find the next meaningfull code and resume
+                            this.SkipBadTemplateMemberListTokens(ref openBrace, members);
                         }
                     }
                 }
@@ -1539,6 +1553,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 }
             }
         }
+        #endregion
 
         /// <summary>
         /// checks for modifiers whose feature is not available
@@ -1721,6 +1736,80 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 }
             }
         }
+
+        #region Package Template SkipBadTemplateMemberListTokens()
+        private void SkipBadTemplateMemberListTokens(ref SyntaxToken openBrace, SyntaxListBuilder members)
+        {
+            if (members.Count > 0)
+            {
+                var tmp = members[members.Count - 1];
+                this.SkipBadTemplateMemberListTokens(ref tmp);
+                members[members.Count - 1] = tmp;
+            }
+            else
+            {
+                GreenNode tmp = openBrace;
+                this.SkipBadTemplateMemberListTokens(ref tmp);
+                openBrace = (SyntaxToken)tmp;
+            }
+        }
+
+        private void SkipBadTemplateMemberListTokens(ref GreenNode previousNode)
+        {
+            int curlyCount = 0;
+            var tokens = _pool.Allocate();
+
+            try
+            {
+                bool done = false;
+
+                var token = this.EatToken();
+                token = this.AddError(token, ErrorCode.ERR_InvalidMemberDecl, token.Text);
+                tokens.Add(token);
+
+                while (!done)
+                {
+                    SyntaxKind kind = this.CurrentToken.Kind;
+
+                    if (CanStartTemplateMember(kind))
+                    {
+                        done = true;
+                        continue;
+                    }
+
+                    switch (kind)
+                    {
+                        case SyntaxKind.OpenBraceToken:
+                            curlyCount++;
+                            break;
+
+                        case SyntaxKind.CloseBraceToken:
+                            if (curlyCount-- == 0)
+                            {
+                                done = true;
+                                continue;
+                            }
+                            break;
+
+                        case SyntaxKind.EndOfFileToken:
+                            done = true;
+                            continue;
+
+                        default:
+                            break;
+                    }
+
+                    tokens.Add(this.EatToken());
+                }
+
+                previousNode = AddTrailingSkippedSyntax((CSharpSyntaxNode) previousNode, tokens.ToListNode());
+            }
+            finally
+            {
+                _pool.Free(tokens);
+            }
+        }
+        #endregion
 
         private void SkipBadMemberListTokens(ref SyntaxToken openBrace, SyntaxListBuilder members)
         {
@@ -1986,6 +2075,25 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 expected);
         }
 
+        #region Package Template CansStartTemplateMember
+        private bool IsPossibleTemplateMemberStart()
+        {
+            return CanStartTemplateMember(this.CurrentToken.Kind);
+        }
+
+        private static bool CanStartTemplateMember(SyntaxKind kind)
+        {
+            switch (kind)
+            {
+                case SyntaxKind.ClassKeyword:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+        #endregion
+
         private bool IsPossibleMemberStart()
         {
             return CanStartMember(this.CurrentToken.Kind);
@@ -2094,6 +2202,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                     return false;
             }
         }
+
+        #region Package Template ParseTemplateMemberDeclarationOrStatement
+        private MemberDeclarationSyntax ParseTemplateMemberDeclarationOrStatement(SyntaxKind kind)
+        {
+            throw new NotImplementedException("ParseTemplateMemberDeclarationOrStatement not implemented!");
+        }
+        #endregion
 
         // Returns null if we can't parse anything (even partially).
         private MemberDeclarationSyntax ParseMemberDeclarationOrStatement(SyntaxKind parentKind)
