@@ -26,7 +26,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         [Fact]
         public void TestTemplate()
         {
-            var text = "template a { }";
+            var text = "template t { }";
             var file = this.ParseFile(text);
 
             Assert.NotNull(file);
@@ -38,14 +38,80 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             var t = (TemplateDeclarationSyntax) file.Members[0];
             Assert.NotNull(t.TemplateKeyword);
             Assert.NotNull(t.Name);
-            Assert.Equal("a", t.Name.ToString());
+            Assert.Equal("t", t.Name.ToString());
             Assert.NotNull(t.OpenBraceToken);
             Assert.Equal(0, t.Members.Count);
             Assert.NotNull(t.CloseBraceToken);
         }
 
+        [Fact]
+        public void TestTemplateWithinNamespace()
+        {
+            var text = "namespace ns { template t { } }";
+            var file = this.ParseFile(text);
+
+            Assert.NotNull(file);
+            Assert.Equal(1, file.Members.Count);
+            Assert.Equal(text, file.ToString());
+            Assert.Equal(0, file.Errors().Length);
+
+            Assert.Equal(SyntaxKind.NamespaceDeclaration, file.Members[0].Kind());
+            var ns = (NamespaceDeclarationSyntax) file.Members[0];
+            Assert.NotNull(ns.NamespaceKeyword);
+            Assert.NotNull(ns.Name);
+            Assert.Equal("ns", ns.Name.ToString());
+            Assert.NotNull(ns.OpenBraceToken);
+            Assert.Equal(1, ns.Members.Count);
+            Assert.NotNull(ns.CloseBraceToken);
+            
+            Assert.Equal(SyntaxKind.TemplateDeclaration, ns.Members[0].Kind());
+            var t = (TemplateDeclarationSyntax) ns.Members[0];
+            Assert.NotNull(t.TemplateKeyword);
+            Assert.NotNull(t.Name);
+            Assert.Equal("t", t.Name.ToString());
+            Assert.NotNull(t.OpenBraceToken);
+            Assert.Equal(0, t.Members.Count);
+            Assert.NotNull(t.CloseBraceToken);
+        }
+
+        [Fact]
+        public void TestTemplateWithClass()
+        {
+            var text = "template t { private class c { } }";
+            var file = this.ParseFile(text);
+
+            Assert.NotNull(file);
+            Assert.Equal(2, file.Members.Count);
+            Assert.Equal(text, file.ToString());
+            Assert.Equal(0, file.Errors().Length);
+
+            Assert.Equal(SyntaxKind.TemplateDeclaration, file.Members[0].Kind());
+            var t = (TemplateDeclarationSyntax)file.Members[0];
+            Assert.NotNull(t.TemplateKeyword);
+            Assert.NotNull(t.Name);
+            Assert.Equal("t", t.Name.ToString());
+            Assert.NotNull(t.OpenBraceToken);
+            Assert.Equal(1, t.Members.Count);
+            Assert.NotNull(t.CloseBraceToken);
+
+            Assert.Equal(SyntaxKind.ClassDeclaration, t.Members[0].Kind());
+            var cs = (TypeDeclarationSyntax)t.Members[0];
+            Assert.Equal(0, cs.AttributeLists.Count);
+            Assert.Equal(0, cs.Modifiers.Count);
+            Assert.NotNull(cs.Keyword);
+            Assert.Equal(SyntaxKind.ClassKeyword, cs.Keyword.Kind());
+            Assert.NotNull(cs.Identifier);
+            Assert.Equal("c", cs.Identifier.ToString());
+            Assert.Null(cs.BaseList);
+            Assert.Equal(0, cs.ConstraintClauses.Count);
+            Assert.NotNull(cs.OpenBraceToken);
+            Assert.Equal(0, cs.Members.Count);
+            Assert.NotNull(cs.CloseBraceToken);
+        }
         #endregion
 
+
+        #region Other tests
         [Fact]
         public void TestExternAlias()
         {
@@ -6356,4 +6422,5 @@ class C<T> : where T : X
             EOF();
         }
     }
+    #endregion
 }
