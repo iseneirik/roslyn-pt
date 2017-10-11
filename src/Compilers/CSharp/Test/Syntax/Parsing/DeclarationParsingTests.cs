@@ -77,11 +77,11 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         [Fact]
         public void TestTemplateWithClass()
         {
-            var text = "template t { private class c { } }";
+            var text = "template t { class c { } }";
             var file = this.ParseFile(text);
 
             Assert.NotNull(file);
-            Assert.Equal(2, file.Members.Count);
+            Assert.Equal(1, file.Members.Count);
             Assert.Equal(text, file.ToString());
             Assert.Equal(0, file.Errors().Length);
 
