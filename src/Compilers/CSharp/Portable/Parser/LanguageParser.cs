@@ -2075,7 +2075,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 expected);
         }
 
-        #region Package Template CansStartTemplateMember
+        #region Package Template Syntax Kind checkers
         private bool IsPossibleTemplateMemberStart()
         {
             return CanStartTemplateMember(this.CurrentToken.Kind);
@@ -2088,6 +2088,24 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 case SyntaxKind.ClassKeyword:
                     return true;
 
+                default:
+                    return false;
+            }
+        }
+
+        private bool IsTemplateDeclarationStart()
+        {
+            return this.CurrentToken.Kind == SyntaxKind.TemplateKeyword;
+        }
+
+        private bool IsTemplateClassDeclarationStart()
+        {
+            // templates have restrictions on class declarations
+            // this switch checks for possible starts (only 'class' at the moment)
+            switch (this.CurrentToken.Kind)
+            {
+                case SyntaxKind.ClassKeyword:
+                    return true;
                 default:
                     return false;
             }
@@ -2155,11 +2173,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             }
         }
 
-        private bool IsTemplateDeclarationStart()
-        {
-            return this.CurrentToken.Kind == SyntaxKind.TemplateKeyword;
-        }
-
         private bool IsTypeDeclarationStart()
         {
             switch (this.CurrentToken.Kind)
@@ -2204,9 +2217,46 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         }
 
         #region Package Template ParseTemplateMemberDeclarationOrStatement
-        private MemberDeclarationSyntax ParseTemplateMemberDeclarationOrStatement(SyntaxKind kind)
+
+        private MemberDeclarationSyntax ParseTemplateMemberDeclarationOrStatement(SyntaxKind parentKind)
         {
-            throw new NotImplementedException("ParseTemplateMemberDeclarationOrStatement not implemented!");
+            // "top-level" expressions and statements should never occur inside an asynchronous context
+            Debug.Assert(!IsInAsync);
+
+            // check for a class, parse it if found
+            if (IsTemplateClassDeclarationStart())
+            {
+                return this.ParseTemplateClassDeclaration(parentKind);
+            }
+
+            // check for an inst statement, parse if found
+            /* TODO: Implement Inst statements
+            if (this.CurrentToken.Kind == SyntaxKind.InstKeyword)
+            {
+                return this.ParseInstStatement();
+            }
+            */
+
+            // if it's neither a class declaration or inst statement, we have an error
+            /* TODO: Handle errors
+             * This might be easier to do when we have implemented parsing legal template class declarations
+             * and legal template inst statments, then we can resume parsing at the next legal syntax.
+             */
+            throw new NotImplementedException("Handling errors within ParseTemplateMemberDeclarationOrStatement");
+        }
+
+        private MemberDeclarationSyntax ParseTemplateClassDeclaration(SyntaxKind parentKind)
+        {
+            /* TODO: Package Template
+             * Make this method enforce restrictions to classes within templates.
+             * Current solution is a quick-fix that uses the current class declaration parser.
+             * This will allow all valid classes in C# that start with "class", which is
+             * more than what is allowed within a template.
+             * 
+             * Remove the 'SyntaxKind parentKind' parameter, we know we are in a template.
+             * This is only used to call ParseMemberDeclarationOrStatement() at the moment.
+             */
+            return this.ParseMemberDeclarationOrStatement(parentKind);
         }
         #endregion
 
