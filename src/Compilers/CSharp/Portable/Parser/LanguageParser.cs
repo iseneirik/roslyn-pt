@@ -1432,8 +1432,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             switch (this.CurrentToken.Kind)
             {
+                // TODO: Consider moving this to a separate method?
+                #region Package Template ParseTypeDeclaration()
                 case SyntaxKind.TemplateKeyword:
                     return this.ParseTemplateDeclaration();
+
+                case SyntaxKind.InstKeyword:
+                    return this.ParseInstStatement();
+                #endregion
 
                 case SyntaxKind.ClassKeyword:
                     // report use of "static class" if feature is unsupported 
@@ -1460,10 +1466,57 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             }
         }
 
+        #region Package Template ParseInstStatement()
+        private MemberDeclarationSyntax ParseInstStatement()
+        {
+            // "top-level" expressions and statements should never occur inside an asynchronous 
+            Debug.Assert(this.CurrentToken.Kind == SyntaxKind.InstKeyword);
+            Debug.Assert(!IsInAsync);
+
+            var instToken = this.EatToken();
+            var name = this.ParseName();
+
+            // Parse inst statement body
+            SyntaxToken openBrace = null;
+            RenameClauseSyntax renameClause = null;
+            AddsClauseSyntax addsClause = null;
+            SyntaxToken closeBrace = null;
+            if (this.CurrentToken.Kind == SyntaxKind.OpenBraceToken)
+            {
+                openBrace = this.EatToken();
+                // TODO: consider having renameClause and addsClause as a list of MemberDeclarationSyntax?
+                //       If so, this can be parsed with two separate while loops.
+                renameClause = this.ParseRenameClause();
+                addsClause = this.ParseAddsClause();
+                closeBrace = this.EatToken(SyntaxKind.CloseBraceToken);
+            }
+
+            var semicolonToken = this.EatToken(SyntaxKind.SemicolonToken);
+
+            return _syntaxFactory.InstStatement(
+                instToken,
+                name,
+                openBrace,
+                renameClause,
+                addsClause,
+                closeBrace,
+                semicolonToken);
+        }
+
+        private AddsClauseSyntax ParseAddsClause()
+        {
+            throw new NotImplementedException();
+        }
+
+        private RenameClauseSyntax ParseRenameClause()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
         #region Package Template ParseTemplateDeclaration()
         private MemberDeclarationSyntax ParseTemplateDeclaration()
         {
-            // "top-level" expressions and statements should never occur inside an asynchronous 
             Debug.Assert(this.CurrentToken.Kind == SyntaxKind.TemplateKeyword);
             Debug.Assert(!IsInAsync);
 
@@ -2076,9 +2129,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         }
 
         #region Package Template Syntax Kind checkers
-        private bool IsPossibleTemplateMemberStart()
+        private bool IsInstStatementStart()
         {
-            return CanStartTemplateMember(this.CurrentToken.Kind);
+            return this.CurrentToken.Kind == SyntaxKind.InstKeyword;
         }
 
         private static bool CanStartTemplateMember(SyntaxKind kind)
@@ -2086,6 +2139,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             switch (kind)
             {
                 case SyntaxKind.ClassKeyword:
+                case SyntaxKind.InstKeyword:
                     return true;
 
                 default:
@@ -2102,6 +2156,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             // templates have restrictions on class declarations
             // this switch checks for possible starts (only 'class' at the moment)
+            // this should be widened to include 'abstract' and other modifiers
             switch (this.CurrentToken.Kind)
             {
                 case SyntaxKind.ClassKeyword:
@@ -2228,14 +2283,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             {
                 return this.ParseTemplateClassDeclaration(parentKind);
             }
-
-            // check for an inst statement, parse if found
-            /* TODO: Implement Inst statements
-            if (this.CurrentToken.Kind == SyntaxKind.InstKeyword)
+            else if (IsInstStatementStart())
             {
                 return this.ParseInstStatement();
             }
-            */
 
             // if it's neither a class declaration or inst statement, we have an error
             /* TODO: Handle errors
@@ -2443,7 +2494,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 }
 
                 // It's valid to have a type declaration here -- check for those
-                if (IsTypeDeclarationStart() || IsTemplateDeclarationStart())
+                if (IsTypeDeclarationStart() || IsTemplateDeclarationStart() || IsInstStatementStart())
                 {
                     return this.ParseTypeDeclaration(attributes, modifiers);
                 }
