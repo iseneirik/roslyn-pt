@@ -1245,6 +1245,12 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
       return this.DefaultVisit(node);
     }
+
+    /// <summary>Called when the visitor visits a InstStatementSyntax node.</summary>
+    public virtual TResult VisitInstStatement(InstStatementSyntax node)
+    {
+      return this.DefaultVisit(node);
+    }
   }
 
   public partial class CSharpSyntaxVisitor
@@ -2475,6 +2481,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
     /// <summary>Called when the visitor visits a TemplateDeclarationSyntax node.</summary>
     public virtual void VisitTemplateDeclaration(TemplateDeclarationSyntax node)
+    {
+      this.DefaultVisit(node);
+    }
+
+    /// <summary>Called when the visitor visits a InstStatementSyntax node.</summary>
+    public virtual void VisitInstStatement(InstStatementSyntax node)
     {
       this.DefaultVisit(node);
     }
@@ -4239,6 +4251,18 @@ namespace Microsoft.CodeAnalysis.CSharp
       var closeBraceToken = this.VisitToken(node.CloseBraceToken);
       var semicolonToken = this.VisitToken(node.SemicolonToken);
       return node.Update(templateKeyword, name, openBraceToken, members, closeBraceToken, semicolonToken);
+    }
+
+    public override SyntaxNode VisitInstStatement(InstStatementSyntax node)
+    {
+      var instKeyword = this.VisitToken(node.InstKeyword);
+      var name = (NameSyntax)this.Visit(node.Name);
+      var openBraceToken = this.VisitToken(node.OpenBraceToken);
+      var renameClause = (RenameClauseSyntax)this.Visit(node.RenameClause);
+      var addsClause = (AddsClauseSyntax)this.Visit(node.AddsClause);
+      var closeBraceToken = this.VisitToken(node.CloseBraceToken);
+      var semicolonToken = this.VisitToken(node.SemicolonToken);
+      return node.Update(instKeyword, name, openBraceToken, renameClause, addsClause, closeBraceToken, semicolonToken);
     }
   }
 
@@ -10941,6 +10965,57 @@ namespace Microsoft.CodeAnalysis.CSharp
     public static TemplateDeclarationSyntax TemplateDeclaration(NameSyntax name)
     {
       return SyntaxFactory.TemplateDeclaration(SyntaxFactory.Token(SyntaxKind.TemplateKeyword), name, SyntaxFactory.Token(SyntaxKind.OpenBraceToken), default(SyntaxList<MemberDeclarationSyntax>), SyntaxFactory.Token(SyntaxKind.CloseBraceToken), default(SyntaxToken));
+    }
+
+    /// <summary>Creates a new InstStatementSyntax instance.</summary>
+    public static InstStatementSyntax InstStatement(SyntaxToken instKeyword, NameSyntax name, SyntaxToken openBraceToken, RenameClauseSyntax renameClause, AddsClauseSyntax addsClause, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    {
+      switch (instKeyword.Kind())
+      {
+        case SyntaxKind.InstKeyword:
+          break;
+        default:
+          throw new ArgumentException("instKeyword");
+      }
+      if (name == null)
+        throw new ArgumentNullException(nameof(name));
+      switch (openBraceToken.Kind())
+      {
+        case SyntaxKind.OpenBraceToken:
+        case SyntaxKind.None:
+          break;
+        default:
+          throw new ArgumentException("openBraceToken");
+      }
+      switch (closeBraceToken.Kind())
+      {
+        case SyntaxKind.CloseBraceToken:
+        case SyntaxKind.None:
+          break;
+        default:
+          throw new ArgumentException("closeBraceToken");
+      }
+      switch (semicolonToken.Kind())
+      {
+        case SyntaxKind.SemicolonToken:
+          break;
+        default:
+          throw new ArgumentException("semicolonToken");
+      }
+      return (InstStatementSyntax)Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.InstStatement((Syntax.InternalSyntax.SyntaxToken)instKeyword.Node, name == null ? null : (Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.NameSyntax)name.Green, (Syntax.InternalSyntax.SyntaxToken)openBraceToken.Node, renameClause == null ? null : (Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.RenameClauseSyntax)renameClause.Green, addsClause == null ? null : (Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.AddsClauseSyntax)addsClause.Green, (Syntax.InternalSyntax.SyntaxToken)closeBraceToken.Node, (Syntax.InternalSyntax.SyntaxToken)semicolonToken.Node).CreateRed();
+    }
+
+
+    /// <summary>Creates a new InstStatementSyntax instance.</summary>
+    public static InstStatementSyntax InstStatement(NameSyntax name, RenameClauseSyntax renameClause, AddsClauseSyntax addsClause)
+    {
+      return SyntaxFactory.InstStatement(SyntaxFactory.Token(SyntaxKind.InstKeyword), name, default(SyntaxToken), renameClause, addsClause, default(SyntaxToken), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+    }
+
+    /// <summary>Creates a new InstStatementSyntax instance.</summary>
+    public static InstStatementSyntax InstStatement(NameSyntax name)
+    {
+      return SyntaxFactory.InstStatement(SyntaxFactory.Token(SyntaxKind.InstKeyword), name, default(SyntaxToken), default(RenameClauseSyntax), default(AddsClauseSyntax), default(SyntaxToken), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
     }
   }
 }

@@ -21411,4 +21411,170 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         return this.WithMembers(this.Members.AddRange(items));
     }
   }
+
+  public abstract partial class RenameClauseSyntax : CSharpSyntaxNode
+  {
+    internal RenameClauseSyntax(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.CSharpSyntaxNode green, SyntaxNode parent, int position)
+      : base(green, parent, position)
+    {
+    }
+  }
+
+  public abstract partial class AddsClauseSyntax : CSharpSyntaxNode
+  {
+    internal AddsClauseSyntax(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.CSharpSyntaxNode green, SyntaxNode parent, int position)
+      : base(green, parent, position)
+    {
+    }
+  }
+
+  public sealed partial class InstStatementSyntax : MemberDeclarationSyntax
+  {
+    private NameSyntax name;
+    private RenameClauseSyntax renameClause;
+    private AddsClauseSyntax addsClause;
+
+    internal InstStatementSyntax(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.CSharpSyntaxNode green, SyntaxNode parent, int position)
+        : base(green, parent, position)
+    {
+    }
+
+    public SyntaxToken InstKeyword 
+    {
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax)this.Green).instKeyword, this.Position, 0); }
+    }
+
+    public NameSyntax Name 
+    {
+        get
+        {
+            return this.GetRed(ref this.name, 1);
+        }
+    }
+
+    public SyntaxToken OpenBraceToken 
+    {
+        get
+        {
+            var slot = ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax)this.Green).openBraceToken;
+            if (slot != null)
+                return new SyntaxToken(this, slot, this.GetChildPosition(2), this.GetChildIndex(2));
+
+            return default(SyntaxToken);
+        }
+    }
+
+    public RenameClauseSyntax RenameClause 
+    {
+        get
+        {
+            return this.GetRed(ref this.renameClause, 3);
+        }
+    }
+
+    public AddsClauseSyntax AddsClause 
+    {
+        get
+        {
+            return this.GetRed(ref this.addsClause, 4);
+        }
+    }
+
+    public SyntaxToken CloseBraceToken 
+    {
+        get
+        {
+            var slot = ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax)this.Green).closeBraceToken;
+            if (slot != null)
+                return new SyntaxToken(this, slot, this.GetChildPosition(5), this.GetChildIndex(5));
+
+            return default(SyntaxToken);
+        }
+    }
+
+    public SyntaxToken SemicolonToken 
+    {
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax)this.Green).semicolonToken, this.GetChildPosition(6), this.GetChildIndex(6)); }
+    }
+
+    internal override SyntaxNode GetNodeSlot(int index)
+    {
+        switch (index)
+        {
+            case 1: return this.GetRed(ref this.name, 1);
+            case 3: return this.GetRed(ref this.renameClause, 3);
+            case 4: return this.GetRed(ref this.addsClause, 4);
+            default: return null;
+        }
+    }
+    internal override SyntaxNode GetCachedSlot(int index)
+    {
+        switch (index)
+        {
+            case 1: return this.name;
+            case 3: return this.renameClause;
+            case 4: return this.addsClause;
+            default: return null;
+        }
+    }
+
+    public override TResult Accept<TResult>(CSharpSyntaxVisitor<TResult> visitor)
+    {
+        return visitor.VisitInstStatement(this);
+    }
+
+    public override void Accept(CSharpSyntaxVisitor visitor)
+    {
+        visitor.VisitInstStatement(this);
+    }
+
+    public InstStatementSyntax Update(SyntaxToken instKeyword, NameSyntax name, SyntaxToken openBraceToken, RenameClauseSyntax renameClause, AddsClauseSyntax addsClause, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    {
+        if (instKeyword != this.InstKeyword || name != this.Name || openBraceToken != this.OpenBraceToken || renameClause != this.RenameClause || addsClause != this.AddsClause || closeBraceToken != this.CloseBraceToken || semicolonToken != this.SemicolonToken)
+        {
+            var newNode = SyntaxFactory.InstStatement(instKeyword, name, openBraceToken, renameClause, addsClause, closeBraceToken, semicolonToken);
+            var annotations = this.GetAnnotations();
+            if (annotations != null && annotations.Length > 0)
+               return newNode.WithAnnotations(annotations);
+            return newNode;
+        }
+
+        return this;
+    }
+
+    public InstStatementSyntax WithInstKeyword(SyntaxToken instKeyword)
+    {
+        return this.Update(instKeyword, this.Name, this.OpenBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public InstStatementSyntax WithName(NameSyntax name)
+    {
+        return this.Update(this.InstKeyword, name, this.OpenBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public InstStatementSyntax WithOpenBraceToken(SyntaxToken openBraceToken)
+    {
+        return this.Update(this.InstKeyword, this.Name, openBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public InstStatementSyntax WithRenameClause(RenameClauseSyntax renameClause)
+    {
+        return this.Update(this.InstKeyword, this.Name, this.OpenBraceToken, renameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public InstStatementSyntax WithAddsClause(AddsClauseSyntax addsClause)
+    {
+        return this.Update(this.InstKeyword, this.Name, this.OpenBraceToken, this.RenameClause, addsClause, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public InstStatementSyntax WithCloseBraceToken(SyntaxToken closeBraceToken)
+    {
+        return this.Update(this.InstKeyword, this.Name, this.OpenBraceToken, this.RenameClause, this.AddsClause, closeBraceToken, this.SemicolonToken);
+    }
+
+    public InstStatementSyntax WithSemicolonToken(SyntaxToken semicolonToken)
+    {
+        return this.Update(this.InstKeyword, this.Name, this.OpenBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, semicolonToken);
+    }
+  }
 }

@@ -4330,7 +4330,7 @@
   
   <AbstractNode Name="AddsClauseSyntax" Base="CSharpSyntaxNode"/>
 
-  <Node Name="InstStatementSyntax" Base="CSharpSyntaxNode">
+  <Node Name="InstStatementSyntax" Base="MemberDeclarationSyntax">
     <Kind Name="InstStatement"/>
     <Field Name="InstKeyword" Type="SyntaxToken">
       <Kind Name="InstKeyword"/>

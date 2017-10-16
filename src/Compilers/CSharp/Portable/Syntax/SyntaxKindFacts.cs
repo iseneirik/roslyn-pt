@@ -954,6 +954,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 #region Package Template GetKeywordKind
                 case "template":
                     return SyntaxKind.TemplateKeyword;
+                case "inst":
+                    return SyntaxKind.InstKeyword;
                 #endregion
                 default:
                     return SyntaxKind.None;
@@ -1529,6 +1531,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 #region Package Template GetText
                 case SyntaxKind.TemplateKeyword:
                     return "template";
+                case SyntaxKind.InstKeyword:
+                    return "inst";
                 #endregion
 
                 // contextual keywords
