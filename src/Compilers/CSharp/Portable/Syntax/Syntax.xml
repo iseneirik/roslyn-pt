@@ -4325,6 +4325,29 @@
       <Kind Name="SemicolonToken"/>
     </Field>
   </Node>
+  
+  <AbstractNode Name="RenameClauseSyntax" Base="CSharpSyntaxNode"/>
+  
+  <AbstractNode Name="AddsClauseSyntax" Base="CSharpSyntaxNode"/>
+
+  <Node Name="InstStatementSyntax" Base="CSharpSyntaxNode">
+    <Kind Name="InstStatement"/>
+    <Field Name="InstKeyword" Type="SyntaxToken">
+      <Kind Name="InstKeyword"/>
+    </Field>
+    <Field Name="Name" Type="NameSyntax"/>
+    <Field Name="OpenBraceToken" Type="SyntaxToken" Optional="true">
+      <Kind Name="OpenBraceToken"/>
+    </Field>
+    <Field Name="RenameClause" Type="RenameClauseSyntax" Optional="true"/>
+    <Field Name="AddsClause" Type="AddsClauseSyntax" Optional="true"/>
+    <Field Name="CloseBraceToken" Type="SyntaxToken" Optional="true">
+      <Kind Name="CloseBraceToken"/>
+    </Field>
+    <Field Name="SemicolonToken" Type="SyntaxToken">
+      <Kind Name="SemicolonToken"/>
+    </Field>
+  </Node>
   <!-- #endregion -->
   
 </Tree>

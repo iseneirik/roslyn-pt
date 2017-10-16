@@ -19,6 +19,8 @@ Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax.WithName(Microsof
 Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax.WithOpenBraceToken(Microsoft.CodeAnalysis.SyntaxToken openBraceToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax.WithSemicolonToken(Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax.WithTemplateKeyword(Microsoft.CodeAnalysis.SyntaxToken templateKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax
+Microsoft.CodeAnalysis.CSharp.SyntaxKind.InstKeyword = 8386 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
+Microsoft.CodeAnalysis.CSharp.SyntaxKind.InstStatement = 8861 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.TemplateDeclaration = 8860 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.TemplateKeyword = 8385 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 override Microsoft.CodeAnalysis.CSharp.CSharpSyntaxRewriter.VisitTemplateDeclaration(Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax node) -> Microsoft.CodeAnalysis.SyntaxNode
