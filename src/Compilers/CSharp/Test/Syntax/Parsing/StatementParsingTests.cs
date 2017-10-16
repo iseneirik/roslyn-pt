@@ -19,6 +19,11 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             return SyntaxFactory.ParseStatement(text, offset, options);
         }
 
+        #region Package Template declaration parsing tests
+        // TODO: Creates tests for statements here! (adds? rename?)
+        #endregion
+
+        #region Other 
         [Fact]
         [WorkItem(17458, "https://github.com/dotnet/roslyn/issues/17458")]
         public void ParsePrivate()
@@ -2722,6 +2727,7 @@ System.Console.WriteLine(true)";
                 Diagnostic(ErrorCode.ERR_RbraceExpected, "public").WithLocation(1, 10)
                 );
         }
+        #endregion
 
         private sealed class TokenAndTriviaWalker : CSharpSyntaxWalker
         {
