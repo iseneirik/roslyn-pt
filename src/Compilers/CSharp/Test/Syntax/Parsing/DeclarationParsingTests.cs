@@ -108,6 +108,30 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.Equal(0, cs.Members.Count);
             Assert.NotNull(cs.CloseBraceToken);
         }
+
+        [Fact]
+        public void TestInstStatement()
+        {
+            var text = "inst t;";
+            var file = this.ParseFile(text);
+
+            Assert.NotNull(file);
+            Assert.Equal(1, file.Members.Count);
+            Assert.Equal(text, file.ToString());
+            Assert.Equal(0, file.Errors().Length);
+
+            Assert.Equal(SyntaxKind.InstStatement, file.Members[0].Kind());
+            var i = (InstStatementSyntax) file.Members[0];
+            Assert.NotNull(i.InstKeyword);
+            Assert.NotNull(i.Name);
+            Assert.Equal("t", i.Name.ToString());
+            Assert.Null(i.OpenBraceToken.Value);
+            Assert.Null(i.RenameClause);
+            Assert.Null(i.AddsClause);
+            Assert.Null(i.CloseBraceToken.Value);
+            Assert.NotNull(i.SemicolonToken);
+            Assert.False(i.SemicolonToken.IsMissing);
+        }
         #endregion
 
 

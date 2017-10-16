@@ -23,6 +23,15 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             return SyntaxFactory.ParseExpression(text, options: options);
         }
 
+        #region Package Template expression parsing 
+        [Fact]
+        public void TestRenameExpression()
+        {
+            // TODO: create tests for renaming here
+        }
+        #endregion
+
+        #region Other Tests
         [Fact]
         public void TestEmptyString()
         {
@@ -3667,5 +3676,6 @@ select t";
             }
             EOF();
         }
+        #endregion
     }
 }
