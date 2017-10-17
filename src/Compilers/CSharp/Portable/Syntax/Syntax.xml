@@ -4348,6 +4348,28 @@
       <Kind Name="SemicolonToken"/>
     </Field>
   </Node>
+
+  <Node Name="RenameExpressionSyntax" Base="ExpressionSyntax">
+    <Kind Name="RenameExpression"/>
+    <Field Name="FromIdentifier" Type="SyntaxToken">
+      <PropertyComment>
+        <summary>The identifier to be renamed in the rename expression</summary>
+      </PropertyComment>
+      <Kind Name="IdentifierToken"/>
+    </Field>
+    <Field Name="RenameToken" Type="SyntaxToken">
+      <Kind Name="TildeGreaterThanToken"/>
+      <PropertyComment>
+        <summary>SyntaxToken representing renaming variables in inst statements</summary>
+      </PropertyComment>
+    </Field>
+    <Field Name="ToIdentifier" Type="SyntaxToken">
+      <PropertyComment>
+        <summary>The new identifier of the type being renamed</summary>
+      </PropertyComment>
+      <Kind Name="IdentifierToken"/>
+    </Field>
+  </Node>
   <!-- #endregion -->
   
 </Tree>
