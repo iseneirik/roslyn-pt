@@ -39,8 +39,10 @@ Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax.WithSemicolonToke
 Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax.WithTemplateKeyword(Microsoft.CodeAnalysis.SyntaxToken templateKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.InstKeyword = 8386 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.InstStatement = 8861 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
+Microsoft.CodeAnalysis.CSharp.SyntaxKind.RenameExpression = 8658 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.TemplateDeclaration = 8860 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.TemplateKeyword = 8385 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
+Microsoft.CodeAnalysis.CSharp.SyntaxKind.TildeGreaterThanToken = 8222 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 override Microsoft.CodeAnalysis.CSharp.CSharpSyntaxRewriter.VisitInstStatement(Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax node) -> Microsoft.CodeAnalysis.SyntaxNode
 override Microsoft.CodeAnalysis.CSharp.CSharpSyntaxRewriter.VisitTemplateDeclaration(Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax node) -> Microsoft.CodeAnalysis.SyntaxNode
 override Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.Accept(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor visitor) -> void

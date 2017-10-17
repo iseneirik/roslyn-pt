@@ -567,11 +567,17 @@ namespace Microsoft.CodeAnalysis.CSharp
         #region Package Template SyntaxKind
         // Kinds below are used for Package Temaplates (PT)
 
+        // Punctuation (8222-8231)
+        TildeGreaterThanToken = 8222,
+
         // Keywords (8385-8404)
         TemplateKeyword = 8385,
         InstKeyword = 8386,
 
-        // Statements (8860-8863)
+        // Expressions (8658-8668)
+        RenameExpression = 8658,
+
+        // Declarations (8860-8863)
         TemplateDeclaration = 8860,
         InstStatement = 8861,
         #endregion
