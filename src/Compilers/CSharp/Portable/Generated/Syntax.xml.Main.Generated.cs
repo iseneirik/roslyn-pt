@@ -1251,6 +1251,12 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
       return this.DefaultVisit(node);
     }
+
+    /// <summary>Called when the visitor visits a RenameStatementSyntax node.</summary>
+    public virtual TResult VisitRenameStatement(RenameStatementSyntax node)
+    {
+      return this.DefaultVisit(node);
+    }
   }
 
   public partial class CSharpSyntaxVisitor
@@ -2487,6 +2493,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
     /// <summary>Called when the visitor visits a InstStatementSyntax node.</summary>
     public virtual void VisitInstStatement(InstStatementSyntax node)
+    {
+      this.DefaultVisit(node);
+    }
+
+    /// <summary>Called when the visitor visits a RenameStatementSyntax node.</summary>
+    public virtual void VisitRenameStatement(RenameStatementSyntax node)
     {
       this.DefaultVisit(node);
     }
@@ -4263,6 +4275,14 @@ namespace Microsoft.CodeAnalysis.CSharp
       var closeBraceToken = this.VisitToken(node.CloseBraceToken);
       var semicolonToken = this.VisitToken(node.SemicolonToken);
       return node.Update(instKeyword, name, openBraceToken, renameClause, addsClause, closeBraceToken, semicolonToken);
+    }
+
+    public override SyntaxNode VisitRenameStatement(RenameStatementSyntax node)
+    {
+      var fromIdentifier = this.VisitToken(node.FromIdentifier);
+      var renameToken = this.VisitToken(node.RenameToken);
+      var toIdentifier = this.VisitToken(node.ToIdentifier);
+      return node.Update(fromIdentifier, renameToken, toIdentifier);
     }
   }
 
@@ -11016,6 +11036,46 @@ namespace Microsoft.CodeAnalysis.CSharp
     public static InstStatementSyntax InstStatement(NameSyntax name)
     {
       return SyntaxFactory.InstStatement(SyntaxFactory.Token(SyntaxKind.InstKeyword), name, default(SyntaxToken), default(RenameClauseSyntax), default(AddsClauseSyntax), default(SyntaxToken), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+    }
+
+    /// <summary>Creates a new RenameStatementSyntax instance.</summary>
+    public static RenameStatementSyntax RenameStatement(SyntaxToken fromIdentifier, SyntaxToken renameToken, SyntaxToken toIdentifier)
+    {
+      switch (fromIdentifier.Kind())
+      {
+        case SyntaxKind.IdentifierToken:
+          break;
+        default:
+          throw new ArgumentException("fromIdentifier");
+      }
+      switch (renameToken.Kind())
+      {
+        case SyntaxKind.TildeGreaterThanToken:
+          break;
+        default:
+          throw new ArgumentException("renameToken");
+      }
+      switch (toIdentifier.Kind())
+      {
+        case SyntaxKind.IdentifierToken:
+          break;
+        default:
+          throw new ArgumentException("toIdentifier");
+      }
+      return (RenameStatementSyntax)Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.RenameStatement((Syntax.InternalSyntax.SyntaxToken)fromIdentifier.Node, (Syntax.InternalSyntax.SyntaxToken)renameToken.Node, (Syntax.InternalSyntax.SyntaxToken)toIdentifier.Node).CreateRed();
+    }
+
+
+    /// <summary>Creates a new RenameStatementSyntax instance.</summary>
+    public static RenameStatementSyntax RenameStatement(SyntaxToken fromIdentifier, SyntaxToken toIdentifier)
+    {
+      return SyntaxFactory.RenameStatement(fromIdentifier, SyntaxFactory.Token(SyntaxKind.TildeGreaterThanToken), toIdentifier);
+    }
+
+    /// <summary>Creates a new RenameStatementSyntax instance.</summary>
+    public static RenameStatementSyntax RenameStatement(string fromIdentifier, string toIdentifier)
+    {
+      return SyntaxFactory.RenameStatement(SyntaxFactory.Identifier(fromIdentifier), SyntaxFactory.Token(SyntaxKind.TildeGreaterThanToken), SyntaxFactory.Identifier(toIdentifier));
     }
   }
 }

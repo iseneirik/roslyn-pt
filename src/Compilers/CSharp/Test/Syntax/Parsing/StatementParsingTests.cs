@@ -20,7 +20,26 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         }
 
         #region Package Template declaration parsing tests
-        // TODO: Creates tests for statements here! (adds? rename?)
+        [Fact]
+        public void TestRenameStatement()
+        {
+            var text = "a ~> aa";
+            var expr = this.ParseStatement(text);
+
+            Assert.NotNull(expr);
+            Assert.Equal(SyntaxKind.RenameStatement, expr.Kind());
+            Assert.Equal(text, expr.ToString());
+            Assert.Equal(0, expr.Errors().Length);
+
+            var rename = (RenameStatementSyntax)expr;
+            Assert.NotNull(rename.FromIdentifier);
+            Assert.False(rename.FromIdentifier.IsMissing);
+            Assert.Equal("a", rename.FromIdentifier.ToString());
+            Assert.NotNull(rename.RenameToken);
+            Assert.NotNull(rename.ToIdentifier);
+            Assert.False(rename.ToIdentifier.IsMissing);
+            Assert.Equal("aa", rename.ToIdentifier.ToString());
+        }
         #endregion
 
         #region Other 
