@@ -1208,6 +1208,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             switch (kind)
             {
+                #region Package Template GetText rename operator
+                case SyntaxKind.TildeGreaterThanToken:
+                    return "~>";
+                #endregion
                 case SyntaxKind.TildeToken:
                     return "~";
                 case SyntaxKind.ExclamationToken:

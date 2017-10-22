@@ -473,10 +473,20 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                     info.Kind = SyntaxKind.SemicolonToken;
                     break;
 
+                #region Package Template ScanSyntaxToken
                 case '~':
                     TextWindow.AdvanceChar();
-                    info.Kind = SyntaxKind.TildeToken;
+                    if (TextWindow.PeekChar() == '>')
+                    {
+                        TextWindow.AdvanceChar();
+                        info.Kind = SyntaxKind.TildeGreaterThanToken;
+                    }
+                    else
+                    {
+                        info.Kind = SyntaxKind.TildeToken;
+                    }
                     break;
+                #endregion
 
                 case '!':
                     TextWindow.AdvanceChar();
