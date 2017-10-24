@@ -19,7 +19,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             return SyntaxFactory.ParseStatement(text, offset, options);
         }
 
-        #region Package Template declaration parsing tests
+        #region Package Template statement parsing tests
         [Fact]
         public void TestRenameStatement()
         {

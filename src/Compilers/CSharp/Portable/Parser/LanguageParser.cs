@@ -6921,6 +6921,12 @@ tryAgain:
                 case SyntaxKind.SemicolonToken:
                     return _syntaxFactory.EmptyStatement(this.EatToken());
                 case SyntaxKind.IdentifierToken:
+                    #region Package Template ParseStatementNoDeclaration
+                    if (this.IsPossibleRenameStatement())
+                    {
+                        return this.ParseRenameStatement();
+                    }
+                    #endregion
                     if (this.IsPossibleLabeledStatement())
                     {
                         return this.ParseLabeledStatement();
@@ -6953,6 +6959,13 @@ tryAgain:
                     }
             }
         }
+
+        #region Package Template IsPossibleRenameStatement
+        private bool IsPossibleRenameStatement()
+        {
+            return this.PeekToken(1).Kind == SyntaxKind.TildeGreaterThanToken;
+        }
+        #endregion
 
         private bool IsPossibleLabeledStatement()
         {
@@ -8448,6 +8461,20 @@ tryAgain:
             var statement = this.ParseEmbeddedStatement();
             return _syntaxFactory.WhileStatement(@while, openParen, condition, closeParen, statement);
         }
+
+        #region Package Template ParseRenameStatement
+        private RenameStatementSyntax ParseRenameStatement()
+        {
+            Debug.Assert(this.CurrentToken.Kind == SyntaxKind.IdentifierToken);
+
+            var fromIdentifier = this.ParseIdentifierToken();
+            var renameToken = this.EatToken(SyntaxKind.TildeGreaterThanToken);
+            Debug.Assert(!renameToken.IsMissing);
+            var toIdentifier = this.ParseIdentifierToken();
+
+            return _syntaxFactory.RenameStatement(fromIdentifier, renameToken, toIdentifier);
+        }
+        #endregion
 
         private LabeledStatementSyntax ParseLabeledStatement()
         {
