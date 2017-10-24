@@ -21577,4 +21577,84 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         return this.Update(this.InstKeyword, this.Name, this.OpenBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, semicolonToken);
     }
   }
+
+  public sealed partial class RenameStatementSyntax : StatementSyntax
+  {
+    internal RenameStatementSyntax(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.CSharpSyntaxNode green, SyntaxNode parent, int position)
+        : base(green, parent, position)
+    {
+    }
+
+    /// <summary>The identifier to be renamed in the rename statement</summary>
+    public SyntaxToken FromIdentifier 
+    {
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.RenameStatementSyntax)this.Green).fromIdentifier, this.Position, 0); }
+    }
+
+    /// <summary>SyntaxToken representing renaming variables in inst statements</summary>
+    public SyntaxToken RenameToken 
+    {
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.RenameStatementSyntax)this.Green).renameToken, this.GetChildPosition(1), this.GetChildIndex(1)); }
+    }
+
+    /// <summary>The new identifier of the type being renamed</summary>
+    public SyntaxToken ToIdentifier 
+    {
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.RenameStatementSyntax)this.Green).toIdentifier, this.GetChildPosition(2), this.GetChildIndex(2)); }
+    }
+
+    internal override SyntaxNode GetNodeSlot(int index)
+    {
+        switch (index)
+        {
+            default: return null;
+        }
+    }
+    internal override SyntaxNode GetCachedSlot(int index)
+    {
+        switch (index)
+        {
+            default: return null;
+        }
+    }
+
+    public override TResult Accept<TResult>(CSharpSyntaxVisitor<TResult> visitor)
+    {
+        return visitor.VisitRenameStatement(this);
+    }
+
+    public override void Accept(CSharpSyntaxVisitor visitor)
+    {
+        visitor.VisitRenameStatement(this);
+    }
+
+    public RenameStatementSyntax Update(SyntaxToken fromIdentifier, SyntaxToken renameToken, SyntaxToken toIdentifier)
+    {
+        if (fromIdentifier != this.FromIdentifier || renameToken != this.RenameToken || toIdentifier != this.ToIdentifier)
+        {
+            var newNode = SyntaxFactory.RenameStatement(fromIdentifier, renameToken, toIdentifier);
+            var annotations = this.GetAnnotations();
+            if (annotations != null && annotations.Length > 0)
+               return newNode.WithAnnotations(annotations);
+            return newNode;
+        }
+
+        return this;
+    }
+
+    public RenameStatementSyntax WithFromIdentifier(SyntaxToken fromIdentifier)
+    {
+        return this.Update(fromIdentifier, this.RenameToken, this.ToIdentifier);
+    }
+
+    public RenameStatementSyntax WithRenameToken(SyntaxToken renameToken)
+    {
+        return this.Update(this.FromIdentifier, renameToken, this.ToIdentifier);
+    }
+
+    public RenameStatementSyntax WithToIdentifier(SyntaxToken toIdentifier)
+    {
+        return this.Update(this.FromIdentifier, this.RenameToken, toIdentifier);
+    }
+  }
 }
