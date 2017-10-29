@@ -24,11 +24,6 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         }
 
         #region Package Template expression parsing 
-        [Fact]
-        public void TestRenameExpression()
-        {
-            // TODO: create tests for renaming here
-        }
         #endregion
 
         #region Other Tests

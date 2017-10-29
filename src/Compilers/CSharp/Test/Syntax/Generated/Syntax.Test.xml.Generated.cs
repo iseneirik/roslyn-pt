@@ -1031,17 +1031,17 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         
         private static Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.TemplateDeclarationSyntax GenerateTemplateDeclaration()
         {
-            return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.TemplateDeclaration(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.TemplateKeyword), GenerateIdentifierName(), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.OpenBraceToken), new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.MemberDeclarationSyntax>(), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.CloseBraceToken), null);
+            return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.TemplateDeclaration(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.TemplateKeyword), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Identifier("Name"), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.OpenBraceToken), new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.MemberDeclarationSyntax>(), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.CloseBraceToken), null);
         }
         
         private static Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax GenerateInstStatement()
         {
-            return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.InstStatement(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.InstKeyword), GenerateIdentifierName(), null, null, null, null, Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.InstStatement(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.InstKeyword), new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.NameSyntax>(), null, null, null, null, Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.SemicolonToken));
         }
         
         private static Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.RenameStatementSyntax GenerateRenameStatement()
         {
-            return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.RenameStatement(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Identifier("FromIdentifier"), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.TildeGreaterThanToken), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Identifier("ToIdentifier"));
+            return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.RenameStatement(GenerateIdentifierName(), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.TildeGreaterThanToken), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Identifier("ToIdentifier"));
         }
         #endregion Green Generators
         
@@ -3638,7 +3638,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             var node = GenerateTemplateDeclaration();
             
             Assert.Equal(SyntaxKind.TemplateKeyword, node.TemplateKeyword.Kind);
-            Assert.NotNull(node.Name);
+            Assert.Equal(SyntaxKind.IdentifierToken, node.Name.Kind);
             Assert.Equal(SyntaxKind.OpenBraceToken, node.OpenBraceToken.Kind);
             Assert.NotNull(node.Members);
             Assert.Equal(SyntaxKind.CloseBraceToken, node.CloseBraceToken.Kind);
@@ -3653,7 +3653,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             var node = GenerateInstStatement();
             
             Assert.Equal(SyntaxKind.InstKeyword, node.InstKeyword.Kind);
-            Assert.NotNull(node.Name);
+            Assert.NotNull(node.Templates);
             Assert.Null(node.OpenBraceToken);
             Assert.Null(node.RenameClause);
             Assert.Null(node.AddsClause);
@@ -3668,7 +3668,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         {
             var node = GenerateRenameStatement();
             
-            Assert.Equal(SyntaxKind.IdentifierToken, node.FromIdentifier.Kind);
+            Assert.NotNull(node.FromIdentifier);
             Assert.Equal(SyntaxKind.TildeGreaterThanToken, node.RenameToken.Kind);
             Assert.Equal(SyntaxKind.IdentifierToken, node.ToIdentifier.Kind);
             
@@ -10086,17 +10086,17 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         
         private static TemplateDeclarationSyntax GenerateTemplateDeclaration()
         {
-            return SyntaxFactory.TemplateDeclaration(SyntaxFactory.Token(SyntaxKind.TemplateKeyword), GenerateIdentifierName(), SyntaxFactory.Token(SyntaxKind.OpenBraceToken), new SyntaxList<MemberDeclarationSyntax>(), SyntaxFactory.Token(SyntaxKind.CloseBraceToken), default(SyntaxToken));
+            return SyntaxFactory.TemplateDeclaration(SyntaxFactory.Token(SyntaxKind.TemplateKeyword), SyntaxFactory.Identifier("Name"), SyntaxFactory.Token(SyntaxKind.OpenBraceToken), new SyntaxList<MemberDeclarationSyntax>(), SyntaxFactory.Token(SyntaxKind.CloseBraceToken), default(SyntaxToken));
         }
         
         private static InstStatementSyntax GenerateInstStatement()
         {
-            return SyntaxFactory.InstStatement(SyntaxFactory.Token(SyntaxKind.InstKeyword), GenerateIdentifierName(), default(SyntaxToken), default(RenameClauseSyntax), default(AddsClauseSyntax), default(SyntaxToken), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            return SyntaxFactory.InstStatement(SyntaxFactory.Token(SyntaxKind.InstKeyword), new SeparatedSyntaxList<NameSyntax>(), default(SyntaxToken), default(RenameClauseSyntax), default(AddsClauseSyntax), default(SyntaxToken), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
         }
         
         private static RenameStatementSyntax GenerateRenameStatement()
         {
-            return SyntaxFactory.RenameStatement(SyntaxFactory.Identifier("FromIdentifier"), SyntaxFactory.Token(SyntaxKind.TildeGreaterThanToken), SyntaxFactory.Identifier("ToIdentifier"));
+            return SyntaxFactory.RenameStatement(GenerateIdentifierName(), SyntaxFactory.Token(SyntaxKind.TildeGreaterThanToken), SyntaxFactory.Identifier("ToIdentifier"));
         }
         #endregion Red Generators
         
@@ -12693,7 +12693,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             var node = GenerateTemplateDeclaration();
             
             Assert.Equal(SyntaxKind.TemplateKeyword, node.TemplateKeyword.Kind());
-            Assert.NotNull(node.Name);
+            Assert.Equal(SyntaxKind.IdentifierToken, node.Name.Kind());
             Assert.Equal(SyntaxKind.OpenBraceToken, node.OpenBraceToken.Kind());
             Assert.NotNull(node.Members);
             Assert.Equal(SyntaxKind.CloseBraceToken, node.CloseBraceToken.Kind());
@@ -12708,13 +12708,13 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             var node = GenerateInstStatement();
             
             Assert.Equal(SyntaxKind.InstKeyword, node.InstKeyword.Kind());
-            Assert.NotNull(node.Name);
+            Assert.NotNull(node.Templates);
             Assert.Equal(SyntaxKind.None, node.OpenBraceToken.Kind());
             Assert.Null(node.RenameClause);
             Assert.Null(node.AddsClause);
             Assert.Equal(SyntaxKind.None, node.CloseBraceToken.Kind());
             Assert.Equal(SyntaxKind.SemicolonToken, node.SemicolonToken.Kind());
-            var newNode = node.WithInstKeyword(node.InstKeyword).WithName(node.Name).WithOpenBraceToken(node.OpenBraceToken).WithRenameClause(node.RenameClause).WithAddsClause(node.AddsClause).WithCloseBraceToken(node.CloseBraceToken).WithSemicolonToken(node.SemicolonToken);
+            var newNode = node.WithInstKeyword(node.InstKeyword).WithTemplates(node.Templates).WithOpenBraceToken(node.OpenBraceToken).WithRenameClause(node.RenameClause).WithAddsClause(node.AddsClause).WithCloseBraceToken(node.CloseBraceToken).WithSemicolonToken(node.SemicolonToken);
             Assert.Equal(node, newNode);
         }
         
@@ -12723,7 +12723,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         {
             var node = GenerateRenameStatement();
             
-            Assert.Equal(SyntaxKind.IdentifierToken, node.FromIdentifier.Kind());
+            Assert.NotNull(node.FromIdentifier);
             Assert.Equal(SyntaxKind.TildeGreaterThanToken, node.RenameToken.Kind());
             Assert.Equal(SyntaxKind.IdentifierToken, node.ToIdentifier.Kind());
             var newNode = node.WithFromIdentifier(node.FromIdentifier).WithRenameToken(node.RenameToken).WithToIdentifier(node.ToIdentifier);

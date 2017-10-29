@@ -4257,7 +4257,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     public override SyntaxNode VisitTemplateDeclaration(TemplateDeclarationSyntax node)
     {
       var templateKeyword = this.VisitToken(node.TemplateKeyword);
-      var name = (NameSyntax)this.Visit(node.Name);
+      var name = this.VisitToken(node.Name);
       var openBraceToken = this.VisitToken(node.OpenBraceToken);
       var members = this.VisitList(node.Members);
       var closeBraceToken = this.VisitToken(node.CloseBraceToken);
@@ -4268,18 +4268,18 @@ namespace Microsoft.CodeAnalysis.CSharp
     public override SyntaxNode VisitInstStatement(InstStatementSyntax node)
     {
       var instKeyword = this.VisitToken(node.InstKeyword);
-      var name = (NameSyntax)this.Visit(node.Name);
+      var templates = this.VisitList(node.Templates);
       var openBraceToken = this.VisitToken(node.OpenBraceToken);
       var renameClause = (RenameClauseSyntax)this.Visit(node.RenameClause);
       var addsClause = (AddsClauseSyntax)this.Visit(node.AddsClause);
       var closeBraceToken = this.VisitToken(node.CloseBraceToken);
       var semicolonToken = this.VisitToken(node.SemicolonToken);
-      return node.Update(instKeyword, name, openBraceToken, renameClause, addsClause, closeBraceToken, semicolonToken);
+      return node.Update(instKeyword, templates, openBraceToken, renameClause, addsClause, closeBraceToken, semicolonToken);
     }
 
     public override SyntaxNode VisitRenameStatement(RenameStatementSyntax node)
     {
-      var fromIdentifier = this.VisitToken(node.FromIdentifier);
+      var fromIdentifier = (NameSyntax)this.Visit(node.FromIdentifier);
       var renameToken = this.VisitToken(node.RenameToken);
       var toIdentifier = this.VisitToken(node.ToIdentifier);
       return node.Update(fromIdentifier, renameToken, toIdentifier);
@@ -10938,7 +10938,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     }
 
     /// <summary>Creates a new TemplateDeclarationSyntax instance.</summary>
-    public static TemplateDeclarationSyntax TemplateDeclaration(SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    public static TemplateDeclarationSyntax TemplateDeclaration(SyntaxToken templateKeyword, SyntaxToken name, SyntaxToken openBraceToken, SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
     {
       switch (templateKeyword.Kind())
       {
@@ -10947,8 +10947,13 @@ namespace Microsoft.CodeAnalysis.CSharp
         default:
           throw new ArgumentException("templateKeyword");
       }
-      if (name == null)
-        throw new ArgumentNullException(nameof(name));
+      switch (name.Kind())
+      {
+        case SyntaxKind.IdentifierToken:
+          break;
+        default:
+          throw new ArgumentException("name");
+      }
       switch (openBraceToken.Kind())
       {
         case SyntaxKind.OpenBraceToken:
@@ -10971,24 +10976,30 @@ namespace Microsoft.CodeAnalysis.CSharp
         default:
           throw new ArgumentException("semicolonToken");
       }
-      return (TemplateDeclarationSyntax)Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.TemplateDeclaration((Syntax.InternalSyntax.SyntaxToken)templateKeyword.Node, name == null ? null : (Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.NameSyntax)name.Green, (Syntax.InternalSyntax.SyntaxToken)openBraceToken.Node, members.Node.ToGreenList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.MemberDeclarationSyntax>(), (Syntax.InternalSyntax.SyntaxToken)closeBraceToken.Node, (Syntax.InternalSyntax.SyntaxToken)semicolonToken.Node).CreateRed();
+      return (TemplateDeclarationSyntax)Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.TemplateDeclaration((Syntax.InternalSyntax.SyntaxToken)templateKeyword.Node, (Syntax.InternalSyntax.SyntaxToken)name.Node, (Syntax.InternalSyntax.SyntaxToken)openBraceToken.Node, members.Node.ToGreenList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.MemberDeclarationSyntax>(), (Syntax.InternalSyntax.SyntaxToken)closeBraceToken.Node, (Syntax.InternalSyntax.SyntaxToken)semicolonToken.Node).CreateRed();
     }
 
 
     /// <summary>Creates a new TemplateDeclarationSyntax instance.</summary>
-    public static TemplateDeclarationSyntax TemplateDeclaration(NameSyntax name, SyntaxList<MemberDeclarationSyntax> members)
+    public static TemplateDeclarationSyntax TemplateDeclaration(SyntaxToken name, SyntaxList<MemberDeclarationSyntax> members)
     {
       return SyntaxFactory.TemplateDeclaration(SyntaxFactory.Token(SyntaxKind.TemplateKeyword), name, SyntaxFactory.Token(SyntaxKind.OpenBraceToken), members, SyntaxFactory.Token(SyntaxKind.CloseBraceToken), default(SyntaxToken));
     }
 
     /// <summary>Creates a new TemplateDeclarationSyntax instance.</summary>
-    public static TemplateDeclarationSyntax TemplateDeclaration(NameSyntax name)
+    public static TemplateDeclarationSyntax TemplateDeclaration(SyntaxToken name)
     {
       return SyntaxFactory.TemplateDeclaration(SyntaxFactory.Token(SyntaxKind.TemplateKeyword), name, SyntaxFactory.Token(SyntaxKind.OpenBraceToken), default(SyntaxList<MemberDeclarationSyntax>), SyntaxFactory.Token(SyntaxKind.CloseBraceToken), default(SyntaxToken));
     }
 
+    /// <summary>Creates a new TemplateDeclarationSyntax instance.</summary>
+    public static TemplateDeclarationSyntax TemplateDeclaration(string name)
+    {
+      return SyntaxFactory.TemplateDeclaration(SyntaxFactory.Token(SyntaxKind.TemplateKeyword), SyntaxFactory.Identifier(name), SyntaxFactory.Token(SyntaxKind.OpenBraceToken), default(SyntaxList<MemberDeclarationSyntax>), SyntaxFactory.Token(SyntaxKind.CloseBraceToken), default(SyntaxToken));
+    }
+
     /// <summary>Creates a new InstStatementSyntax instance.</summary>
-    public static InstStatementSyntax InstStatement(SyntaxToken instKeyword, NameSyntax name, SyntaxToken openBraceToken, RenameClauseSyntax renameClause, AddsClauseSyntax addsClause, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    public static InstStatementSyntax InstStatement(SyntaxToken instKeyword, SeparatedSyntaxList<NameSyntax> templates, SyntaxToken openBraceToken, RenameClauseSyntax renameClause, AddsClauseSyntax addsClause, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
     {
       switch (instKeyword.Kind())
       {
@@ -10997,8 +11008,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         default:
           throw new ArgumentException("instKeyword");
       }
-      if (name == null)
-        throw new ArgumentNullException(nameof(name));
       switch (openBraceToken.Kind())
       {
         case SyntaxKind.OpenBraceToken:
@@ -11022,32 +11031,22 @@ namespace Microsoft.CodeAnalysis.CSharp
         default:
           throw new ArgumentException("semicolonToken");
       }
-      return (InstStatementSyntax)Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.InstStatement((Syntax.InternalSyntax.SyntaxToken)instKeyword.Node, name == null ? null : (Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.NameSyntax)name.Green, (Syntax.InternalSyntax.SyntaxToken)openBraceToken.Node, renameClause == null ? null : (Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.RenameClauseSyntax)renameClause.Green, addsClause == null ? null : (Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.AddsClauseSyntax)addsClause.Green, (Syntax.InternalSyntax.SyntaxToken)closeBraceToken.Node, (Syntax.InternalSyntax.SyntaxToken)semicolonToken.Node).CreateRed();
+      return (InstStatementSyntax)Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.InstStatement((Syntax.InternalSyntax.SyntaxToken)instKeyword.Node, templates.Node.ToGreenSeparatedList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.NameSyntax>(), (Syntax.InternalSyntax.SyntaxToken)openBraceToken.Node, renameClause == null ? null : (Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.RenameClauseSyntax)renameClause.Green, addsClause == null ? null : (Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.AddsClauseSyntax)addsClause.Green, (Syntax.InternalSyntax.SyntaxToken)closeBraceToken.Node, (Syntax.InternalSyntax.SyntaxToken)semicolonToken.Node).CreateRed();
     }
 
 
     /// <summary>Creates a new InstStatementSyntax instance.</summary>
-    public static InstStatementSyntax InstStatement(NameSyntax name, RenameClauseSyntax renameClause, AddsClauseSyntax addsClause)
+    public static InstStatementSyntax InstStatement(SeparatedSyntaxList<NameSyntax> templates, RenameClauseSyntax renameClause, AddsClauseSyntax addsClause)
     {
-      return SyntaxFactory.InstStatement(SyntaxFactory.Token(SyntaxKind.InstKeyword), name, default(SyntaxToken), renameClause, addsClause, default(SyntaxToken), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+      return SyntaxFactory.InstStatement(SyntaxFactory.Token(SyntaxKind.InstKeyword), templates, default(SyntaxToken), renameClause, addsClause, default(SyntaxToken), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
     }
 
-    /// <summary>Creates a new InstStatementSyntax instance.</summary>
-    public static InstStatementSyntax InstStatement(NameSyntax name)
-    {
-      return SyntaxFactory.InstStatement(SyntaxFactory.Token(SyntaxKind.InstKeyword), name, default(SyntaxToken), default(RenameClauseSyntax), default(AddsClauseSyntax), default(SyntaxToken), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-    }
 
     /// <summary>Creates a new RenameStatementSyntax instance.</summary>
-    public static RenameStatementSyntax RenameStatement(SyntaxToken fromIdentifier, SyntaxToken renameToken, SyntaxToken toIdentifier)
+    public static RenameStatementSyntax RenameStatement(NameSyntax fromIdentifier, SyntaxToken renameToken, SyntaxToken toIdentifier)
     {
-      switch (fromIdentifier.Kind())
-      {
-        case SyntaxKind.IdentifierToken:
-          break;
-        default:
-          throw new ArgumentException("fromIdentifier");
-      }
+      if (fromIdentifier == null)
+        throw new ArgumentNullException(nameof(fromIdentifier));
       switch (renameToken.Kind())
       {
         case SyntaxKind.TildeGreaterThanToken:
@@ -11062,20 +11061,20 @@ namespace Microsoft.CodeAnalysis.CSharp
         default:
           throw new ArgumentException("toIdentifier");
       }
-      return (RenameStatementSyntax)Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.RenameStatement((Syntax.InternalSyntax.SyntaxToken)fromIdentifier.Node, (Syntax.InternalSyntax.SyntaxToken)renameToken.Node, (Syntax.InternalSyntax.SyntaxToken)toIdentifier.Node).CreateRed();
+      return (RenameStatementSyntax)Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.RenameStatement(fromIdentifier == null ? null : (Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.NameSyntax)fromIdentifier.Green, (Syntax.InternalSyntax.SyntaxToken)renameToken.Node, (Syntax.InternalSyntax.SyntaxToken)toIdentifier.Node).CreateRed();
     }
 
 
     /// <summary>Creates a new RenameStatementSyntax instance.</summary>
-    public static RenameStatementSyntax RenameStatement(SyntaxToken fromIdentifier, SyntaxToken toIdentifier)
+    public static RenameStatementSyntax RenameStatement(NameSyntax fromIdentifier, SyntaxToken toIdentifier)
     {
       return SyntaxFactory.RenameStatement(fromIdentifier, SyntaxFactory.Token(SyntaxKind.TildeGreaterThanToken), toIdentifier);
     }
 
     /// <summary>Creates a new RenameStatementSyntax instance.</summary>
-    public static RenameStatementSyntax RenameStatement(string fromIdentifier, string toIdentifier)
+    public static RenameStatementSyntax RenameStatement(NameSyntax fromIdentifier, string toIdentifier)
     {
-      return SyntaxFactory.RenameStatement(SyntaxFactory.Identifier(fromIdentifier), SyntaxFactory.Token(SyntaxKind.TildeGreaterThanToken), SyntaxFactory.Identifier(toIdentifier));
+      return SyntaxFactory.RenameStatement(fromIdentifier, SyntaxFactory.Token(SyntaxKind.TildeGreaterThanToken), SyntaxFactory.Identifier(toIdentifier));
     }
   }
 }

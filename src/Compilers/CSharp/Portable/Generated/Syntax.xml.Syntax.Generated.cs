@@ -21281,7 +21281,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
   public sealed partial class TemplateDeclarationSyntax : MemberDeclarationSyntax
   {
-    private NameSyntax name;
     private SyntaxNode members;
 
     internal TemplateDeclarationSyntax(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.CSharpSyntaxNode green, SyntaxNode parent, int position)
@@ -21294,12 +21293,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
       get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.TemplateDeclarationSyntax)this.Green).templateKeyword, this.Position, 0); }
     }
 
-    public NameSyntax Name 
+    public SyntaxToken Name 
     {
-        get
-        {
-            return this.GetRed(ref this.name, 1);
-        }
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.TemplateDeclarationSyntax)this.Green).name, this.GetChildPosition(1), this.GetChildIndex(1)); }
     }
 
     public SyntaxToken OpenBraceToken 
@@ -21337,7 +21333,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     {
         switch (index)
         {
-            case 1: return this.GetRed(ref this.name, 1);
             case 3: return this.GetRed(ref this.members, 3);
             default: return null;
         }
@@ -21346,7 +21341,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     {
         switch (index)
         {
-            case 1: return this.name;
             case 3: return this.members;
             default: return null;
         }
@@ -21362,7 +21356,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         visitor.VisitTemplateDeclaration(this);
     }
 
-    public TemplateDeclarationSyntax Update(SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    public TemplateDeclarationSyntax Update(SyntaxToken templateKeyword, SyntaxToken name, SyntaxToken openBraceToken, SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
     {
         if (templateKeyword != this.TemplateKeyword || name != this.Name || openBraceToken != this.OpenBraceToken || members != this.Members || closeBraceToken != this.CloseBraceToken || semicolonToken != this.SemicolonToken)
         {
@@ -21381,7 +21375,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         return this.Update(templateKeyword, this.Name, this.OpenBraceToken, this.Members, this.CloseBraceToken, this.SemicolonToken);
     }
 
-    public TemplateDeclarationSyntax WithName(NameSyntax name)
+    public TemplateDeclarationSyntax WithName(SyntaxToken name)
     {
         return this.Update(this.TemplateKeyword, name, this.OpenBraceToken, this.Members, this.CloseBraceToken, this.SemicolonToken);
     }
@@ -21430,7 +21424,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
   public sealed partial class InstStatementSyntax : MemberDeclarationSyntax
   {
-    private NameSyntax name;
+    private SyntaxNode templates;
     private RenameClauseSyntax renameClause;
     private AddsClauseSyntax addsClause;
 
@@ -21444,11 +21438,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
       get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax)this.Green).instKeyword, this.Position, 0); }
     }
 
-    public NameSyntax Name 
+    public SeparatedSyntaxList<NameSyntax> Templates 
     {
         get
         {
-            return this.GetRed(ref this.name, 1);
+            var red = this.GetRed(ref this.templates, 1);
+            if (red != null)
+                return new SeparatedSyntaxList<NameSyntax>(red, this.GetChildIndex(1));
+
+            return default(SeparatedSyntaxList<NameSyntax>);
         }
     }
 
@@ -21501,7 +21499,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     {
         switch (index)
         {
-            case 1: return this.GetRed(ref this.name, 1);
+            case 1: return this.GetRed(ref this.templates, 1);
             case 3: return this.GetRed(ref this.renameClause, 3);
             case 4: return this.GetRed(ref this.addsClause, 4);
             default: return null;
@@ -21511,7 +21509,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     {
         switch (index)
         {
-            case 1: return this.name;
+            case 1: return this.templates;
             case 3: return this.renameClause;
             case 4: return this.addsClause;
             default: return null;
@@ -21528,11 +21526,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         visitor.VisitInstStatement(this);
     }
 
-    public InstStatementSyntax Update(SyntaxToken instKeyword, NameSyntax name, SyntaxToken openBraceToken, RenameClauseSyntax renameClause, AddsClauseSyntax addsClause, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    public InstStatementSyntax Update(SyntaxToken instKeyword, SeparatedSyntaxList<NameSyntax> templates, SyntaxToken openBraceToken, RenameClauseSyntax renameClause, AddsClauseSyntax addsClause, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
     {
-        if (instKeyword != this.InstKeyword || name != this.Name || openBraceToken != this.OpenBraceToken || renameClause != this.RenameClause || addsClause != this.AddsClause || closeBraceToken != this.CloseBraceToken || semicolonToken != this.SemicolonToken)
+        if (instKeyword != this.InstKeyword || templates != this.Templates || openBraceToken != this.OpenBraceToken || renameClause != this.RenameClause || addsClause != this.AddsClause || closeBraceToken != this.CloseBraceToken || semicolonToken != this.SemicolonToken)
         {
-            var newNode = SyntaxFactory.InstStatement(instKeyword, name, openBraceToken, renameClause, addsClause, closeBraceToken, semicolonToken);
+            var newNode = SyntaxFactory.InstStatement(instKeyword, templates, openBraceToken, renameClause, addsClause, closeBraceToken, semicolonToken);
             var annotations = this.GetAnnotations();
             if (annotations != null && annotations.Length > 0)
                return newNode.WithAnnotations(annotations);
@@ -21544,51 +21542,61 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public InstStatementSyntax WithInstKeyword(SyntaxToken instKeyword)
     {
-        return this.Update(instKeyword, this.Name, this.OpenBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
+        return this.Update(instKeyword, this.Templates, this.OpenBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
     }
 
-    public InstStatementSyntax WithName(NameSyntax name)
+    public InstStatementSyntax WithTemplates(SeparatedSyntaxList<NameSyntax> templates)
     {
-        return this.Update(this.InstKeyword, name, this.OpenBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
+        return this.Update(this.InstKeyword, templates, this.OpenBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
     }
 
     public InstStatementSyntax WithOpenBraceToken(SyntaxToken openBraceToken)
     {
-        return this.Update(this.InstKeyword, this.Name, openBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
+        return this.Update(this.InstKeyword, this.Templates, openBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
     }
 
     public InstStatementSyntax WithRenameClause(RenameClauseSyntax renameClause)
     {
-        return this.Update(this.InstKeyword, this.Name, this.OpenBraceToken, renameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
+        return this.Update(this.InstKeyword, this.Templates, this.OpenBraceToken, renameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
     }
 
     public InstStatementSyntax WithAddsClause(AddsClauseSyntax addsClause)
     {
-        return this.Update(this.InstKeyword, this.Name, this.OpenBraceToken, this.RenameClause, addsClause, this.CloseBraceToken, this.SemicolonToken);
+        return this.Update(this.InstKeyword, this.Templates, this.OpenBraceToken, this.RenameClause, addsClause, this.CloseBraceToken, this.SemicolonToken);
     }
 
     public InstStatementSyntax WithCloseBraceToken(SyntaxToken closeBraceToken)
     {
-        return this.Update(this.InstKeyword, this.Name, this.OpenBraceToken, this.RenameClause, this.AddsClause, closeBraceToken, this.SemicolonToken);
+        return this.Update(this.InstKeyword, this.Templates, this.OpenBraceToken, this.RenameClause, this.AddsClause, closeBraceToken, this.SemicolonToken);
     }
 
     public InstStatementSyntax WithSemicolonToken(SyntaxToken semicolonToken)
     {
-        return this.Update(this.InstKeyword, this.Name, this.OpenBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, semicolonToken);
+        return this.Update(this.InstKeyword, this.Templates, this.OpenBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, semicolonToken);
+    }
+
+    public InstStatementSyntax AddTemplates(params NameSyntax[] items)
+    {
+        return this.WithTemplates(this.Templates.AddRange(items));
     }
   }
 
   public sealed partial class RenameStatementSyntax : StatementSyntax
   {
+    private NameSyntax fromIdentifier;
+
     internal RenameStatementSyntax(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.CSharpSyntaxNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
     /// <summary>The identifier to be renamed in the rename statement</summary>
-    public SyntaxToken FromIdentifier 
+    public NameSyntax FromIdentifier 
     {
-      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.RenameStatementSyntax)this.Green).fromIdentifier, this.Position, 0); }
+        get
+        {
+            return this.GetRedAtZero(ref this.fromIdentifier);
+        }
     }
 
     /// <summary>SyntaxToken representing renaming variables in inst statements</summary>
@@ -21607,6 +21615,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     {
         switch (index)
         {
+            case 0: return this.GetRedAtZero(ref this.fromIdentifier);
             default: return null;
         }
     }
@@ -21614,6 +21623,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     {
         switch (index)
         {
+            case 0: return this.fromIdentifier;
             default: return null;
         }
     }
@@ -21628,7 +21638,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         visitor.VisitRenameStatement(this);
     }
 
-    public RenameStatementSyntax Update(SyntaxToken fromIdentifier, SyntaxToken renameToken, SyntaxToken toIdentifier)
+    public RenameStatementSyntax Update(NameSyntax fromIdentifier, SyntaxToken renameToken, SyntaxToken toIdentifier)
     {
         if (fromIdentifier != this.FromIdentifier || renameToken != this.RenameToken || toIdentifier != this.ToIdentifier)
         {
@@ -21642,7 +21652,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         return this;
     }
 
-    public RenameStatementSyntax WithFromIdentifier(SyntaxToken fromIdentifier)
+    public RenameStatementSyntax WithFromIdentifier(NameSyntax fromIdentifier)
     {
         return this.Update(fromIdentifier, this.RenameToken, this.ToIdentifier);
     }
