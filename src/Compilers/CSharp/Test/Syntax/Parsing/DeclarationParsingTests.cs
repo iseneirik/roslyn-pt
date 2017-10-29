@@ -123,8 +123,61 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.Equal(SyntaxKind.InstStatement, file.Members[0].Kind());
             var i = (InstStatementSyntax) file.Members[0];
             Assert.NotNull(i.InstKeyword);
-            Assert.NotNull(i.Name);
-            Assert.Equal("t", i.Name.ToString());
+            Assert.NotNull(i.Templates);
+            Assert.Equal(1, i.Templates.Count);
+            Assert.Equal("t", i.Templates.First().ToString());
+            Assert.Null(i.OpenBraceToken.Value);
+            Assert.Null(i.RenameClause);
+            Assert.Null(i.AddsClause);
+            Assert.Null(i.CloseBraceToken.Value);
+            Assert.NotNull(i.SemicolonToken);
+            Assert.False(i.SemicolonToken.IsMissing);
+        }
+
+        [Fact]
+        public void TestInstStatementWithQualifiedName()
+        {
+            var text = "inst a.b.c.t;";
+            var file = this.ParseFile(text);
+
+            Assert.NotNull(file);
+            Assert.Equal(1, file.Members.Count);
+            Assert.Equal(text, file.ToString());
+            Assert.Equal(0, file.Errors().Length);
+
+            Assert.Equal(SyntaxKind.InstStatement, file.Members[0].Kind());
+            var i = (InstStatementSyntax)file.Members[0];
+            Assert.NotNull(i.InstKeyword);
+            Assert.NotNull(i.Templates);
+            Assert.Equal(1, i.Templates.Count);
+            Assert.Equal("a.b.c.t", i.Templates.First().ToString());
+            Assert.Null(i.OpenBraceToken.Value);
+            Assert.Null(i.RenameClause);
+            Assert.Null(i.AddsClause);
+            Assert.Null(i.CloseBraceToken.Value);
+            Assert.NotNull(i.SemicolonToken);
+            Assert.False(i.SemicolonToken.IsMissing);
+        }
+
+        [Fact]
+        public void TestInstStatementWithMultipleTemplates()
+        {
+            var text = "inst t1, t2;";
+            var file = this.ParseFile(text);
+
+            Assert.NotNull(file);
+            Assert.Equal(1, file.Members.Count);
+            Assert.Equal(text, file.ToString());
+            Assert.Equal(0, file.Errors().Length);
+
+            Assert.Equal(SyntaxKind.InstStatement, file.Members[0].Kind());
+            var i = (InstStatementSyntax)file.Members[0];
+            Assert.NotNull(i.InstKeyword);
+            Assert.NotNull(i.Templates);
+            Assert.Equal(2, i.Templates.Count);
+            Assert.Equal("t1, t2", i.Templates.ToString());
+            Assert.Equal("t1", i.Templates[0].ToString());
+            Assert.Equal("t2", i.Templates[1].ToString());
             Assert.Null(i.OpenBraceToken.Value);
             Assert.Null(i.RenameClause);
             Assert.Null(i.AddsClause);

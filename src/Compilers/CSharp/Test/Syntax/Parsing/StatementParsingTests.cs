@@ -40,6 +40,33 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.False(rename.ToIdentifier.IsMissing);
             Assert.Equal("aa", rename.ToIdentifier.ToString());
         }
+
+        /*
+         * I also made the test below, but quickly found out that this was hard to implement.
+         * Luckily, I don't need this to work, since all RenameStatements are parsed inside
+         * Inst statements, and that way i can simply call "parseRenameStatement()" directly
+         * instead of having to go through the entire "ParseStatement" flow
+        [Fact]
+        public void TestRenameStatementWithQualifiedFromName()
+        {
+            var text = "n1.a ~> aa";
+            var expr = this.ParseStatement(text);
+
+            Assert.NotNull(expr);
+            Assert.Equal(SyntaxKind.RenameStatement, expr.Kind());
+            Assert.Equal(text, expr.ToString());
+            Assert.Equal(0, expr.Errors().Length);
+
+            var rename = (RenameStatementSyntax)expr;
+            Assert.NotNull(rename.FromIdentifier);
+            Assert.False(rename.FromIdentifier.IsMissing);
+            Assert.Equal("n1.a", rename.FromIdentifier.ToString());
+            Assert.NotNull(rename.RenameToken);
+            Assert.NotNull(rename.ToIdentifier);
+            Assert.False(rename.ToIdentifier.IsMissing);
+            Assert.Equal("aa", rename.ToIdentifier.ToString());
+        }
+        */
         #endregion
 
         #region Other 

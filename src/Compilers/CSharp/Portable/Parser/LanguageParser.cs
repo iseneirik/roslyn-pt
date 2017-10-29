@@ -1474,7 +1474,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             Debug.Assert(!IsInAsync);
 
             var instToken = this.EatToken();
-            var name = this.ParseName();
+
+            var templates = _pool.AllocateSeparated<NameSyntax>();
+            templates.Add(this.ParseName());
+            while (this.CurrentToken.Kind == SyntaxKind.CommaToken)
+            {
+                templates.AddSeparator(this.EatToken(SyntaxKind.CommaToken));
+                templates.Add(this.ParseName());
+            }
 
             // Parse inst statement body
             SyntaxToken openBrace = null;
@@ -1495,7 +1502,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             return _syntaxFactory.InstStatement(
                 instToken,
-                name,
+                templates,
                 openBrace,
                 renameClause,
                 addsClause,
@@ -1521,7 +1528,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             Debug.Assert(!IsInAsync);
 
             var templateToken = this.EatToken();
-            var name = this.ParseName();
+            var name = this.ParseIdentifierToken();
 
             // Parse template body
             bool parseMembers = true;
@@ -8467,7 +8474,7 @@ tryAgain:
         {
             Debug.Assert(this.CurrentToken.Kind == SyntaxKind.IdentifierToken);
 
-            var fromIdentifier = this.ParseIdentifierToken();
+            var fromIdentifier = this.ParseName();
             var renameToken = this.EatToken(SyntaxKind.TildeGreaterThanToken);
             Debug.Assert(!renameToken.IsMissing);
             var toIdentifier = this.ParseIdentifierToken();

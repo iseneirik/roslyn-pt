@@ -4309,7 +4309,9 @@
     <Field Name="TemplateKeyword" Type="SyntaxToken">
       <Kind Name="TemplateKeyword"/>
     </Field>
-    <Field Name="Name" Type="NameSyntax"/>
+    <Field Name="Name" Type="SyntaxToken">
+      <Kind Name="IdentifierToken"/>
+    </Field>
     <Field Name="OpenBraceToken" Type="SyntaxToken">
       <Kind Name="OpenBraceToken"/>
     </Field>
@@ -4335,7 +4337,7 @@
     <Field Name="InstKeyword" Type="SyntaxToken">
       <Kind Name="InstKeyword"/>
     </Field>
-    <Field Name="Name" Type="NameSyntax"/>
+    <Field Name="Templates" Type="SeparatedSyntaxList&lt;NameSyntax&gt;"/>
     <Field Name="OpenBraceToken" Type="SyntaxToken" Optional="true">
       <Kind Name="OpenBraceToken"/>
     </Field>
@@ -4351,7 +4353,7 @@
   
   <Node Name="RenameStatementSyntax" Base="StatementSyntax">
     <Kind Name="RenameStatement"/>
-    <Field Name="FromIdentifier" Type="SyntaxToken">
+    <Field Name="FromIdentifier" Type="NameSyntax">
       <PropertyComment>
         <summary>The identifier to be renamed in the rename statement</summary>
       </PropertyComment>
