@@ -1485,16 +1485,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             // Parse inst statement body
             SyntaxToken openBrace = null;
-            RenameClauseSyntax renameClause = null;
-            AddsClauseSyntax addsClause = null;
+            SyntaxListBuilder<ClassRenameStatementSyntax> renameList = default(SyntaxListBuilder<ClassRenameStatementSyntax>);
+            SyntaxListBuilder<AddsStatementSyntax> addsList = default(SyntaxListBuilder<AddsStatementSyntax>);
             SyntaxToken closeBrace = null;
             if (this.CurrentToken.Kind == SyntaxKind.OpenBraceToken)
             {
                 openBrace = this.EatToken();
-                // TODO: consider having renameClause and addsClause as a list of MemberDeclarationSyntax?
-                //       If so, this can be parsed with two separate while loops.
-                renameClause = this.ParseRenameClause();
-                addsClause = this.ParseAddsClause();
+                renameList = _pool.Allocate<ClassRenameStatementSyntax>();
+                // TODO: Parse renames
+                addsList = _pool.Allocate<AddsStatementSyntax>();
+                // TODO: Parse adds
                 closeBrace = this.EatToken(SyntaxKind.CloseBraceToken);
             }
 
@@ -1504,20 +1504,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 instToken,
                 templates,
                 openBrace,
-                renameClause,
-                addsClause,
+                renameList,
+                addsList,
                 closeBrace,
                 semicolonToken);
-        }
-
-        private AddsClauseSyntax ParseAddsClause()
-        {
-            throw new NotImplementedException();
-        }
-
-        private RenameClauseSyntax ParseRenameClause()
-        {
-            throw new NotImplementedException();
         }
         #endregion
 

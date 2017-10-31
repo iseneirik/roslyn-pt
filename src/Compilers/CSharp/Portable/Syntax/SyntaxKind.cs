@@ -577,7 +577,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         // Declarations (8860-8863)
         TemplateDeclaration = 8860,
         InstStatement = 8861,
-        RenameStatement = 8862
+        RenameStatement = 8862,
+        ClassRenameStatement = 8863,
+        AddsStatement = 8864
+
         #endregion
     }
 }

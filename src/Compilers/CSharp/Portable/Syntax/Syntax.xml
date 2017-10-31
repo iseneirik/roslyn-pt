@@ -4328,36 +4328,12 @@
     </Field>
   </Node>
   
-  <AbstractNode Name="RenameClauseSyntax" Base="CSharpSyntaxNode"/>
-  
-  <AbstractNode Name="AddsClauseSyntax" Base="CSharpSyntaxNode"/>
-
-  <Node Name="InstStatementSyntax" Base="MemberDeclarationSyntax">
-    <Kind Name="InstStatement"/>
-    <Field Name="InstKeyword" Type="SyntaxToken">
-      <Kind Name="InstKeyword"/>
-    </Field>
-    <Field Name="Templates" Type="SeparatedSyntaxList&lt;NameSyntax&gt;"/>
-    <Field Name="OpenBraceToken" Type="SyntaxToken" Optional="true">
-      <Kind Name="OpenBraceToken"/>
-    </Field>
-    <Field Name="RenameClause" Type="RenameClauseSyntax" Optional="true"/>
-    <Field Name="AddsClause" Type="AddsClauseSyntax" Optional="true"/>
-    <Field Name="CloseBraceToken" Type="SyntaxToken" Optional="true">
-      <Kind Name="CloseBraceToken"/>
-    </Field>
-    <Field Name="SemicolonToken" Type="SyntaxToken">
-      <Kind Name="SemicolonToken"/>
-    </Field>
-  </Node>
-  
   <Node Name="RenameStatementSyntax" Base="StatementSyntax">
     <Kind Name="RenameStatement"/>
     <Field Name="FromIdentifier" Type="NameSyntax">
       <PropertyComment>
         <summary>The identifier to be renamed in the rename statement</summary>
       </PropertyComment>
-      <Kind Name="IdentifierToken"/>
     </Field>
     <Field Name="RenameToken" Type="SyntaxToken">
       <Kind Name="TildeGreaterThanToken"/>
@@ -4370,6 +4346,66 @@
         <summary>The new identifier of the type being renamed</summary>
       </PropertyComment>
       <Kind Name="IdentifierToken"/>
+    </Field>
+  </Node>
+  
+  <Node Name="ClassRenameStatementSyntax" Base="StatementSyntax">
+    <Kind Name="ClassRenameStatement"/>
+    <Field Name="ClassRename" Type="RenameStatementSyntax"/>
+    <Field Name="OpenParenToken" Type="SyntaxToken" Optional="true">
+      <Kind Name="OpenParenToken"/>
+      <PropertyComment>
+        <summary>SyntaxToken representing the open parenthesis.</summary>
+      </PropertyComment>
+    </Field>
+    <Field Name="MemberRenames" Type="SeparatedSyntaxList&lt;RenameStatementSyntax&gt;"/>
+    <Field Name="CloseParenToken" Type="SyntaxToken" Optional="true">
+      <Kind Name="CloseParenToken"/>
+      <PropertyComment>
+        <summary>SyntaxToken representing the close parenthesis.</summary>
+      </PropertyComment>
+    </Field>
+    <Field Name="SemicolonToken" Type="SyntaxToken">
+      <Kind Name="SemicolonToken"/>
+    </Field>
+  </Node>
+  
+  <Node Name="AddsStatementSyntax" Base="StatementSyntax">
+    <Kind Name="AddsStatement"/>
+    <Field Name="Identifier" Type="SyntaxToken">
+      <PropertyComment>
+        <summary>The Identifier of the class we are adding members to</summary>
+      </PropertyComment>
+      <Kind Name="IdentifierToken"/>
+    </Field>
+    <Field Name="OpenBraceToken" Type="SyntaxToken">
+      <Kind Name="OpenBraceToken"/>
+    </Field>
+    <Field Name="NewMembers" Type="SyntaxList&lt;MemberDeclarationSyntax&gt;"/>
+    <Field Name="CloseBraceToken" Type="SyntaxToken">
+      <Kind Name="CloseBraceToken"/>
+    </Field>
+    <Field Name="SemicolonToken" Type="SyntaxToken">
+      <Kind Name="SemicolonToken"/>
+    </Field>
+  </Node>
+
+  <Node Name="InstStatementSyntax" Base="MemberDeclarationSyntax">
+    <Kind Name="InstStatement"/>
+    <Field Name="InstKeyword" Type="SyntaxToken">
+      <Kind Name="InstKeyword"/>
+    </Field>
+    <Field Name="Templates" Type="SeparatedSyntaxList&lt;NameSyntax&gt;"/>
+    <Field Name="OpenBraceToken" Type="SyntaxToken" Optional="true">
+      <Kind Name="OpenBraceToken"/>
+    </Field>
+    <Field Name="RenameList" Type="SyntaxList&lt;ClassRenameStatementSyntax&gt;"/>
+    <Field Name="AddsList" Type="SyntaxList&lt;AddsStatementSyntax&gt;" Optional="true"/>
+    <Field Name="CloseBraceToken" Type="SyntaxToken" Optional="true">
+      <Kind Name="CloseBraceToken"/>
+    </Field>
+    <Field Name="SemicolonToken" Type="SyntaxToken">
+      <Kind Name="SemicolonToken"/>
     </Field>
   </Node>
   <!-- #endregion -->

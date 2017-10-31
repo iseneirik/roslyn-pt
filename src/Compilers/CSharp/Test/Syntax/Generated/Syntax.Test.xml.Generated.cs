@@ -1034,14 +1034,24 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.TemplateDeclaration(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.TemplateKeyword), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Identifier("Name"), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.OpenBraceToken), new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.MemberDeclarationSyntax>(), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.CloseBraceToken), null);
         }
         
-        private static Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax GenerateInstStatement()
-        {
-            return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.InstStatement(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.InstKeyword), new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.NameSyntax>(), null, null, null, null, Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-        }
-        
         private static Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.RenameStatementSyntax GenerateRenameStatement()
         {
             return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.RenameStatement(GenerateIdentifierName(), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.TildeGreaterThanToken), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Identifier("ToIdentifier"));
+        }
+        
+        private static Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.ClassRenameStatementSyntax GenerateClassRenameStatement()
+        {
+            return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.ClassRenameStatement(GenerateRenameStatement(), null, new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.RenameStatementSyntax>(), null, Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+        }
+        
+        private static Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.AddsStatementSyntax GenerateAddsStatement()
+        {
+            return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.AddsStatement(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Identifier("Identifier"), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.OpenBraceToken), new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.MemberDeclarationSyntax>(), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.CloseBraceToken), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+        }
+        
+        private static Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax GenerateInstStatement()
+        {
+            return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.InstStatement(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.InstKeyword), new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.NameSyntax>(), null, new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.ClassRenameStatementSyntax>(), null, null, Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.SemicolonToken));
         }
         #endregion Green Generators
         
@@ -3648,22 +3658,6 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         }
         
         [Fact]
-        public void TestInstStatementFactoryAndProperties()
-        {
-            var node = GenerateInstStatement();
-            
-            Assert.Equal(SyntaxKind.InstKeyword, node.InstKeyword.Kind);
-            Assert.NotNull(node.Templates);
-            Assert.Null(node.OpenBraceToken);
-            Assert.Null(node.RenameClause);
-            Assert.Null(node.AddsClause);
-            Assert.Null(node.CloseBraceToken);
-            Assert.Equal(SyntaxKind.SemicolonToken, node.SemicolonToken.Kind);
-            
-            AttachAndCheckDiagnostics(node);
-        }
-        
-        [Fact]
         public void TestRenameStatementFactoryAndProperties()
         {
             var node = GenerateRenameStatement();
@@ -3671,6 +3665,50 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.NotNull(node.FromIdentifier);
             Assert.Equal(SyntaxKind.TildeGreaterThanToken, node.RenameToken.Kind);
             Assert.Equal(SyntaxKind.IdentifierToken, node.ToIdentifier.Kind);
+            
+            AttachAndCheckDiagnostics(node);
+        }
+        
+        [Fact]
+        public void TestClassRenameStatementFactoryAndProperties()
+        {
+            var node = GenerateClassRenameStatement();
+            
+            Assert.NotNull(node.ClassRename);
+            Assert.Null(node.OpenParenToken);
+            Assert.NotNull(node.MemberRenames);
+            Assert.Null(node.CloseParenToken);
+            Assert.Equal(SyntaxKind.SemicolonToken, node.SemicolonToken.Kind);
+            
+            AttachAndCheckDiagnostics(node);
+        }
+        
+        [Fact]
+        public void TestAddsStatementFactoryAndProperties()
+        {
+            var node = GenerateAddsStatement();
+            
+            Assert.Equal(SyntaxKind.IdentifierToken, node.Identifier.Kind);
+            Assert.Equal(SyntaxKind.OpenBraceToken, node.OpenBraceToken.Kind);
+            Assert.NotNull(node.NewMembers);
+            Assert.Equal(SyntaxKind.CloseBraceToken, node.CloseBraceToken.Kind);
+            Assert.Equal(SyntaxKind.SemicolonToken, node.SemicolonToken.Kind);
+            
+            AttachAndCheckDiagnostics(node);
+        }
+        
+        [Fact]
+        public void TestInstStatementFactoryAndProperties()
+        {
+            var node = GenerateInstStatement();
+            
+            Assert.Equal(SyntaxKind.InstKeyword, node.InstKeyword.Kind);
+            Assert.NotNull(node.Templates);
+            Assert.Null(node.OpenBraceToken);
+            Assert.NotNull(node.RenameList);
+            Assert.Null(node.AddsList);
+            Assert.Null(node.CloseBraceToken);
+            Assert.Equal(SyntaxKind.SemicolonToken, node.SemicolonToken.Kind);
             
             AttachAndCheckDiagnostics(node);
         }
@@ -9008,32 +9046,6 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         }
         
         [Fact]
-        public void TestInstStatementTokenDeleteRewriter()
-        {
-            var oldNode = GenerateInstStatement();
-            var rewriter = new TokenDeleteRewriter();
-            var newNode = rewriter.Visit(oldNode);
-            
-            if(!oldNode.IsMissing)
-            {
-                Assert.NotEqual(oldNode, newNode);
-            }
-            
-            Assert.NotNull(newNode);
-            Assert.True(newNode.IsMissing, "No tokens => missing");
-        }
-        
-        [Fact]
-        public void TestInstStatementIdentityRewriter()
-        {
-            var oldNode = GenerateInstStatement();
-            var rewriter = new IdentityRewriter();
-            var newNode = rewriter.Visit(oldNode);
-            
-            Assert.Same(oldNode, newNode);
-        }
-        
-        [Fact]
         public void TestRenameStatementTokenDeleteRewriter()
         {
             var oldNode = GenerateRenameStatement();
@@ -9053,6 +9065,84 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         public void TestRenameStatementIdentityRewriter()
         {
             var oldNode = GenerateRenameStatement();
+            var rewriter = new IdentityRewriter();
+            var newNode = rewriter.Visit(oldNode);
+            
+            Assert.Same(oldNode, newNode);
+        }
+        
+        [Fact]
+        public void TestClassRenameStatementTokenDeleteRewriter()
+        {
+            var oldNode = GenerateClassRenameStatement();
+            var rewriter = new TokenDeleteRewriter();
+            var newNode = rewriter.Visit(oldNode);
+            
+            if(!oldNode.IsMissing)
+            {
+                Assert.NotEqual(oldNode, newNode);
+            }
+            
+            Assert.NotNull(newNode);
+            Assert.True(newNode.IsMissing, "No tokens => missing");
+        }
+        
+        [Fact]
+        public void TestClassRenameStatementIdentityRewriter()
+        {
+            var oldNode = GenerateClassRenameStatement();
+            var rewriter = new IdentityRewriter();
+            var newNode = rewriter.Visit(oldNode);
+            
+            Assert.Same(oldNode, newNode);
+        }
+        
+        [Fact]
+        public void TestAddsStatementTokenDeleteRewriter()
+        {
+            var oldNode = GenerateAddsStatement();
+            var rewriter = new TokenDeleteRewriter();
+            var newNode = rewriter.Visit(oldNode);
+            
+            if(!oldNode.IsMissing)
+            {
+                Assert.NotEqual(oldNode, newNode);
+            }
+            
+            Assert.NotNull(newNode);
+            Assert.True(newNode.IsMissing, "No tokens => missing");
+        }
+        
+        [Fact]
+        public void TestAddsStatementIdentityRewriter()
+        {
+            var oldNode = GenerateAddsStatement();
+            var rewriter = new IdentityRewriter();
+            var newNode = rewriter.Visit(oldNode);
+            
+            Assert.Same(oldNode, newNode);
+        }
+        
+        [Fact]
+        public void TestInstStatementTokenDeleteRewriter()
+        {
+            var oldNode = GenerateInstStatement();
+            var rewriter = new TokenDeleteRewriter();
+            var newNode = rewriter.Visit(oldNode);
+            
+            if(!oldNode.IsMissing)
+            {
+                Assert.NotEqual(oldNode, newNode);
+            }
+            
+            Assert.NotNull(newNode);
+            Assert.True(newNode.IsMissing, "No tokens => missing");
+        }
+        
+        [Fact]
+        public void TestInstStatementIdentityRewriter()
+        {
+            var oldNode = GenerateInstStatement();
             var rewriter = new IdentityRewriter();
             var newNode = rewriter.Visit(oldNode);
             
@@ -10089,14 +10179,24 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             return SyntaxFactory.TemplateDeclaration(SyntaxFactory.Token(SyntaxKind.TemplateKeyword), SyntaxFactory.Identifier("Name"), SyntaxFactory.Token(SyntaxKind.OpenBraceToken), new SyntaxList<MemberDeclarationSyntax>(), SyntaxFactory.Token(SyntaxKind.CloseBraceToken), default(SyntaxToken));
         }
         
-        private static InstStatementSyntax GenerateInstStatement()
-        {
-            return SyntaxFactory.InstStatement(SyntaxFactory.Token(SyntaxKind.InstKeyword), new SeparatedSyntaxList<NameSyntax>(), default(SyntaxToken), default(RenameClauseSyntax), default(AddsClauseSyntax), default(SyntaxToken), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-        }
-        
         private static RenameStatementSyntax GenerateRenameStatement()
         {
             return SyntaxFactory.RenameStatement(GenerateIdentifierName(), SyntaxFactory.Token(SyntaxKind.TildeGreaterThanToken), SyntaxFactory.Identifier("ToIdentifier"));
+        }
+        
+        private static ClassRenameStatementSyntax GenerateClassRenameStatement()
+        {
+            return SyntaxFactory.ClassRenameStatement(GenerateRenameStatement(), default(SyntaxToken), new SeparatedSyntaxList<RenameStatementSyntax>(), default(SyntaxToken), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+        }
+        
+        private static AddsStatementSyntax GenerateAddsStatement()
+        {
+            return SyntaxFactory.AddsStatement(SyntaxFactory.Identifier("Identifier"), SyntaxFactory.Token(SyntaxKind.OpenBraceToken), new SyntaxList<MemberDeclarationSyntax>(), SyntaxFactory.Token(SyntaxKind.CloseBraceToken), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+        }
+        
+        private static InstStatementSyntax GenerateInstStatement()
+        {
+            return SyntaxFactory.InstStatement(SyntaxFactory.Token(SyntaxKind.InstKeyword), new SeparatedSyntaxList<NameSyntax>(), default(SyntaxToken), new SyntaxList<ClassRenameStatementSyntax>(), default(SyntaxList<AddsStatementSyntax>), default(SyntaxToken), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
         }
         #endregion Red Generators
         
@@ -12703,22 +12803,6 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         }
         
         [Fact]
-        public void TestInstStatementFactoryAndProperties()
-        {
-            var node = GenerateInstStatement();
-            
-            Assert.Equal(SyntaxKind.InstKeyword, node.InstKeyword.Kind());
-            Assert.NotNull(node.Templates);
-            Assert.Equal(SyntaxKind.None, node.OpenBraceToken.Kind());
-            Assert.Null(node.RenameClause);
-            Assert.Null(node.AddsClause);
-            Assert.Equal(SyntaxKind.None, node.CloseBraceToken.Kind());
-            Assert.Equal(SyntaxKind.SemicolonToken, node.SemicolonToken.Kind());
-            var newNode = node.WithInstKeyword(node.InstKeyword).WithTemplates(node.Templates).WithOpenBraceToken(node.OpenBraceToken).WithRenameClause(node.RenameClause).WithAddsClause(node.AddsClause).WithCloseBraceToken(node.CloseBraceToken).WithSemicolonToken(node.SemicolonToken);
-            Assert.Equal(node, newNode);
-        }
-        
-        [Fact]
         public void TestRenameStatementFactoryAndProperties()
         {
             var node = GenerateRenameStatement();
@@ -12727,6 +12811,50 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.Equal(SyntaxKind.TildeGreaterThanToken, node.RenameToken.Kind());
             Assert.Equal(SyntaxKind.IdentifierToken, node.ToIdentifier.Kind());
             var newNode = node.WithFromIdentifier(node.FromIdentifier).WithRenameToken(node.RenameToken).WithToIdentifier(node.ToIdentifier);
+            Assert.Equal(node, newNode);
+        }
+        
+        [Fact]
+        public void TestClassRenameStatementFactoryAndProperties()
+        {
+            var node = GenerateClassRenameStatement();
+            
+            Assert.NotNull(node.ClassRename);
+            Assert.Equal(SyntaxKind.None, node.OpenParenToken.Kind());
+            Assert.NotNull(node.MemberRenames);
+            Assert.Equal(SyntaxKind.None, node.CloseParenToken.Kind());
+            Assert.Equal(SyntaxKind.SemicolonToken, node.SemicolonToken.Kind());
+            var newNode = node.WithClassRename(node.ClassRename).WithOpenParenToken(node.OpenParenToken).WithMemberRenames(node.MemberRenames).WithCloseParenToken(node.CloseParenToken).WithSemicolonToken(node.SemicolonToken);
+            Assert.Equal(node, newNode);
+        }
+        
+        [Fact]
+        public void TestAddsStatementFactoryAndProperties()
+        {
+            var node = GenerateAddsStatement();
+            
+            Assert.Equal(SyntaxKind.IdentifierToken, node.Identifier.Kind());
+            Assert.Equal(SyntaxKind.OpenBraceToken, node.OpenBraceToken.Kind());
+            Assert.NotNull(node.NewMembers);
+            Assert.Equal(SyntaxKind.CloseBraceToken, node.CloseBraceToken.Kind());
+            Assert.Equal(SyntaxKind.SemicolonToken, node.SemicolonToken.Kind());
+            var newNode = node.WithIdentifier(node.Identifier).WithOpenBraceToken(node.OpenBraceToken).WithNewMembers(node.NewMembers).WithCloseBraceToken(node.CloseBraceToken).WithSemicolonToken(node.SemicolonToken);
+            Assert.Equal(node, newNode);
+        }
+        
+        [Fact]
+        public void TestInstStatementFactoryAndProperties()
+        {
+            var node = GenerateInstStatement();
+            
+            Assert.Equal(SyntaxKind.InstKeyword, node.InstKeyword.Kind());
+            Assert.NotNull(node.Templates);
+            Assert.Equal(SyntaxKind.None, node.OpenBraceToken.Kind());
+            Assert.NotNull(node.RenameList);
+            Assert.Null(node.AddsList);
+            Assert.Equal(SyntaxKind.None, node.CloseBraceToken.Kind());
+            Assert.Equal(SyntaxKind.SemicolonToken, node.SemicolonToken.Kind());
+            var newNode = node.WithInstKeyword(node.InstKeyword).WithTemplates(node.Templates).WithOpenBraceToken(node.OpenBraceToken).WithRenameList(node.RenameList).WithAddsList(node.AddsList).WithCloseBraceToken(node.CloseBraceToken).WithSemicolonToken(node.SemicolonToken);
             Assert.Equal(node, newNode);
         }
         #endregion Red Factory and Property Tests
@@ -18063,32 +18191,6 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         }
         
         [Fact]
-        public void TestInstStatementTokenDeleteRewriter()
-        {
-            var oldNode = GenerateInstStatement();
-            var rewriter = new TokenDeleteRewriter();
-            var newNode = rewriter.Visit(oldNode);
-            
-            if(!oldNode.IsMissing)
-            {
-                Assert.NotEqual(oldNode, newNode);
-            }
-            
-            Assert.NotNull(newNode);
-            Assert.True(newNode.IsMissing, "No tokens => missing");
-        }
-        
-        [Fact]
-        public void TestInstStatementIdentityRewriter()
-        {
-            var oldNode = GenerateInstStatement();
-            var rewriter = new IdentityRewriter();
-            var newNode = rewriter.Visit(oldNode);
-            
-            Assert.Same(oldNode, newNode);
-        }
-        
-        [Fact]
         public void TestRenameStatementTokenDeleteRewriter()
         {
             var oldNode = GenerateRenameStatement();
@@ -18108,6 +18210,84 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         public void TestRenameStatementIdentityRewriter()
         {
             var oldNode = GenerateRenameStatement();
+            var rewriter = new IdentityRewriter();
+            var newNode = rewriter.Visit(oldNode);
+            
+            Assert.Same(oldNode, newNode);
+        }
+        
+        [Fact]
+        public void TestClassRenameStatementTokenDeleteRewriter()
+        {
+            var oldNode = GenerateClassRenameStatement();
+            var rewriter = new TokenDeleteRewriter();
+            var newNode = rewriter.Visit(oldNode);
+            
+            if(!oldNode.IsMissing)
+            {
+                Assert.NotEqual(oldNode, newNode);
+            }
+            
+            Assert.NotNull(newNode);
+            Assert.True(newNode.IsMissing, "No tokens => missing");
+        }
+        
+        [Fact]
+        public void TestClassRenameStatementIdentityRewriter()
+        {
+            var oldNode = GenerateClassRenameStatement();
+            var rewriter = new IdentityRewriter();
+            var newNode = rewriter.Visit(oldNode);
+            
+            Assert.Same(oldNode, newNode);
+        }
+        
+        [Fact]
+        public void TestAddsStatementTokenDeleteRewriter()
+        {
+            var oldNode = GenerateAddsStatement();
+            var rewriter = new TokenDeleteRewriter();
+            var newNode = rewriter.Visit(oldNode);
+            
+            if(!oldNode.IsMissing)
+            {
+                Assert.NotEqual(oldNode, newNode);
+            }
+            
+            Assert.NotNull(newNode);
+            Assert.True(newNode.IsMissing, "No tokens => missing");
+        }
+        
+        [Fact]
+        public void TestAddsStatementIdentityRewriter()
+        {
+            var oldNode = GenerateAddsStatement();
+            var rewriter = new IdentityRewriter();
+            var newNode = rewriter.Visit(oldNode);
+            
+            Assert.Same(oldNode, newNode);
+        }
+        
+        [Fact]
+        public void TestInstStatementTokenDeleteRewriter()
+        {
+            var oldNode = GenerateInstStatement();
+            var rewriter = new TokenDeleteRewriter();
+            var newNode = rewriter.Visit(oldNode);
+            
+            if(!oldNode.IsMissing)
+            {
+                Assert.NotEqual(oldNode, newNode);
+            }
+            
+            Assert.NotNull(newNode);
+            Assert.True(newNode.IsMissing, "No tokens => missing");
+        }
+        
+        [Fact]
+        public void TestInstStatementIdentityRewriter()
+        {
+            var oldNode = GenerateInstStatement();
             var rewriter = new IdentityRewriter();
             var newNode = rewriter.Visit(oldNode);
             

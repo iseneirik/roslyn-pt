@@ -1,28 +1,54 @@
 Microsoft.CodeAnalysis.CSharp.Conversion.IsStackAlloc.get -> bool
 Microsoft.CodeAnalysis.CSharp.Conversion.ToCommonConversion() -> Microsoft.CodeAnalysis.Semantics.CommonConversion
 Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp7_2 = 702 -> Microsoft.CodeAnalysis.CSharp.LanguageVersion
-Microsoft.CodeAnalysis.CSharp.Syntax.AddsClauseSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax.AddNewMembers(params Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax.CloseBraceToken.get -> Microsoft.CodeAnalysis.SyntaxToken
+Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax.Identifier.get -> Microsoft.CodeAnalysis.SyntaxToken
+Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax.NewMembers.get -> Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax>
+Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax.OpenBraceToken.get -> Microsoft.CodeAnalysis.SyntaxToken
+Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax.SemicolonToken.get -> Microsoft.CodeAnalysis.SyntaxToken
+Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken identifier, Microsoft.CodeAnalysis.SyntaxToken openBraceToken, Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax> newMembers, Microsoft.CodeAnalysis.SyntaxToken closeBraceToken, Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax.WithCloseBraceToken(Microsoft.CodeAnalysis.SyntaxToken closeBraceToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax.WithIdentifier(Microsoft.CodeAnalysis.SyntaxToken identifier) -> Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax.WithNewMembers(Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax> newMembers) -> Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax.WithOpenBraceToken(Microsoft.CodeAnalysis.SyntaxToken openBraceToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax.WithSemicolonToken(Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax.AddMemberRenames(params Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax.ClassRename.get -> Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax.CloseParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken
+Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax.MemberRenames.get -> Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax>
+Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax.OpenParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken
+Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax.SemicolonToken.get -> Microsoft.CodeAnalysis.SyntaxToken
+Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax.Update(Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax classRename, Microsoft.CodeAnalysis.SyntaxToken openParenToken, Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax> memberRenames, Microsoft.CodeAnalysis.SyntaxToken closeParenToken, Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax.WithClassRename(Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax classRename) -> Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax.WithCloseParenToken(Microsoft.CodeAnalysis.SyntaxToken closeParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax.WithMemberRenames(Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax> memberRenames) -> Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax.WithOpenParenToken(Microsoft.CodeAnalysis.SyntaxToken openParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax.WithSemicolonToken(Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.AddAddsList(params Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.AddRenameList(params Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.AddTemplates(params Microsoft.CodeAnalysis.CSharp.Syntax.NameSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
-Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.AddsClause.get -> Microsoft.CodeAnalysis.CSharp.Syntax.AddsClauseSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.AddsList.get -> Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax>
 Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.CloseBraceToken.get -> Microsoft.CodeAnalysis.SyntaxToken
 Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.InstKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken
 Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.OpenBraceToken.get -> Microsoft.CodeAnalysis.SyntaxToken
-Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.RenameClause.get -> Microsoft.CodeAnalysis.CSharp.Syntax.RenameClauseSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.RenameList.get -> Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax>
 Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.SemicolonToken.get -> Microsoft.CodeAnalysis.SyntaxToken
 Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.Templates.get -> Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.NameSyntax>
-Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken instKeyword, Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.NameSyntax> templates, Microsoft.CodeAnalysis.SyntaxToken openBraceToken, Microsoft.CodeAnalysis.CSharp.Syntax.RenameClauseSyntax renameClause, Microsoft.CodeAnalysis.CSharp.Syntax.AddsClauseSyntax addsClause, Microsoft.CodeAnalysis.SyntaxToken closeBraceToken, Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
-Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.WithAddsClause(Microsoft.CodeAnalysis.CSharp.Syntax.AddsClauseSyntax addsClause) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken instKeyword, Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.NameSyntax> templates, Microsoft.CodeAnalysis.SyntaxToken openBraceToken, Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax> renameList, Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax> addsList, Microsoft.CodeAnalysis.SyntaxToken closeBraceToken, Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.WithAddsList(Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax> addsList) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.WithCloseBraceToken(Microsoft.CodeAnalysis.SyntaxToken closeBraceToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.WithInstKeyword(Microsoft.CodeAnalysis.SyntaxToken instKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.WithOpenBraceToken(Microsoft.CodeAnalysis.SyntaxToken openBraceToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
-Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.WithRenameClause(Microsoft.CodeAnalysis.CSharp.Syntax.RenameClauseSyntax renameClause) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
+Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.WithRenameList(Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax> renameList) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.WithSemicolonToken(Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.WithTemplates(Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.NameSyntax> templates) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax.ReadOnlyKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken
 Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken refKeyword, Microsoft.CodeAnalysis.SyntaxToken readOnlyKeyword, Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax type) -> Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax.WithReadOnlyKeyword(Microsoft.CodeAnalysis.SyntaxToken readOnlyKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax
-Microsoft.CodeAnalysis.CSharp.Syntax.RenameClauseSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax.FromIdentifier.get -> Microsoft.CodeAnalysis.CSharp.Syntax.NameSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax.RenameToken.get -> Microsoft.CodeAnalysis.SyntaxToken
@@ -46,15 +72,23 @@ Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax.WithName(Microsof
 Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax.WithOpenBraceToken(Microsoft.CodeAnalysis.SyntaxToken openBraceToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax.WithSemicolonToken(Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax.WithTemplateKeyword(Microsoft.CodeAnalysis.SyntaxToken templateKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax
+Microsoft.CodeAnalysis.CSharp.SyntaxKind.AddsStatement = 8864 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
+Microsoft.CodeAnalysis.CSharp.SyntaxKind.ClassRenameStatement = 8863 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.InstKeyword = 8386 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.InstStatement = 8861 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.RenameStatement = 8862 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.TemplateDeclaration = 8860 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.TemplateKeyword = 8385 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.TildeGreaterThanToken = 8222 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
+override Microsoft.CodeAnalysis.CSharp.CSharpSyntaxRewriter.VisitAddsStatement(Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax node) -> Microsoft.CodeAnalysis.SyntaxNode
+override Microsoft.CodeAnalysis.CSharp.CSharpSyntaxRewriter.VisitClassRenameStatement(Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax node) -> Microsoft.CodeAnalysis.SyntaxNode
 override Microsoft.CodeAnalysis.CSharp.CSharpSyntaxRewriter.VisitInstStatement(Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax node) -> Microsoft.CodeAnalysis.SyntaxNode
 override Microsoft.CodeAnalysis.CSharp.CSharpSyntaxRewriter.VisitRenameStatement(Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax node) -> Microsoft.CodeAnalysis.SyntaxNode
 override Microsoft.CodeAnalysis.CSharp.CSharpSyntaxRewriter.VisitTemplateDeclaration(Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax node) -> Microsoft.CodeAnalysis.SyntaxNode
+override Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax.Accept(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor visitor) -> void
+override Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax.Accept<TResult>(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor<TResult> visitor) -> TResult
+override Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax.Accept(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor visitor) -> void
+override Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax.Accept<TResult>(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor<TResult> visitor) -> TResult
 override Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.Accept(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor visitor) -> void
 override Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax.Accept<TResult>(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor<TResult> visitor) -> TResult
 override Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax.Accept(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor visitor) -> void
@@ -62,8 +96,16 @@ override Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax.Accept<TResu
 override Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax.Accept(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor visitor) -> void
 override Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax.Accept<TResult>(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor<TResult> visitor) -> TResult
 static Microsoft.CodeAnalysis.CSharp.CSharpExtensions.GetConversion(this Microsoft.CodeAnalysis.Semantics.IConversionExpression conversionExpression) -> Microsoft.CodeAnalysis.CSharp.Conversion
-static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.InstStatement(Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.NameSyntax> templates, Microsoft.CodeAnalysis.CSharp.Syntax.RenameClauseSyntax renameClause, Microsoft.CodeAnalysis.CSharp.Syntax.AddsClauseSyntax addsClause) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
-static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.InstStatement(Microsoft.CodeAnalysis.SyntaxToken instKeyword, Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.NameSyntax> templates, Microsoft.CodeAnalysis.SyntaxToken openBraceToken, Microsoft.CodeAnalysis.CSharp.Syntax.RenameClauseSyntax renameClause, Microsoft.CodeAnalysis.CSharp.Syntax.AddsClauseSyntax addsClause, Microsoft.CodeAnalysis.SyntaxToken closeBraceToken, Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
+static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.AddsStatement(Microsoft.CodeAnalysis.SyntaxToken identifier) -> Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax
+static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.AddsStatement(Microsoft.CodeAnalysis.SyntaxToken identifier, Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax> newMembers) -> Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax
+static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.AddsStatement(Microsoft.CodeAnalysis.SyntaxToken identifier, Microsoft.CodeAnalysis.SyntaxToken openBraceToken, Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax> newMembers, Microsoft.CodeAnalysis.SyntaxToken closeBraceToken, Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax
+static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.AddsStatement(string identifier) -> Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax
+static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.ClassRenameStatement(Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax classRename) -> Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax
+static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.ClassRenameStatement(Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax classRename, Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax> memberRenames) -> Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax
+static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.ClassRenameStatement(Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax classRename, Microsoft.CodeAnalysis.SyntaxToken openParenToken, Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax> memberRenames, Microsoft.CodeAnalysis.SyntaxToken closeParenToken, Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax
+static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.InstStatement() -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
+static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.InstStatement(Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.NameSyntax> templates, Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax> renameList, Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax> addsList) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
+static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.InstStatement(Microsoft.CodeAnalysis.SyntaxToken instKeyword, Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.NameSyntax> templates, Microsoft.CodeAnalysis.SyntaxToken openBraceToken, Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax> renameList, Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax> addsList, Microsoft.CodeAnalysis.SyntaxToken closeBraceToken, Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax
 static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.RefType(Microsoft.CodeAnalysis.SyntaxToken refKeyword, Microsoft.CodeAnalysis.SyntaxToken readOnlyKeyword, Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax type) -> Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax
 static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.RenameStatement(Microsoft.CodeAnalysis.CSharp.Syntax.NameSyntax fromIdentifier, Microsoft.CodeAnalysis.SyntaxToken renameToken, Microsoft.CodeAnalysis.SyntaxToken toIdentifier) -> Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax
 static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.RenameStatement(Microsoft.CodeAnalysis.CSharp.Syntax.NameSyntax fromIdentifier, Microsoft.CodeAnalysis.SyntaxToken toIdentifier) -> Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax
@@ -72,9 +114,13 @@ static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.TemplateDeclaration(Microsoft
 static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.TemplateDeclaration(Microsoft.CodeAnalysis.SyntaxToken name, Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax> members) -> Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax
 static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.TemplateDeclaration(Microsoft.CodeAnalysis.SyntaxToken templateKeyword, Microsoft.CodeAnalysis.SyntaxToken name, Microsoft.CodeAnalysis.SyntaxToken openBraceToken, Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax> members, Microsoft.CodeAnalysis.SyntaxToken closeBraceToken, Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax
 static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.TemplateDeclaration(string name) -> Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax
+virtual Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor.VisitAddsStatement(Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax node) -> void
+virtual Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor.VisitClassRenameStatement(Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax node) -> void
 virtual Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor.VisitInstStatement(Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax node) -> void
 virtual Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor.VisitRenameStatement(Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax node) -> void
 virtual Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor.VisitTemplateDeclaration(Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax node) -> void
+virtual Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor<TResult>.VisitAddsStatement(Microsoft.CodeAnalysis.CSharp.Syntax.AddsStatementSyntax node) -> TResult
+virtual Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor<TResult>.VisitClassRenameStatement(Microsoft.CodeAnalysis.CSharp.Syntax.ClassRenameStatementSyntax node) -> TResult
 virtual Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor<TResult>.VisitInstStatement(Microsoft.CodeAnalysis.CSharp.Syntax.InstStatementSyntax node) -> TResult
 virtual Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor<TResult>.VisitRenameStatement(Microsoft.CodeAnalysis.CSharp.Syntax.RenameStatementSyntax node) -> TResult
 virtual Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor<TResult>.VisitTemplateDeclaration(Microsoft.CodeAnalysis.CSharp.Syntax.TemplateDeclarationSyntax node) -> TResult

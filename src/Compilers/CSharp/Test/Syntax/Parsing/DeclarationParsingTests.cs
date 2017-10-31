@@ -127,8 +127,8 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.Equal(1, i.Templates.Count);
             Assert.Equal("t", i.Templates.First().ToString());
             Assert.Null(i.OpenBraceToken.Value);
-            Assert.Null(i.RenameClause);
-            Assert.Null(i.AddsClause);
+            Assert.Empty(i.RenameList);
+            Assert.Empty(i.AddsList);
             Assert.Null(i.CloseBraceToken.Value);
             Assert.NotNull(i.SemicolonToken);
             Assert.False(i.SemicolonToken.IsMissing);
@@ -152,8 +152,8 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.Equal(1, i.Templates.Count);
             Assert.Equal("a.b.c.t", i.Templates.First().ToString());
             Assert.Null(i.OpenBraceToken.Value);
-            Assert.Null(i.RenameClause);
-            Assert.Null(i.AddsClause);
+            Assert.Empty(i.RenameList);
+            Assert.Empty(i.AddsList);
             Assert.Null(i.CloseBraceToken.Value);
             Assert.NotNull(i.SemicolonToken);
             Assert.False(i.SemicolonToken.IsMissing);
@@ -179,8 +179,8 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.Equal("t1", i.Templates[0].ToString());
             Assert.Equal("t2", i.Templates[1].ToString());
             Assert.Null(i.OpenBraceToken.Value);
-            Assert.Null(i.RenameClause);
-            Assert.Null(i.AddsClause);
+            Assert.Empty(i.RenameList);
+            Assert.Empty(i.AddsList);
             Assert.Null(i.CloseBraceToken.Value);
             Assert.NotNull(i.SemicolonToken);
             Assert.False(i.SemicolonToken.IsMissing);
