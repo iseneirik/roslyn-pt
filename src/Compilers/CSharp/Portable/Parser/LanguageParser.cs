@@ -1561,9 +1561,38 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             throw new NotImplementedException();
         }
 
+        // TODO: This method doesn't do much with wrong syntax, should this be handled somehow?
         private ClassRenameStatementSyntax ParseClassRenameStatement()
         {
-            throw new NotImplementedException();
+            var classRename = this.ParseRenameStatement();
+
+            SyntaxToken openParen = null;
+            SyntaxToken closeParen = null;
+            SeparatedSyntaxListBuilder<RenameStatementSyntax> memberRenames =
+                default(SeparatedSyntaxListBuilder<RenameStatementSyntax>);
+            if (this.CurrentToken.Kind == SyntaxKind.OpenParenToken)
+            {
+                openParen = this.EatToken(SyntaxKind.OpenParenToken);
+
+                memberRenames = _pool.AllocateSeparated<RenameStatementSyntax>();
+                memberRenames.Add(this.ParseRenameStatement());
+                while (this.CurrentToken.Kind == SyntaxKind.CommaToken)
+                {
+                    memberRenames.AddSeparator(this.EatToken(SyntaxKind.CommaToken));
+                    memberRenames.Add(this.ParseRenameStatement());
+                }
+
+                closeParen = this.EatToken(SyntaxKind.CloseParenToken);
+            }
+
+            var semicolon = this.EatToken(SyntaxKind.SemicolonToken);
+
+            return _syntaxFactory.ClassRenameStatement(
+                classRename,
+                openParen,
+                memberRenames,
+                closeParen,
+                semicolon);
         }
         #endregion
 
