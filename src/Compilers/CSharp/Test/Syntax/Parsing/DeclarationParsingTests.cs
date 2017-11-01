@@ -110,6 +110,89 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         }
 
         [Fact]
+        public void TestTemplateWithInst()
+        {
+            var text = "template t { inst a; }";
+            var file = this.ParseFile(text);
+
+            Assert.NotNull(file);
+            Assert.Equal(1, file.Members.Count);
+            Assert.Equal(text, file.ToString());
+            Assert.Equal(0, file.Errors().Length);
+
+            Assert.Equal(SyntaxKind.TemplateDeclaration, file.Members[0].Kind());
+            var t = (TemplateDeclarationSyntax)file.Members[0];
+            Assert.NotNull(t.TemplateKeyword);
+            Assert.NotNull(t.Name);
+            Assert.Equal("t", t.Name.ToString());
+            Assert.NotNull(t.OpenBraceToken);
+            Assert.Equal(1, t.Members.Count);
+            Assert.NotNull(t.CloseBraceToken);
+
+            Assert.Equal(SyntaxKind.InstStatement, t.Members[0].Kind());
+            var i = (InstStatementSyntax)t.Members[0];
+            Assert.NotNull(i.InstKeyword);
+            Assert.Equal(SyntaxKind.InstKeyword, i.InstKeyword.Kind());
+            Assert.NotEmpty(i.Templates);
+            Assert.Equal(1, i.Templates.Count);
+            Assert.Equal("a", i.Templates.First().ToString());
+            Assert.Null(i.OpenBraceToken.Value);
+            Assert.Empty(i.RenameList);
+            Assert.Empty(i.AddsList);
+            Assert.Null(i.CloseBraceToken.Value);
+            Assert.NotNull(i.SemicolonToken);
+        }
+
+        [Fact]
+        public void TestTemplateWithInstAndClass()
+        {
+            var text = "template t { inst a; class c { }; }";
+            var file = this.ParseFile(text);
+
+            Assert.NotNull(file);
+            Assert.Equal(1, file.Members.Count);
+            Assert.Equal(text, file.ToString());
+            Assert.Equal(0, file.Errors().Length);
+
+            Assert.Equal(SyntaxKind.TemplateDeclaration, file.Members[0].Kind());
+            var t = (TemplateDeclarationSyntax)file.Members[0];
+            Assert.NotNull(t.TemplateKeyword);
+            Assert.NotNull(t.Name);
+            Assert.Equal("t", t.Name.ToString());
+            Assert.NotNull(t.OpenBraceToken);
+            Assert.Equal(2, t.Members.Count);
+            Assert.NotNull(t.CloseBraceToken);
+
+            Assert.Equal(SyntaxKind.InstStatement, t.Members[0].Kind());
+            var i = (InstStatementSyntax)t.Members[0];
+            Assert.NotNull(i.InstKeyword);
+            Assert.Equal(SyntaxKind.InstKeyword, i.InstKeyword.Kind());
+            Assert.NotEmpty(i.Templates);
+            Assert.Equal(1, i.Templates.Count);
+            Assert.Equal("a", i.Templates.First().ToString());
+            Assert.Null(i.OpenBraceToken.Value);
+            Assert.Empty(i.RenameList);
+            Assert.Empty(i.AddsList);
+            Assert.Null(i.CloseBraceToken.Value);
+            Assert.NotNull(i.SemicolonToken);
+
+            Assert.Equal(SyntaxKind.ClassDeclaration, t.Members[1].Kind());
+            var cs = (TypeDeclarationSyntax)t.Members[1];
+            Assert.Equal(0, cs.AttributeLists.Count);
+            Assert.Equal(0, cs.Modifiers.Count);
+            Assert.NotNull(cs.Keyword);
+            Assert.Equal(SyntaxKind.ClassKeyword, cs.Keyword.Kind());
+            Assert.NotNull(cs.Identifier);
+            Assert.Equal("c", cs.Identifier.ToString());
+            Assert.Null(cs.BaseList);
+            Assert.Equal(0, cs.ConstraintClauses.Count);
+            Assert.NotNull(cs.OpenBraceToken);
+            Assert.Equal(0, cs.Members.Count);
+            Assert.NotNull(cs.CloseBraceToken);
+        }
+
+
+        [Fact]
         public void TestInstStatement()
         {
             var text = "inst t;";
