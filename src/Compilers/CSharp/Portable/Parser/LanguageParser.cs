@@ -1491,10 +1491,56 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             if (this.CurrentToken.Kind == SyntaxKind.OpenBraceToken)
             {
                 openBrace = this.EatToken();
+
                 renameList = _pool.Allocate<ClassRenameStatementSyntax>();
-                // TODO: Parse renames
+                while (true)
+                {
+                    SyntaxKind kind = this.CurrentToken.Kind;
+                    SyntaxKind nextKind = this.PeekToken(1).Kind;
+                    // Class-renames can be "a.b.c ~> ..." or "a ~> ..."
+                    if ((nextKind == SyntaxKind.DotToken || nextKind == SyntaxKind.TildeGreaterThanToken) &&
+                        kind == SyntaxKind.IdentifierToken)
+                    {
+                        renameList.Add(this.ParseClassRenameStatement());
+                    }
+                    // Check if we have reached the end, or the adds-clause
+                    else if (kind == SyntaxKind.CloseBraceToken || 
+                             kind == SyntaxKind.EndOfFileToken ||
+                             nextKind == SyntaxKind.OpenBraceToken)
+                    {
+                        break;
+                    }
+                    // Illegal syntax, clean up!
+                    else
+                    {
+                        // TODO: Implement cleaning up bad syntax!
+                        throw new NotImplementedException();
+                    }
+                }
+
                 addsList = _pool.Allocate<AddsStatementSyntax>();
-                // TODO: Parse adds
+                while (true)
+                {
+                    SyntaxKind kind = this.CurrentToken.Kind;
+                    SyntaxKind nextKind = this.PeekToken(1).Kind;
+                    // Adds-statements always start with "a {", with 'a' being the class to be added to
+                    if (kind == SyntaxKind.IdentifierToken && nextKind == SyntaxKind.OpenBraceToken)
+                    {
+                        addsList.Add(this.ParseAddsStatement());
+                    }
+                    // Check if we have reached the end of the inst statement body
+                    else if (kind == SyntaxKind.CloseBraceToken || kind == SyntaxKind.EndOfFileToken)
+                    {
+                        break;
+                    }
+                    // Illegal syntax, clean up!
+                    else
+                    {
+                        // TODO: Implement cleaning up bad syntax!
+                        throw new NotImplementedException();
+                    }
+                }
+
                 closeBrace = this.EatToken(SyntaxKind.CloseBraceToken);
             }
 
@@ -1508,6 +1554,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 addsList,
                 closeBrace,
                 semicolonToken);
+        }
+
+        private AddsStatementSyntax ParseAddsStatement()
+        {
+            throw new NotImplementedException();
+        }
+
+        private ClassRenameStatementSyntax ParseClassRenameStatement()
+        {
+            throw new NotImplementedException();
         }
         #endregion
 
