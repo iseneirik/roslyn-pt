@@ -422,8 +422,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         [Fact]
         public void TestInstStatementWithRenameAndAdds()
         {
-            var text = @"
-inst t1 
+            var text = @"inst t1 
 {
     A ~> AA(i ~> ii, j ~> jj);
 
