@@ -20,6 +20,8 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         }
 
         #region Package Template statement parsing tests
+        /*
+         * This is no longer valid, as RenameStatements are only parsed from within InstStatements
         [Fact]
         public void TestRenameStatement()
         {
@@ -40,6 +42,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.False(rename.ToIdentifier.IsMissing);
             Assert.Equal("aa", rename.ToIdentifier.ToString());
         }
+        */
 
         /*
          * I also made the test below, but quickly found out that this was hard to implement.

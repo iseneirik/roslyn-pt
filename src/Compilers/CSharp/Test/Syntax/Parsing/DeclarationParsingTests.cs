@@ -86,7 +86,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.Equal(0, file.Errors().Length);
 
             Assert.Equal(SyntaxKind.TemplateDeclaration, file.Members[0].Kind());
-            var t = (TemplateDeclarationSyntax)file.Members[0];
+            var t = (TemplateDeclarationSyntax) file.Members[0];
             Assert.NotNull(t.TemplateKeyword);
             Assert.NotNull(t.Name);
             Assert.Equal("t", t.Name.ToString());
@@ -95,7 +95,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.NotNull(t.CloseBraceToken);
 
             Assert.Equal(SyntaxKind.ClassDeclaration, t.Members[0].Kind());
-            var cs = (TypeDeclarationSyntax)t.Members[0];
+            var cs = (TypeDeclarationSyntax) t.Members[0];
             Assert.Equal(0, cs.AttributeLists.Count);
             Assert.Equal(0, cs.Modifiers.Count);
             Assert.NotNull(cs.Keyword);
@@ -108,6 +108,93 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.Equal(0, cs.Members.Count);
             Assert.NotNull(cs.CloseBraceToken);
         }
+
+        [Fact]
+        public void TestTemplateWithInst()
+        {
+            var text = "template t { inst a; }";
+            var file = this.ParseFile(text);
+
+            Assert.NotNull(file);
+            Assert.Equal(1, file.Members.Count);
+            Assert.Equal(text, file.ToString());
+            Assert.Equal(0, file.Errors().Length);
+
+            Assert.Equal(SyntaxKind.TemplateDeclaration, file.Members[0].Kind());
+            var t = (TemplateDeclarationSyntax) file.Members[0];
+            Assert.NotNull(t.TemplateKeyword);
+            Assert.NotNull(t.Name);
+            Assert.Equal("t", t.Name.ToString());
+            Assert.NotNull(t.OpenBraceToken);
+            Assert.False(t.OpenBraceToken.IsMissing);
+            Assert.Equal(1, t.Members.Count);
+            Assert.NotNull(t.CloseBraceToken);
+            Assert.False(t.CloseBraceToken.IsMissing);
+
+            Assert.Equal(SyntaxKind.InstStatement, t.Members[0].Kind());
+            var i = (InstStatementSyntax) t.Members[0];
+            Assert.NotNull(i.InstKeyword);
+            Assert.Equal(SyntaxKind.InstKeyword, i.InstKeyword.Kind());
+            Assert.NotEmpty(i.Templates);
+            Assert.Equal(1, i.Templates.Count);
+            Assert.Equal("a", i.Templates.First().ToString());
+            Assert.Null(i.OpenBraceToken.Value);
+            Assert.Empty(i.RenameList);
+            Assert.Empty(i.AddsList);
+            Assert.Null(i.CloseBraceToken.Value);
+            Assert.NotNull(i.SemicolonToken);
+        }
+
+        [Fact]
+        public void TestTemplateWithInstAndClass()
+        {
+            var text = "template t { inst a; class c { }; }";
+            var file = this.ParseFile(text);
+
+            Assert.NotNull(file);
+            Assert.Equal(1, file.Members.Count);
+            Assert.Equal(text, file.ToString());
+            Assert.Equal(0, file.Errors().Length);
+
+            Assert.Equal(SyntaxKind.TemplateDeclaration, file.Members[0].Kind());
+            var t = (TemplateDeclarationSyntax) file.Members[0];
+            Assert.NotNull(t.TemplateKeyword);
+            Assert.NotNull(t.Name);
+            Assert.Equal("t", t.Name.ToString());
+            Assert.NotNull(t.OpenBraceToken);
+            Assert.False(t.OpenBraceToken.IsMissing);
+            Assert.Equal(2, t.Members.Count);
+            Assert.NotNull(t.CloseBraceToken);
+            Assert.False(t.CloseBraceToken.IsMissing);
+
+            Assert.Equal(SyntaxKind.InstStatement, t.Members[0].Kind());
+            var i = (InstStatementSyntax) t.Members[0];
+            Assert.NotNull(i.InstKeyword);
+            Assert.Equal(SyntaxKind.InstKeyword, i.InstKeyword.Kind());
+            Assert.NotEmpty(i.Templates);
+            Assert.Equal(1, i.Templates.Count);
+            Assert.Equal("a", i.Templates.First().ToString());
+            Assert.Null(i.OpenBraceToken.Value);
+            Assert.Empty(i.RenameList);
+            Assert.Empty(i.AddsList);
+            Assert.Null(i.CloseBraceToken.Value);
+            Assert.NotNull(i.SemicolonToken);
+
+            Assert.Equal(SyntaxKind.ClassDeclaration, t.Members[1].Kind());
+            var cs = (TypeDeclarationSyntax) t.Members[1];
+            Assert.Equal(0, cs.AttributeLists.Count);
+            Assert.Equal(0, cs.Modifiers.Count);
+            Assert.NotNull(cs.Keyword);
+            Assert.Equal(SyntaxKind.ClassKeyword, cs.Keyword.Kind());
+            Assert.NotNull(cs.Identifier);
+            Assert.Equal("c", cs.Identifier.ToString());
+            Assert.Null(cs.BaseList);
+            Assert.Equal(0, cs.ConstraintClauses.Count);
+            Assert.NotNull(cs.OpenBraceToken);
+            Assert.Equal(0, cs.Members.Count);
+            Assert.NotNull(cs.CloseBraceToken);
+        }
+
 
         [Fact]
         public void TestInstStatement()
@@ -127,8 +214,8 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.Equal(1, i.Templates.Count);
             Assert.Equal("t", i.Templates.First().ToString());
             Assert.Null(i.OpenBraceToken.Value);
-            Assert.Null(i.RenameClause);
-            Assert.Null(i.AddsClause);
+            Assert.Empty(i.RenameList);
+            Assert.Empty(i.AddsList);
             Assert.Null(i.CloseBraceToken.Value);
             Assert.NotNull(i.SemicolonToken);
             Assert.False(i.SemicolonToken.IsMissing);
@@ -146,14 +233,14 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.Equal(0, file.Errors().Length);
 
             Assert.Equal(SyntaxKind.InstStatement, file.Members[0].Kind());
-            var i = (InstStatementSyntax)file.Members[0];
+            var i = (InstStatementSyntax) file.Members[0];
             Assert.NotNull(i.InstKeyword);
             Assert.NotNull(i.Templates);
             Assert.Equal(1, i.Templates.Count);
             Assert.Equal("a.b.c.t", i.Templates.First().ToString());
             Assert.Null(i.OpenBraceToken.Value);
-            Assert.Null(i.RenameClause);
-            Assert.Null(i.AddsClause);
+            Assert.Empty(i.RenameList);
+            Assert.Empty(i.AddsList);
             Assert.Null(i.CloseBraceToken.Value);
             Assert.NotNull(i.SemicolonToken);
             Assert.False(i.SemicolonToken.IsMissing);
@@ -171,7 +258,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.Equal(0, file.Errors().Length);
 
             Assert.Equal(SyntaxKind.InstStatement, file.Members[0].Kind());
-            var i = (InstStatementSyntax)file.Members[0];
+            var i = (InstStatementSyntax) file.Members[0];
             Assert.NotNull(i.InstKeyword);
             Assert.NotNull(i.Templates);
             Assert.Equal(2, i.Templates.Count);
@@ -179,9 +266,237 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.Equal("t1", i.Templates[0].ToString());
             Assert.Equal("t2", i.Templates[1].ToString());
             Assert.Null(i.OpenBraceToken.Value);
-            Assert.Null(i.RenameClause);
-            Assert.Null(i.AddsClause);
+            Assert.Empty(i.RenameList);
+            Assert.Empty(i.AddsList);
             Assert.Null(i.CloseBraceToken.Value);
+            Assert.NotNull(i.SemicolonToken);
+            Assert.False(i.SemicolonToken.IsMissing);
+        }
+
+        [Fact]
+        public void TestInstStatementWithRenameClause()
+        {
+            var text = "inst t1 { A ~> AA(i ~> ii, j ~> jj); };";
+            var file = this.ParseFile(text);
+
+            Assert.NotNull(file);
+            Assert.Equal(1, file.Members.Count);
+            Assert.Equal(text, file.ToString());
+            Assert.Equal(0, file.Errors().Length);
+
+            Assert.Equal(SyntaxKind.InstStatement, file.Members[0].Kind());
+            var i = (InstStatementSyntax) file.Members[0];
+            Assert.NotNull(i.InstKeyword);
+            Assert.NotNull(i.Templates);
+            Assert.Equal(1, i.Templates.Count);
+            Assert.Equal("t1", i.Templates.ToString());
+            Assert.Equal("t1", i.Templates[0].ToString());
+            Assert.NotNull(i.OpenBraceToken);
+            Assert.False(i.OpenBraceToken.IsMissing);
+
+            Assert.NotEmpty(i.RenameList);
+            Assert.Equal(1, i.RenameList.Count);
+            Assert.Equal(SyntaxKind.ClassRenameStatement, i.RenameList[0].Kind());
+            var r = (ClassRenameStatementSyntax) i.RenameList[0];
+
+            Assert.NotNull(r.ClassRename);
+            Assert.Equal(SyntaxKind.RenameStatement, r.ClassRename.Kind());
+            var cr = (RenameStatementSyntax) r.ClassRename;
+            Assert.Equal("A", cr.FromIdentifier.ToString());
+            Assert.NotNull(cr.RenameToken);
+            Assert.False(cr.RenameToken.IsMissing);
+            Assert.Equal("AA", cr.ToIdentifier.ToString());
+
+            Assert.NotNull(r.OpenParenToken);
+            Assert.False(r.OpenParenToken.IsMissing);
+            Assert.Equal(2, r.MemberRenames.Count);
+            var mr0 = (RenameStatementSyntax) r.MemberRenames[0];
+            Assert.Equal("i", mr0.FromIdentifier.ToString());
+            Assert.NotNull(mr0.RenameToken);
+            Assert.False(mr0.RenameToken.IsMissing);
+            Assert.Equal("ii", mr0.ToIdentifier.ToString());
+            var mr1 = (RenameStatementSyntax) r.MemberRenames[1];
+            Assert.Equal("j", mr1.FromIdentifier.ToString());
+            Assert.NotNull(mr1.RenameToken);
+            Assert.False(mr1.RenameToken.IsMissing);
+            Assert.Equal("jj", mr1.ToIdentifier.ToString());
+            Assert.NotNull(r.CloseParenToken);
+            Assert.False(r.CloseParenToken.IsMissing);
+
+            Assert.NotNull(r.SemicolonToken);
+            Assert.False(r.SemicolonToken.IsMissing);
+
+            Assert.Empty(i.AddsList);
+            Assert.NotNull(i.CloseBraceToken);
+            Assert.False(i.CloseBraceToken.IsMissing);
+            Assert.NotNull(i.SemicolonToken);
+            Assert.False(i.SemicolonToken.IsMissing);
+        }
+
+        [Fact]
+        public void TestInstStatementWithRenameClauseWithQualifiedName()
+        {
+            var text = "inst t1 { t1.A ~> AA; };";
+            var file = this.ParseFile(text);
+
+            Assert.NotNull(file);
+            Assert.Equal(1, file.Members.Count);
+            Assert.Equal(text, file.ToString());
+            Assert.Equal(0, file.Errors().Length);
+
+            Assert.Equal(SyntaxKind.InstStatement, file.Members[0].Kind());
+            var i = (InstStatementSyntax)file.Members[0];
+            Assert.NotNull(i.InstKeyword);
+            Assert.NotNull(i.Templates);
+            Assert.Equal(1, i.Templates.Count);
+            Assert.Equal("t1", i.Templates.ToString());
+            Assert.Equal("t1", i.Templates[0].ToString());
+            Assert.NotNull(i.OpenBraceToken);
+            Assert.False(i.OpenBraceToken.IsMissing);
+
+            Assert.NotEmpty(i.RenameList);
+            Assert.Equal(1, i.RenameList.Count);
+            Assert.Equal(SyntaxKind.ClassRenameStatement, i.RenameList[0].Kind());
+            var r = (ClassRenameStatementSyntax)i.RenameList[0];
+
+            Assert.NotNull(r.ClassRename);
+            Assert.Equal(SyntaxKind.RenameStatement, r.ClassRename.Kind());
+            var cr = (RenameStatementSyntax)r.ClassRename;
+            Assert.Equal("t1.A", cr.FromIdentifier.ToString());
+            Assert.NotNull(cr.RenameToken);
+            Assert.False(cr.RenameToken.IsMissing);
+            Assert.Equal("AA", cr.ToIdentifier.ToString());
+
+            Assert.Null(r.OpenParenToken.Value);
+            Assert.Empty(r.MemberRenames);
+            Assert.Null(r.CloseParenToken.Value);
+
+            Assert.NotNull(r.SemicolonToken);
+            Assert.False(r.SemicolonToken.IsMissing);
+
+            Assert.Empty(i.AddsList);
+            Assert.NotNull(i.CloseBraceToken);
+            Assert.False(i.CloseBraceToken.IsMissing);
+            Assert.NotNull(i.SemicolonToken);
+            Assert.False(i.SemicolonToken.IsMissing);
+        }
+
+        [Fact]
+        public void TestInstStatementWithAddsClause()
+        {
+            var text = "inst t1 { A { int j; }; };";
+            var file = this.ParseFile(text);
+
+            Assert.NotNull(file);
+            Assert.Equal(1, file.Members.Count);
+            Assert.Equal(text, file.ToString());
+            Assert.Equal(0, file.Errors().Length);
+
+            Assert.Equal(SyntaxKind.InstStatement, file.Members[0].Kind());
+            var i = (InstStatementSyntax)file.Members[0];
+            Assert.NotNull(i.InstKeyword);
+            Assert.NotNull(i.Templates);
+            Assert.Equal(1, i.Templates.Count);
+            Assert.Equal("t1", i.Templates.ToString());
+            Assert.Equal("t1", i.Templates[0].ToString());
+            Assert.NotNull(i.OpenBraceToken);
+            Assert.False(i.OpenBraceToken.IsMissing);
+
+            Assert.Empty(i.RenameList);
+            Assert.NotEmpty(i.AddsList);
+            Assert.Equal(1, i.AddsList.Count);
+            Assert.Equal(SyntaxKind.AddsStatement, i.AddsList[0].Kind());
+            var a = (AddsStatementSyntax) i.AddsList[0];
+            Assert.NotNull(a.Identifier);
+            Assert.Equal("A", a.Identifier.Text);
+            Assert.NotNull(a.OpenBraceToken);
+            Assert.False(a.OpenBraceToken.IsMissing);
+            Assert.NotEmpty(a.NewMembers);
+            Assert.Equal(1, a.NewMembers.Count);
+            Assert.NotNull(a.CloseBraceToken);
+            Assert.False(a.CloseBraceToken.IsMissing);
+            Assert.NotNull(a.SemicolonToken);
+            Assert.False(a.SemicolonToken.IsMissing);
+        }
+
+        [Fact]
+        public void TestInstStatementWithRenameAndAdds()
+        {
+            var text = @"inst t1 
+{
+    A ~> AA(i ~> ii, j ~> jj);
+
+    AA 
+    { 
+        int kk; 
+    }; 
+};";
+            var file = this.ParseFile(text);
+
+            Assert.NotNull(file);
+            Assert.Equal(1, file.Members.Count);
+            Assert.Equal(text, file.ToString());
+            Assert.Equal(0, file.Errors().Length);
+
+            Assert.Equal(SyntaxKind.InstStatement, file.Members[0].Kind());
+            var i = (InstStatementSyntax)file.Members[0];
+            Assert.NotNull(i.InstKeyword);
+            Assert.NotNull(i.Templates);
+            Assert.Equal(1, i.Templates.Count);
+            Assert.Equal("t1", i.Templates.ToString());
+            Assert.Equal("t1", i.Templates[0].ToString());
+            Assert.NotNull(i.OpenBraceToken);
+            Assert.False(i.OpenBraceToken.IsMissing);
+
+            Assert.NotEmpty(i.RenameList);
+            Assert.Equal(1, i.RenameList.Count);
+            Assert.Equal(SyntaxKind.ClassRenameStatement, i.RenameList[0].Kind());
+            var r = (ClassRenameStatementSyntax)i.RenameList[0];
+
+            Assert.NotNull(r.ClassRename);
+            Assert.Equal(SyntaxKind.RenameStatement, r.ClassRename.Kind());
+            var cr = (RenameStatementSyntax) r.ClassRename;
+            Assert.Equal("A", cr.FromIdentifier.ToString());
+            Assert.NotNull(cr.RenameToken);
+            Assert.False(cr.RenameToken.IsMissing);
+            Assert.Equal("AA", cr.ToIdentifier.ToString());
+
+            Assert.NotNull(r.OpenParenToken);
+            Assert.False(r.OpenParenToken.IsMissing);
+            Assert.Equal(2, r.MemberRenames.Count);
+            var mr0 = (RenameStatementSyntax) r.MemberRenames[0];
+            Assert.Equal("i", mr0.FromIdentifier.ToString());
+            Assert.NotNull(mr0.RenameToken);
+            Assert.False(mr0.RenameToken.IsMissing);
+            Assert.Equal("ii", mr0.ToIdentifier.ToString());
+            var mr1 = (RenameStatementSyntax) r.MemberRenames[1];
+            Assert.Equal("j", mr1.FromIdentifier.ToString());
+            Assert.NotNull(mr1.RenameToken);
+            Assert.False(mr1.RenameToken.IsMissing);
+            Assert.Equal("jj", mr1.ToIdentifier.ToString());
+            Assert.NotNull(r.CloseParenToken);
+            Assert.False(r.CloseParenToken.IsMissing);
+
+            Assert.NotNull(r.SemicolonToken);
+            Assert.False(r.SemicolonToken.IsMissing);
+            
+            Assert.NotEmpty(i.AddsList);
+            Assert.Equal(1, i.AddsList.Count);
+            Assert.Equal(SyntaxKind.AddsStatement, i.AddsList[0].Kind());
+            var a = (AddsStatementSyntax) i.AddsList[0];
+            Assert.NotNull(a.Identifier);
+            Assert.Equal("AA", a.Identifier.Text);
+            Assert.NotNull(a.OpenBraceToken);
+            Assert.False(a.OpenBraceToken.IsMissing);
+            Assert.NotEmpty(a.NewMembers);
+            Assert.Equal(1, a.NewMembers.Count);
+            Assert.NotNull(a.CloseBraceToken);
+            Assert.False(a.CloseBraceToken.IsMissing);
+            Assert.NotNull(a.SemicolonToken);
+            Assert.False(a.SemicolonToken.IsMissing);
+
+            Assert.NotNull(i.CloseBraceToken);
+            Assert.False(i.CloseBraceToken.IsMissing);
             Assert.NotNull(i.SemicolonToken);
             Assert.False(i.SemicolonToken.IsMissing);
         }

@@ -1432,7 +1432,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             switch (this.CurrentToken.Kind)
             {
-                // TODO: Consider moving this to a separate method?
                 #region Package Template ParseTypeDeclaration()
                 case SyntaxKind.TemplateKeyword:
                     return this.ParseTemplateDeclaration();
@@ -1475,6 +1474,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             var instToken = this.EatToken();
 
+            // Parsing names is safe, missing nodes are returned upon unexpected input
             var templates = _pool.AllocateSeparated<NameSyntax>();
             templates.Add(this.ParseName());
             while (this.CurrentToken.Kind == SyntaxKind.CommaToken)
@@ -1485,16 +1485,53 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             // Parse inst statement body
             SyntaxToken openBrace = null;
-            RenameClauseSyntax renameClause = null;
-            AddsClauseSyntax addsClause = null;
+            SyntaxListBuilder<ClassRenameStatementSyntax> renameList = default(SyntaxListBuilder<ClassRenameStatementSyntax>);
+            SyntaxListBuilder<AddsStatementSyntax> addsList = default(SyntaxListBuilder<AddsStatementSyntax>);
             SyntaxToken closeBrace = null;
             if (this.CurrentToken.Kind == SyntaxKind.OpenBraceToken)
             {
-                openBrace = this.EatToken();
-                // TODO: consider having renameClause and addsClause as a list of MemberDeclarationSyntax?
-                //       If so, this can be parsed with two separate while loops.
-                renameClause = this.ParseRenameClause();
-                addsClause = this.ParseAddsClause();
+                openBrace = this.EatToken(SyntaxKind.OpenBraceToken);
+
+                renameList = _pool.Allocate<ClassRenameStatementSyntax>();
+                while (true)
+                {
+                    if (this.IsPossibleClassRenameStatement(parentKind: SyntaxKind.InstStatement))
+                    {
+                        // ClassRename expected, handles syntax error if not
+                        renameList.Add(this.ParseClassRenameStatement());
+                    }
+                    else if (this.IsEndOfClassRenameStatements())
+                    {
+                        // Reached end of renames or inst-statement body
+                        break;
+                    }
+                    else
+                    {
+                        // Illegal syntax, clean up!
+                        this.SkipBadClassRenameStatement(ref openBrace, renameList);
+                    }
+                }
+
+                addsList = _pool.Allocate<AddsStatementSyntax>();
+                while (true)
+                {
+                    if (this.IsPossibleAddsStatement(parentKind: SyntaxKind.InstStatement))
+                    {
+                        // AddsStatement expected, handles syntax error if not
+                        addsList.Add(this.ParseAddsStatement());
+                    }
+                    else if (this.IsEndOfAddsStatements())
+                    {
+                        // We have reached the end of the inst statement body
+                        break;
+                    }
+                    else
+                    {
+                        // Illegal syntax, clean up!
+                        this.SkipBadAddsStatement(ref openBrace, renameList, addsList);
+                    }
+                }
+
                 closeBrace = this.EatToken(SyntaxKind.CloseBraceToken);
             }
 
@@ -1504,20 +1541,116 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 instToken,
                 templates,
                 openBrace,
-                renameClause,
-                addsClause,
+                renameList,
+                addsList,
                 closeBrace,
                 semicolonToken);
         }
 
-        private AddsClauseSyntax ParseAddsClause()
+        private RenameStatementSyntax ParseRenameStatement()
         {
-            throw new NotImplementedException();
+            Debug.Assert(this.CurrentToken.Kind == SyntaxKind.IdentifierToken);
+
+            var fromIdentifier = this.ParseName();
+            var renameToken = this.EatToken(SyntaxKind.TildeGreaterThanToken);
+            Debug.Assert(!renameToken.IsMissing);
+            var toIdentifier = this.ParseIdentifierToken();
+
+            return _syntaxFactory.RenameStatement(fromIdentifier, renameToken, toIdentifier);
         }
 
-        private RenameClauseSyntax ParseRenameClause()
+        private AddsStatementSyntax ParseAddsStatement()
         {
-            throw new NotImplementedException();
+            var identifier = this.ParseIdentifierToken();
+            var openBrace = this.EatToken(SyntaxKind.OpenBraceToken);
+
+            var newMembers = _pool.Allocate<MemberDeclarationSyntax>();
+            while (true)
+            {
+                SyntaxKind kind = this.CurrentToken.Kind;
+
+                if (CanStartAddsMember(kind))
+                {
+                    var attributes = _pool.Allocate<AttributeListSyntax>();
+                    var modifiers = _pool.Allocate();
+
+                    // TODO: Package Template - Simplify and create error-handler
+                    this.ParseAttributeDeclarations(attributes);
+                    this.ParseModifiers(modifiers);
+                    TypeSyntax type = ParseReturnType();
+
+                    if (IsFieldDeclaration(isEvent: false))
+                    {
+                        newMembers.Add(this.ParseNormalFieldDeclaration(attributes, modifiers, type, SyntaxKind.AddsStatement));
+                    }
+                    else
+                    {
+                        ExplicitInterfaceSpecifierSyntax explicitInterfaceOpt;
+                        SyntaxToken identifierOrThisOpt;
+                        TypeParameterListSyntax typeParameterListOpt;
+                        this.ParseMemberName(out explicitInterfaceOpt, out identifierOrThisOpt, out typeParameterListOpt, isEvent: false);
+                        newMembers.Add(this.ParseMethodDeclaration(attributes, modifiers, type, explicitInterfaceOpt, identifierOrThisOpt, typeParameterListOpt));
+                    }
+                }
+                else if (kind == SyntaxKind.CloseBraceToken || kind == SyntaxKind.EndOfFileToken)
+                {
+                    // This marks the end of the newMembers in the AddsStatement
+                    break;
+                }
+                else
+                {
+                    // Illegal syntax, clean up!
+                    this.SkipBadAddsMember(ref openBrace, newMembers);
+                }
+            }
+
+            var closeBrace = this.EatToken(SyntaxKind.CloseBraceToken);
+            var semicolon = this.EatToken(SyntaxKind.SemicolonToken);
+
+            return _syntaxFactory.AddsStatement(
+                identifier,
+                openBrace,
+                newMembers,
+                closeBrace,
+                semicolon);
+        }
+
+        // TODO: Package Template - Should return missing token if syntax error!
+        private ClassRenameStatementSyntax ParseClassRenameStatement()
+        {
+            // TODO: Package Template - Handle syntax error!
+            var classRename = this.ParseRenameStatement();
+
+            SyntaxToken openParen = null;
+            SyntaxToken closeParen = null;
+            SeparatedSyntaxListBuilder<RenameStatementSyntax> memberRenames =
+                default(SeparatedSyntaxListBuilder<RenameStatementSyntax>);
+            if (this.CurrentToken.Kind == SyntaxKind.OpenParenToken)
+            {
+                openParen = this.EatToken(SyntaxKind.OpenParenToken);
+
+                // TODO: Package Template - Handle syntax error!
+                memberRenames = _pool.AllocateSeparated<RenameStatementSyntax>();
+                memberRenames.Add(this.ParseRenameStatement());
+                while (this.CurrentToken.Kind == SyntaxKind.CommaToken)
+                {
+                    memberRenames.AddSeparator(this.EatToken(SyntaxKind.CommaToken));
+                    memberRenames.Add(this.ParseRenameStatement());
+                }
+
+                // TODO: Package Template - Handle syntax error!
+                closeParen = this.EatToken(SyntaxKind.CloseParenToken);
+            }
+
+            // TODO: Package Template - Handle syntax error!
+            var semicolon = this.EatToken(SyntaxKind.SemicolonToken);
+
+            return _syntaxFactory.ClassRenameStatement(
+                classRename,
+                openParen,
+                memberRenames,
+                closeParen,
+                semicolon);
         }
         #endregion
 
@@ -1796,6 +1929,186 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 }
             }
         }
+
+        #region PackageTemplate SkipBadAddsMember()
+        private void SkipBadAddsMember(ref SyntaxToken openBrace, SyntaxListBuilder members)
+        {
+            if (members.Count > 0)
+            {
+                var tmp = members[members.Count - 1];
+                this.SkipBadAddsMember(ref tmp);
+                members[members.Count - 1] = tmp;
+            }
+            else
+            {
+                GreenNode tmp = openBrace;
+                this.SkipBadAddsMember(ref tmp);
+                openBrace = (SyntaxToken)tmp;
+            }
+        }
+
+        private void SkipBadAddsMember(ref GreenNode previousNode)
+        {
+            int curlyCount = 0;
+            var tokens = _pool.Allocate();
+
+            try
+            {
+                bool done = false;
+
+                var token = this.EatToken();
+                token = this.AddError(token, ErrorCode.ERR_InvalidAddsMember, token.Text);
+                tokens.Add(token);
+
+                while (!done)
+                {
+                    SyntaxKind kind = this.CurrentToken.Kind;
+
+                    if (CanStartAddsMember(kind))
+                    {
+                        done = true;
+                        continue;
+                    }
+
+                    switch (kind)
+                    {
+                        case SyntaxKind.OpenBraceToken:
+                            curlyCount++;
+                            break;
+
+                        case SyntaxKind.CloseBraceToken:
+                            if (curlyCount-- == 0)
+                            {
+                                done = true;
+                                continue;
+                            }
+                            break;
+
+                        case SyntaxKind.EndOfFileToken:
+                            done = true;
+                            continue;
+
+                        default:
+                            break;
+                    }
+
+                    tokens.Add(this.EatToken());
+                }
+
+                previousNode = AddTrailingSkippedSyntax((CSharpSyntaxNode)previousNode, tokens.ToListNode());
+            }
+            finally
+            {
+                _pool.Free(tokens);
+            }
+        }
+        #endregion
+
+        #region Package Template SkipBadAddsStatement()
+        private void SkipBadAddsStatement(ref SyntaxToken openBrace, SyntaxListBuilder renameList, SyntaxListBuilder addsList)
+        {
+            if (addsList.Count > 0)
+            {
+                var tmp = addsList[addsList.Count - 1];
+                this.SkipBadAddsStatement(ref tmp);
+                addsList[addsList.Count - 1] = tmp;
+            }
+            else if (renameList.Count > 0)
+            {
+                var tmp = renameList[renameList.Count - 1];
+                this.SkipBadAddsStatement(ref tmp);
+                renameList[renameList.Count - 1] = tmp;
+            }
+            else
+            {
+                GreenNode tmp = openBrace;
+                this.SkipBadAddsStatement(ref tmp);
+                openBrace = (SyntaxToken)tmp;
+            }
+        }
+
+        private void SkipBadAddsStatement(ref GreenNode previousNode)
+        {
+            var tokens = _pool.Allocate();
+
+            try
+            {
+                bool done = false;
+
+                var token = this.EatToken();
+                token = this.AddError(token, ErrorCode.ERR_InvalidAddsStatement, token.Text);
+                tokens.Add(token);
+
+                while (!done)
+                {
+                    if (this.IsPossibleAddsStatement(parentKind: SyntaxKind.InstKeyword) ||
+                        this.IsEndOfAddsStatements())
+                    {
+                        done = true;
+                        continue;
+                    }
+
+                    tokens.Add(this.EatToken());
+                }
+
+                previousNode = AddTrailingSkippedSyntax((CSharpSyntaxNode) previousNode, tokens.ToListNode());
+            }
+            finally
+            {
+                _pool.Free(tokens);
+            }
+        }
+        #endregion
+
+        #region Package Template SkipBadClassRenameStatement()
+        private void SkipBadClassRenameStatement(ref SyntaxToken openBrace, SyntaxListBuilder renameList)
+        {
+            if (renameList.Count > 0)
+            {
+                var tmp = renameList[renameList.Count - 1];
+                this.SkipBadClassRenameStatement(ref tmp);
+                renameList[renameList.Count - 1] = tmp;
+            }
+            else
+            {
+                GreenNode tmp = openBrace;
+                this.SkipBadClassRenameStatement(ref tmp);
+                openBrace = (SyntaxToken)tmp;
+            }
+        }
+
+        private void SkipBadClassRenameStatement(ref GreenNode previousNode)
+        {
+            var tokens = _pool.Allocate();
+
+            try
+            {
+                bool done = false;
+
+                var token = this.EatToken();
+                token = this.AddError(token, ErrorCode.ERR_InvalidClassRenameStatement, token.Text);
+                tokens.Add(token);
+
+                while (!done)
+                {
+                    if (this.IsPossibleClassRenameStatement(parentKind: SyntaxKind.InstKeyword) ||
+                        this.IsEndOfClassRenameStatements())
+                    {
+                        done = true;
+                        continue;
+                    }
+                    
+                    tokens.Add(this.EatToken());
+                }
+
+                previousNode = AddTrailingSkippedSyntax((CSharpSyntaxNode) previousNode, tokens.ToListNode());
+            }
+            finally
+            {
+                _pool.Free(tokens);
+            }
+        }
+        #endregion
 
         #region Package Template SkipBadTemplateMemberListTokens()
         private void SkipBadTemplateMemberListTokens(ref SyntaxToken openBrace, SyntaxListBuilder members)
@@ -2168,6 +2481,66 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             {
                 case SyntaxKind.ClassKeyword:
                     return true;
+                default:
+                    return false;
+            }
+        }
+
+        private bool CanStartAddsMember(SyntaxKind kind)
+        {
+            // TODO: One should be able to have almost all valid class members in the adds-clause.
+            //       However, this might be a bit challenging to implement, so for now, only the basics
+            switch (kind)
+            {
+                //case SyntaxKind.AbstractKeyword:
+                case SyntaxKind.BoolKeyword:
+                case SyntaxKind.ByteKeyword:
+                case SyntaxKind.CharKeyword:
+                //case SyntaxKind.ClassKeyword:
+                //case SyntaxKind.ConstKeyword:
+                case SyntaxKind.DecimalKeyword:
+                //case SyntaxKind.DelegateKeyword:
+                case SyntaxKind.DoubleKeyword:
+                //case SyntaxKind.EnumKeyword:
+                //case SyntaxKind.EventKeyword:
+                //case SyntaxKind.ExternKeyword:
+                //case SyntaxKind.FixedKeyword:
+                case SyntaxKind.FloatKeyword:
+                case SyntaxKind.IntKeyword:
+                //case SyntaxKind.InterfaceKeyword:
+                //case SyntaxKind.InternalKeyword:
+                case SyntaxKind.LongKeyword:
+                //case SyntaxKind.NewKeyword:
+                case SyntaxKind.ObjectKeyword:
+                //case SyntaxKind.OverrideKeyword:
+                case SyntaxKind.PrivateKeyword:
+                case SyntaxKind.ProtectedKeyword:
+                case SyntaxKind.PublicKeyword:
+                //case SyntaxKind.ReadOnlyKeyword:
+                case SyntaxKind.SByteKeyword:
+                //case SyntaxKind.SealedKeyword:
+                case SyntaxKind.ShortKeyword:
+                //case SyntaxKind.StaticKeyword:
+                case SyntaxKind.StringKeyword:
+                //case SyntaxKind.StructKeyword:
+                case SyntaxKind.UIntKeyword:
+                case SyntaxKind.ULongKeyword:
+                //case SyntaxKind.UnsafeKeyword:
+                case SyntaxKind.UShortKeyword:
+                //case SyntaxKind.VirtualKeyword:
+                case SyntaxKind.VoidKeyword:
+                //case SyntaxKind.VolatileKeyword:
+                // I assume IdentifierToken is used for other classes?
+                // eg. SomeClass a = new SomeClass();
+                case SyntaxKind.IdentifierToken:
+                //case SyntaxKind.TildeToken:
+                //case SyntaxKind.OpenBracketToken:
+                //case SyntaxKind.ImplicitKeyword:
+                //case SyntaxKind.ExplicitKeyword:
+                //case SyntaxKind.OpenParenToken:    //tuple
+                //case SyntaxKind.RefKeyword:
+                    return true;
+
                 default:
                     return false;
             }
@@ -6928,12 +7301,6 @@ tryAgain:
                 case SyntaxKind.SemicolonToken:
                     return _syntaxFactory.EmptyStatement(this.EatToken());
                 case SyntaxKind.IdentifierToken:
-                    #region Package Template ParseStatementNoDeclaration
-                    if (this.IsPossibleRenameStatement())
-                    {
-                        return this.ParseRenameStatement();
-                    }
-                    #endregion
                     if (this.IsPossibleLabeledStatement())
                     {
                         return this.ParseLabeledStatement();
@@ -6968,9 +7335,35 @@ tryAgain:
         }
 
         #region Package Template IsPossibleRenameStatement
-        private bool IsPossibleRenameStatement()
+        private bool IsPossibleClassRenameStatement(SyntaxKind parentKind)
         {
-            return this.PeekToken(1).Kind == SyntaxKind.TildeGreaterThanToken;
+            // Both "A ~> AA" and "a.b.c.D ~> DD" are allowed forms to start a RenameStatement
+            return parentKind == SyntaxKind.InstStatement && this.CurrentToken.Kind == SyntaxKind.IdentifierToken &&
+                   (this.PeekToken(1).Kind == SyntaxKind.TildeGreaterThanToken || this.PeekToken(1).Kind == SyntaxKind.DotToken);
+        }
+
+        private bool IsEndOfClassRenameStatements()
+        {
+            // Either we have reached the end of an inst-statement, or the start of the adds-clause
+            return this.CurrentToken.Kind == SyntaxKind.CloseBraceToken ||
+                   this.CurrentToken.Kind == SyntaxKind.EndOfFileToken ||
+                    (this.CurrentToken.Kind == SyntaxKind.IdentifierToken &&
+                     this.PeekToken(1).Kind == SyntaxKind.OpenBraceToken);
+        }
+        #endregion
+
+        #region Package Template IsPossibleAddsStatement
+        private bool IsPossibleAddsStatement(SyntaxKind parentKind)
+        {
+            return parentKind == SyntaxKind.InstStatement &&
+                this.CurrentToken.Kind == SyntaxKind.IdentifierToken &&
+                this.PeekToken(1).Kind == SyntaxKind.OpenBraceToken;
+        }
+
+        private bool IsEndOfAddsStatements()
+        {
+            return this.CurrentToken.Kind == SyntaxKind.CloseBraceToken ||
+                   this.CurrentToken.Kind == SyntaxKind.EndOfFileToken;
         }
         #endregion
 
@@ -8468,20 +8861,6 @@ tryAgain:
             var statement = this.ParseEmbeddedStatement();
             return _syntaxFactory.WhileStatement(@while, openParen, condition, closeParen, statement);
         }
-
-        #region Package Template ParseRenameStatement
-        private RenameStatementSyntax ParseRenameStatement()
-        {
-            Debug.Assert(this.CurrentToken.Kind == SyntaxKind.IdentifierToken);
-
-            var fromIdentifier = this.ParseName();
-            var renameToken = this.EatToken(SyntaxKind.TildeGreaterThanToken);
-            Debug.Assert(!renameToken.IsMissing);
-            var toIdentifier = this.ParseIdentifierToken();
-
-            return _syntaxFactory.RenameStatement(fromIdentifier, renameToken, toIdentifier);
-        }
-        #endregion
 
         private LabeledStatementSyntax ParseLabeledStatement()
         {

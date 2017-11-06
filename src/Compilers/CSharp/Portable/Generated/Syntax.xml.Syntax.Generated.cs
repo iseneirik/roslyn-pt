@@ -21406,181 +21406,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     }
   }
 
-  public abstract partial class RenameClauseSyntax : CSharpSyntaxNode
-  {
-    internal RenameClauseSyntax(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.CSharpSyntaxNode green, SyntaxNode parent, int position)
-      : base(green, parent, position)
-    {
-    }
-  }
-
-  public abstract partial class AddsClauseSyntax : CSharpSyntaxNode
-  {
-    internal AddsClauseSyntax(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.CSharpSyntaxNode green, SyntaxNode parent, int position)
-      : base(green, parent, position)
-    {
-    }
-  }
-
-  public sealed partial class InstStatementSyntax : MemberDeclarationSyntax
-  {
-    private SyntaxNode templates;
-    private RenameClauseSyntax renameClause;
-    private AddsClauseSyntax addsClause;
-
-    internal InstStatementSyntax(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.CSharpSyntaxNode green, SyntaxNode parent, int position)
-        : base(green, parent, position)
-    {
-    }
-
-    public SyntaxToken InstKeyword 
-    {
-      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax)this.Green).instKeyword, this.Position, 0); }
-    }
-
-    public SeparatedSyntaxList<NameSyntax> Templates 
-    {
-        get
-        {
-            var red = this.GetRed(ref this.templates, 1);
-            if (red != null)
-                return new SeparatedSyntaxList<NameSyntax>(red, this.GetChildIndex(1));
-
-            return default(SeparatedSyntaxList<NameSyntax>);
-        }
-    }
-
-    public SyntaxToken OpenBraceToken 
-    {
-        get
-        {
-            var slot = ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax)this.Green).openBraceToken;
-            if (slot != null)
-                return new SyntaxToken(this, slot, this.GetChildPosition(2), this.GetChildIndex(2));
-
-            return default(SyntaxToken);
-        }
-    }
-
-    public RenameClauseSyntax RenameClause 
-    {
-        get
-        {
-            return this.GetRed(ref this.renameClause, 3);
-        }
-    }
-
-    public AddsClauseSyntax AddsClause 
-    {
-        get
-        {
-            return this.GetRed(ref this.addsClause, 4);
-        }
-    }
-
-    public SyntaxToken CloseBraceToken 
-    {
-        get
-        {
-            var slot = ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax)this.Green).closeBraceToken;
-            if (slot != null)
-                return new SyntaxToken(this, slot, this.GetChildPosition(5), this.GetChildIndex(5));
-
-            return default(SyntaxToken);
-        }
-    }
-
-    public SyntaxToken SemicolonToken 
-    {
-      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax)this.Green).semicolonToken, this.GetChildPosition(6), this.GetChildIndex(6)); }
-    }
-
-    internal override SyntaxNode GetNodeSlot(int index)
-    {
-        switch (index)
-        {
-            case 1: return this.GetRed(ref this.templates, 1);
-            case 3: return this.GetRed(ref this.renameClause, 3);
-            case 4: return this.GetRed(ref this.addsClause, 4);
-            default: return null;
-        }
-    }
-    internal override SyntaxNode GetCachedSlot(int index)
-    {
-        switch (index)
-        {
-            case 1: return this.templates;
-            case 3: return this.renameClause;
-            case 4: return this.addsClause;
-            default: return null;
-        }
-    }
-
-    public override TResult Accept<TResult>(CSharpSyntaxVisitor<TResult> visitor)
-    {
-        return visitor.VisitInstStatement(this);
-    }
-
-    public override void Accept(CSharpSyntaxVisitor visitor)
-    {
-        visitor.VisitInstStatement(this);
-    }
-
-    public InstStatementSyntax Update(SyntaxToken instKeyword, SeparatedSyntaxList<NameSyntax> templates, SyntaxToken openBraceToken, RenameClauseSyntax renameClause, AddsClauseSyntax addsClause, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
-    {
-        if (instKeyword != this.InstKeyword || templates != this.Templates || openBraceToken != this.OpenBraceToken || renameClause != this.RenameClause || addsClause != this.AddsClause || closeBraceToken != this.CloseBraceToken || semicolonToken != this.SemicolonToken)
-        {
-            var newNode = SyntaxFactory.InstStatement(instKeyword, templates, openBraceToken, renameClause, addsClause, closeBraceToken, semicolonToken);
-            var annotations = this.GetAnnotations();
-            if (annotations != null && annotations.Length > 0)
-               return newNode.WithAnnotations(annotations);
-            return newNode;
-        }
-
-        return this;
-    }
-
-    public InstStatementSyntax WithInstKeyword(SyntaxToken instKeyword)
-    {
-        return this.Update(instKeyword, this.Templates, this.OpenBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
-    }
-
-    public InstStatementSyntax WithTemplates(SeparatedSyntaxList<NameSyntax> templates)
-    {
-        return this.Update(this.InstKeyword, templates, this.OpenBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
-    }
-
-    public InstStatementSyntax WithOpenBraceToken(SyntaxToken openBraceToken)
-    {
-        return this.Update(this.InstKeyword, this.Templates, openBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
-    }
-
-    public InstStatementSyntax WithRenameClause(RenameClauseSyntax renameClause)
-    {
-        return this.Update(this.InstKeyword, this.Templates, this.OpenBraceToken, renameClause, this.AddsClause, this.CloseBraceToken, this.SemicolonToken);
-    }
-
-    public InstStatementSyntax WithAddsClause(AddsClauseSyntax addsClause)
-    {
-        return this.Update(this.InstKeyword, this.Templates, this.OpenBraceToken, this.RenameClause, addsClause, this.CloseBraceToken, this.SemicolonToken);
-    }
-
-    public InstStatementSyntax WithCloseBraceToken(SyntaxToken closeBraceToken)
-    {
-        return this.Update(this.InstKeyword, this.Templates, this.OpenBraceToken, this.RenameClause, this.AddsClause, closeBraceToken, this.SemicolonToken);
-    }
-
-    public InstStatementSyntax WithSemicolonToken(SyntaxToken semicolonToken)
-    {
-        return this.Update(this.InstKeyword, this.Templates, this.OpenBraceToken, this.RenameClause, this.AddsClause, this.CloseBraceToken, semicolonToken);
-    }
-
-    public InstStatementSyntax AddTemplates(params NameSyntax[] items)
-    {
-        return this.WithTemplates(this.Templates.AddRange(items));
-    }
-  }
-
   public sealed partial class RenameStatementSyntax : StatementSyntax
   {
     private NameSyntax fromIdentifier;
@@ -21665,6 +21490,420 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     public RenameStatementSyntax WithToIdentifier(SyntaxToken toIdentifier)
     {
         return this.Update(this.FromIdentifier, this.RenameToken, toIdentifier);
+    }
+  }
+
+  public sealed partial class ClassRenameStatementSyntax : StatementSyntax
+  {
+    private RenameStatementSyntax classRename;
+    private SyntaxNode memberRenames;
+
+    internal ClassRenameStatementSyntax(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.CSharpSyntaxNode green, SyntaxNode parent, int position)
+        : base(green, parent, position)
+    {
+    }
+
+    public RenameStatementSyntax ClassRename 
+    {
+        get
+        {
+            return this.GetRedAtZero(ref this.classRename);
+        }
+    }
+
+    /// <summary>SyntaxToken representing the open parenthesis.</summary>
+    public SyntaxToken OpenParenToken 
+    {
+        get
+        {
+            var slot = ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.ClassRenameStatementSyntax)this.Green).openParenToken;
+            if (slot != null)
+                return new SyntaxToken(this, slot, this.GetChildPosition(1), this.GetChildIndex(1));
+
+            return default(SyntaxToken);
+        }
+    }
+
+    public SeparatedSyntaxList<RenameStatementSyntax> MemberRenames 
+    {
+        get
+        {
+            var red = this.GetRed(ref this.memberRenames, 2);
+            if (red != null)
+                return new SeparatedSyntaxList<RenameStatementSyntax>(red, this.GetChildIndex(2));
+
+            return default(SeparatedSyntaxList<RenameStatementSyntax>);
+        }
+    }
+
+    /// <summary>SyntaxToken representing the close parenthesis.</summary>
+    public SyntaxToken CloseParenToken 
+    {
+        get
+        {
+            var slot = ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.ClassRenameStatementSyntax)this.Green).closeParenToken;
+            if (slot != null)
+                return new SyntaxToken(this, slot, this.GetChildPosition(3), this.GetChildIndex(3));
+
+            return default(SyntaxToken);
+        }
+    }
+
+    public SyntaxToken SemicolonToken 
+    {
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.ClassRenameStatementSyntax)this.Green).semicolonToken, this.GetChildPosition(4), this.GetChildIndex(4)); }
+    }
+
+    internal override SyntaxNode GetNodeSlot(int index)
+    {
+        switch (index)
+        {
+            case 0: return this.GetRedAtZero(ref this.classRename);
+            case 2: return this.GetRed(ref this.memberRenames, 2);
+            default: return null;
+        }
+    }
+    internal override SyntaxNode GetCachedSlot(int index)
+    {
+        switch (index)
+        {
+            case 0: return this.classRename;
+            case 2: return this.memberRenames;
+            default: return null;
+        }
+    }
+
+    public override TResult Accept<TResult>(CSharpSyntaxVisitor<TResult> visitor)
+    {
+        return visitor.VisitClassRenameStatement(this);
+    }
+
+    public override void Accept(CSharpSyntaxVisitor visitor)
+    {
+        visitor.VisitClassRenameStatement(this);
+    }
+
+    public ClassRenameStatementSyntax Update(RenameStatementSyntax classRename, SyntaxToken openParenToken, SeparatedSyntaxList<RenameStatementSyntax> memberRenames, SyntaxToken closeParenToken, SyntaxToken semicolonToken)
+    {
+        if (classRename != this.ClassRename || openParenToken != this.OpenParenToken || memberRenames != this.MemberRenames || closeParenToken != this.CloseParenToken || semicolonToken != this.SemicolonToken)
+        {
+            var newNode = SyntaxFactory.ClassRenameStatement(classRename, openParenToken, memberRenames, closeParenToken, semicolonToken);
+            var annotations = this.GetAnnotations();
+            if (annotations != null && annotations.Length > 0)
+               return newNode.WithAnnotations(annotations);
+            return newNode;
+        }
+
+        return this;
+    }
+
+    public ClassRenameStatementSyntax WithClassRename(RenameStatementSyntax classRename)
+    {
+        return this.Update(classRename, this.OpenParenToken, this.MemberRenames, this.CloseParenToken, this.SemicolonToken);
+    }
+
+    public ClassRenameStatementSyntax WithOpenParenToken(SyntaxToken openParenToken)
+    {
+        return this.Update(this.ClassRename, openParenToken, this.MemberRenames, this.CloseParenToken, this.SemicolonToken);
+    }
+
+    public ClassRenameStatementSyntax WithMemberRenames(SeparatedSyntaxList<RenameStatementSyntax> memberRenames)
+    {
+        return this.Update(this.ClassRename, this.OpenParenToken, memberRenames, this.CloseParenToken, this.SemicolonToken);
+    }
+
+    public ClassRenameStatementSyntax WithCloseParenToken(SyntaxToken closeParenToken)
+    {
+        return this.Update(this.ClassRename, this.OpenParenToken, this.MemberRenames, closeParenToken, this.SemicolonToken);
+    }
+
+    public ClassRenameStatementSyntax WithSemicolonToken(SyntaxToken semicolonToken)
+    {
+        return this.Update(this.ClassRename, this.OpenParenToken, this.MemberRenames, this.CloseParenToken, semicolonToken);
+    }
+
+    public ClassRenameStatementSyntax AddMemberRenames(params RenameStatementSyntax[] items)
+    {
+        return this.WithMemberRenames(this.MemberRenames.AddRange(items));
+    }
+  }
+
+  public sealed partial class AddsStatementSyntax : StatementSyntax
+  {
+    private SyntaxNode newMembers;
+
+    internal AddsStatementSyntax(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.CSharpSyntaxNode green, SyntaxNode parent, int position)
+        : base(green, parent, position)
+    {
+    }
+
+    /// <summary>The Identifier of the class we are adding members to</summary>
+    public SyntaxToken Identifier 
+    {
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.AddsStatementSyntax)this.Green).identifier, this.Position, 0); }
+    }
+
+    public SyntaxToken OpenBraceToken 
+    {
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.AddsStatementSyntax)this.Green).openBraceToken, this.GetChildPosition(1), this.GetChildIndex(1)); }
+    }
+
+    public SyntaxList<MemberDeclarationSyntax> NewMembers 
+    {
+        get
+        {
+            return new SyntaxList<MemberDeclarationSyntax>(this.GetRed(ref this.newMembers, 2));
+        }
+    }
+
+    public SyntaxToken CloseBraceToken 
+    {
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.AddsStatementSyntax)this.Green).closeBraceToken, this.GetChildPosition(3), this.GetChildIndex(3)); }
+    }
+
+    public SyntaxToken SemicolonToken 
+    {
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.AddsStatementSyntax)this.Green).semicolonToken, this.GetChildPosition(4), this.GetChildIndex(4)); }
+    }
+
+    internal override SyntaxNode GetNodeSlot(int index)
+    {
+        switch (index)
+        {
+            case 2: return this.GetRed(ref this.newMembers, 2);
+            default: return null;
+        }
+    }
+    internal override SyntaxNode GetCachedSlot(int index)
+    {
+        switch (index)
+        {
+            case 2: return this.newMembers;
+            default: return null;
+        }
+    }
+
+    public override TResult Accept<TResult>(CSharpSyntaxVisitor<TResult> visitor)
+    {
+        return visitor.VisitAddsStatement(this);
+    }
+
+    public override void Accept(CSharpSyntaxVisitor visitor)
+    {
+        visitor.VisitAddsStatement(this);
+    }
+
+    public AddsStatementSyntax Update(SyntaxToken identifier, SyntaxToken openBraceToken, SyntaxList<MemberDeclarationSyntax> newMembers, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    {
+        if (identifier != this.Identifier || openBraceToken != this.OpenBraceToken || newMembers != this.NewMembers || closeBraceToken != this.CloseBraceToken || semicolonToken != this.SemicolonToken)
+        {
+            var newNode = SyntaxFactory.AddsStatement(identifier, openBraceToken, newMembers, closeBraceToken, semicolonToken);
+            var annotations = this.GetAnnotations();
+            if (annotations != null && annotations.Length > 0)
+               return newNode.WithAnnotations(annotations);
+            return newNode;
+        }
+
+        return this;
+    }
+
+    public AddsStatementSyntax WithIdentifier(SyntaxToken identifier)
+    {
+        return this.Update(identifier, this.OpenBraceToken, this.NewMembers, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public AddsStatementSyntax WithOpenBraceToken(SyntaxToken openBraceToken)
+    {
+        return this.Update(this.Identifier, openBraceToken, this.NewMembers, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public AddsStatementSyntax WithNewMembers(SyntaxList<MemberDeclarationSyntax> newMembers)
+    {
+        return this.Update(this.Identifier, this.OpenBraceToken, newMembers, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public AddsStatementSyntax WithCloseBraceToken(SyntaxToken closeBraceToken)
+    {
+        return this.Update(this.Identifier, this.OpenBraceToken, this.NewMembers, closeBraceToken, this.SemicolonToken);
+    }
+
+    public AddsStatementSyntax WithSemicolonToken(SyntaxToken semicolonToken)
+    {
+        return this.Update(this.Identifier, this.OpenBraceToken, this.NewMembers, this.CloseBraceToken, semicolonToken);
+    }
+
+    public AddsStatementSyntax AddNewMembers(params MemberDeclarationSyntax[] items)
+    {
+        return this.WithNewMembers(this.NewMembers.AddRange(items));
+    }
+  }
+
+  public sealed partial class InstStatementSyntax : MemberDeclarationSyntax
+  {
+    private SyntaxNode templates;
+    private SyntaxNode renameList;
+    private SyntaxNode addsList;
+
+    internal InstStatementSyntax(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.CSharpSyntaxNode green, SyntaxNode parent, int position)
+        : base(green, parent, position)
+    {
+    }
+
+    public SyntaxToken InstKeyword 
+    {
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax)this.Green).instKeyword, this.Position, 0); }
+    }
+
+    public SeparatedSyntaxList<NameSyntax> Templates 
+    {
+        get
+        {
+            var red = this.GetRed(ref this.templates, 1);
+            if (red != null)
+                return new SeparatedSyntaxList<NameSyntax>(red, this.GetChildIndex(1));
+
+            return default(SeparatedSyntaxList<NameSyntax>);
+        }
+    }
+
+    public SyntaxToken OpenBraceToken 
+    {
+        get
+        {
+            var slot = ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax)this.Green).openBraceToken;
+            if (slot != null)
+                return new SyntaxToken(this, slot, this.GetChildPosition(2), this.GetChildIndex(2));
+
+            return default(SyntaxToken);
+        }
+    }
+
+    public SyntaxList<ClassRenameStatementSyntax> RenameList 
+    {
+        get
+        {
+            return new SyntaxList<ClassRenameStatementSyntax>(this.GetRed(ref this.renameList, 3));
+        }
+    }
+
+    public SyntaxList<AddsStatementSyntax> AddsList 
+    {
+        get
+        {
+            return new SyntaxList<AddsStatementSyntax>(this.GetRed(ref this.addsList, 4));
+        }
+    }
+
+    public SyntaxToken CloseBraceToken 
+    {
+        get
+        {
+            var slot = ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax)this.Green).closeBraceToken;
+            if (slot != null)
+                return new SyntaxToken(this, slot, this.GetChildPosition(5), this.GetChildIndex(5));
+
+            return default(SyntaxToken);
+        }
+    }
+
+    public SyntaxToken SemicolonToken 
+    {
+      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax)this.Green).semicolonToken, this.GetChildPosition(6), this.GetChildIndex(6)); }
+    }
+
+    internal override SyntaxNode GetNodeSlot(int index)
+    {
+        switch (index)
+        {
+            case 1: return this.GetRed(ref this.templates, 1);
+            case 3: return this.GetRed(ref this.renameList, 3);
+            case 4: return this.GetRed(ref this.addsList, 4);
+            default: return null;
+        }
+    }
+    internal override SyntaxNode GetCachedSlot(int index)
+    {
+        switch (index)
+        {
+            case 1: return this.templates;
+            case 3: return this.renameList;
+            case 4: return this.addsList;
+            default: return null;
+        }
+    }
+
+    public override TResult Accept<TResult>(CSharpSyntaxVisitor<TResult> visitor)
+    {
+        return visitor.VisitInstStatement(this);
+    }
+
+    public override void Accept(CSharpSyntaxVisitor visitor)
+    {
+        visitor.VisitInstStatement(this);
+    }
+
+    public InstStatementSyntax Update(SyntaxToken instKeyword, SeparatedSyntaxList<NameSyntax> templates, SyntaxToken openBraceToken, SyntaxList<ClassRenameStatementSyntax> renameList, SyntaxList<AddsStatementSyntax> addsList, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    {
+        if (instKeyword != this.InstKeyword || templates != this.Templates || openBraceToken != this.OpenBraceToken || renameList != this.RenameList || addsList != this.AddsList || closeBraceToken != this.CloseBraceToken || semicolonToken != this.SemicolonToken)
+        {
+            var newNode = SyntaxFactory.InstStatement(instKeyword, templates, openBraceToken, renameList, addsList, closeBraceToken, semicolonToken);
+            var annotations = this.GetAnnotations();
+            if (annotations != null && annotations.Length > 0)
+               return newNode.WithAnnotations(annotations);
+            return newNode;
+        }
+
+        return this;
+    }
+
+    public InstStatementSyntax WithInstKeyword(SyntaxToken instKeyword)
+    {
+        return this.Update(instKeyword, this.Templates, this.OpenBraceToken, this.RenameList, this.AddsList, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public InstStatementSyntax WithTemplates(SeparatedSyntaxList<NameSyntax> templates)
+    {
+        return this.Update(this.InstKeyword, templates, this.OpenBraceToken, this.RenameList, this.AddsList, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public InstStatementSyntax WithOpenBraceToken(SyntaxToken openBraceToken)
+    {
+        return this.Update(this.InstKeyword, this.Templates, openBraceToken, this.RenameList, this.AddsList, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public InstStatementSyntax WithRenameList(SyntaxList<ClassRenameStatementSyntax> renameList)
+    {
+        return this.Update(this.InstKeyword, this.Templates, this.OpenBraceToken, renameList, this.AddsList, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public InstStatementSyntax WithAddsList(SyntaxList<AddsStatementSyntax> addsList)
+    {
+        return this.Update(this.InstKeyword, this.Templates, this.OpenBraceToken, this.RenameList, addsList, this.CloseBraceToken, this.SemicolonToken);
+    }
+
+    public InstStatementSyntax WithCloseBraceToken(SyntaxToken closeBraceToken)
+    {
+        return this.Update(this.InstKeyword, this.Templates, this.OpenBraceToken, this.RenameList, this.AddsList, closeBraceToken, this.SemicolonToken);
+    }
+
+    public InstStatementSyntax WithSemicolonToken(SyntaxToken semicolonToken)
+    {
+        return this.Update(this.InstKeyword, this.Templates, this.OpenBraceToken, this.RenameList, this.AddsList, this.CloseBraceToken, semicolonToken);
+    }
+
+    public InstStatementSyntax AddTemplates(params NameSyntax[] items)
+    {
+        return this.WithTemplates(this.Templates.AddRange(items));
+    }
+
+    public InstStatementSyntax AddRenameList(params ClassRenameStatementSyntax[] items)
+    {
+        return this.WithRenameList(this.RenameList.AddRange(items));
+    }
+
+    public InstStatementSyntax AddAddsList(params AddsStatementSyntax[] items)
+    {
+        return this.WithAddsList(this.AddsList.AddRange(items));
     }
   }
 }

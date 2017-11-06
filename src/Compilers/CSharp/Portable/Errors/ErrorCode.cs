@@ -701,7 +701,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         ERR_NoNamespacePrivate = 1527,
         ERR_BadVarDecl = 1528,
         ERR_UsingAfterElements = 1529,
-        //ERR_NoNewOnNamespaceElement = 1530, EDMAURER we now give BadMemberFlag which is only a little less specific than this.
+        //ERR_NoNewOnNamespaceElement = 1530, EDMAURER we now give BadMemberFlag which is only a little less specific than this
         //ERR_DontUseInvoke = 1533,
         ERR_BadBinOpArgs = 1534,
         ERR_BadUnOpArgs = 1535,
@@ -1537,5 +1537,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         ERR_EscapeStackAlloc = 8353,
         ERR_RefReturnThis = 8354,
         #endregion diagnostics introduced for `ref readonly`, `ref ternary` and `ref-like` features in C# 7.2
+
+        #region Package Template Errors
+        ERR_InvalidClassRenameStatement = 8400,
+        ERR_InvalidAddsStatement = 8401,
+        ERR_InvalidAddsMember = 8402,
+        #endregion
     }
 }
