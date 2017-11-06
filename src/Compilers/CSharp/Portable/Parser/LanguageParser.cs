@@ -1615,10 +1615,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 semicolon);
         }
 
-        // TODO: Package Template - Should return missing token if syntax error!
         private ClassRenameStatementSyntax ParseClassRenameStatement()
         {
-            // TODO: Package Template - Handle syntax error!
             var classRename = this.ParseRenameStatement();
 
             SyntaxToken openParen = null;
@@ -1627,22 +1625,31 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 default(SeparatedSyntaxListBuilder<RenameStatementSyntax>);
             if (this.CurrentToken.Kind == SyntaxKind.OpenParenToken)
             {
-                openParen = this.EatToken(SyntaxKind.OpenParenToken);
+                openParen = this.EatToken();
 
-                // TODO: Package Template - Handle syntax error!
                 memberRenames = _pool.AllocateSeparated<RenameStatementSyntax>();
                 memberRenames.Add(this.ParseRenameStatement());
-                while (this.CurrentToken.Kind == SyntaxKind.CommaToken)
+                while (this.CurrentToken.Kind != SyntaxKind.CloseParenToken)
                 {
-                    memberRenames.AddSeparator(this.EatToken(SyntaxKind.CommaToken));
-                    memberRenames.Add(this.ParseRenameStatement());
+                    if (this.CurrentToken.Kind == SyntaxKind.CommaToken)
+                    {
+                        memberRenames.AddSeparator(this.EatToken());
+                        memberRenames.Add(this.ParseRenameStatement());
+                    }
+                    else if (this.CurrentToken.Kind == SyntaxKind.EndOfFileToken)
+                    {
+                        // CloseParen is the only legal way out of here!
+                        break;
+                    }
+                    else
+                    {
+                        this.SkipBadMemberRenameStatement(ref openParen, memberRenames);
+                    }
                 }
 
-                // TODO: Package Template - Handle syntax error!
                 closeParen = this.EatToken(SyntaxKind.CloseParenToken);
             }
 
-            // TODO: Package Template - Handle syntax error!
             var semicolon = this.EatToken(SyntaxKind.SemicolonToken);
 
             return _syntaxFactory.ClassRenameStatement(
@@ -2052,6 +2059,58 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 }
 
                 previousNode = AddTrailingSkippedSyntax((CSharpSyntaxNode) previousNode, tokens.ToListNode());
+            }
+            finally
+            {
+                _pool.Free(tokens);
+            }
+        }
+        #endregion
+
+        #region Package Template SkipBadMemberRenameStatement()
+
+        private void SkipBadMemberRenameStatement(ref SyntaxToken openBrace, SyntaxListBuilder memberRenames)
+        {
+            if (memberRenames.Count > 0)
+            {
+                var tmp = memberRenames[memberRenames.Count - 1];
+                this.SkipBadMemberRenameStatement(ref tmp);
+                memberRenames[memberRenames.Count - 1] = tmp;
+            }
+            else
+            {
+                GreenNode tmp = openBrace;
+                this.SkipBadMemberRenameStatement(ref tmp);
+                openBrace = (SyntaxToken)tmp;
+            }
+        }
+
+        private void SkipBadMemberRenameStatement(ref GreenNode previousNode)
+        {
+            var tokens = _pool.Allocate();
+
+            try
+            {
+                bool done = false;
+
+                var token = this.EatToken();
+                token = this.AddError(token, ErrorCode.ERR_InvalidMemberRenameStatement, token.Text);
+                tokens.Add(token);
+
+                while (!done)
+                {
+                    if (this.CurrentToken.Kind == SyntaxKind.CommaToken ||
+                        this.CurrentToken.Kind == SyntaxKind.CloseParenToken ||
+                        this.CurrentToken.Kind == SyntaxKind.EndOfFileToken)
+                    {
+                        done = true;
+                        continue;
+                    }
+
+                    tokens.Add(this.EatToken());
+                }
+
+                previousNode = AddTrailingSkippedSyntax((CSharpSyntaxNode)previousNode, tokens.ToListNode());
             }
             finally
             {
