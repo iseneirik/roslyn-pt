@@ -500,6 +500,239 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.NotNull(i.SemicolonToken);
             Assert.False(i.SemicolonToken.IsMissing);
         }
+
+        [Fact]
+        public void TestSimpleProgramWithTemplateAndInst()
+        {
+            UsingTree(@"namespace N 
+{
+	template T1
+	{
+		class A
+		{
+			int i;
+			int j;
+		}
+	}
+
+	template T2
+	{
+		class A
+		{
+			int k;
+		}
+	}
+
+	inst T1, T2
+	{
+		T1.A ~> AA (i ~> ii, j ~> jj);
+		T2.A ~> AA (k ~> kk);
+
+		AA
+		{
+			int ll;
+		};
+	};
+}");
+            N(SyntaxKind.CompilationUnit);
+            {
+                N(SyntaxKind.NamespaceDeclaration);
+                {
+                    N(SyntaxKind.NamespaceKeyword);
+                    N(SyntaxKind.IdentifierName);
+                    {
+                        N(SyntaxKind.IdentifierToken);
+                    }
+                    N(SyntaxKind.OpenBraceToken);
+                    N(SyntaxKind.TemplateDeclaration);
+                    {
+                        N(SyntaxKind.TemplateKeyword);
+                        N(SyntaxKind.IdentifierToken);
+                        N(SyntaxKind.OpenBraceToken);
+                        N(SyntaxKind.ClassDeclaration);
+                        {
+                            N(SyntaxKind.ClassKeyword);
+                            N(SyntaxKind.IdentifierToken);
+                            N(SyntaxKind.OpenBraceToken);
+                            N(SyntaxKind.FieldDeclaration);
+                            {
+                                N(SyntaxKind.VariableDeclaration);
+                                {
+                                    N(SyntaxKind.PredefinedType);
+                                    {
+                                        N(SyntaxKind.IntKeyword);
+                                    }
+                                    N(SyntaxKind.VariableDeclarator);
+                                    {
+                                        N(SyntaxKind.IdentifierToken);
+                                    }
+                                }
+                                N(SyntaxKind.SemicolonToken);
+                            }
+                            N(SyntaxKind.FieldDeclaration);
+                            {
+                                N(SyntaxKind.VariableDeclaration);
+                                {
+                                    N(SyntaxKind.PredefinedType);
+                                    {
+                                        N(SyntaxKind.IntKeyword);
+                                    }
+                                    N(SyntaxKind.VariableDeclarator);
+                                    {
+                                        N(SyntaxKind.IdentifierToken);
+                                    }
+                                }
+                                N(SyntaxKind.SemicolonToken);
+                            }
+                            N(SyntaxKind.CloseBraceToken);
+                        }
+                        N(SyntaxKind.CloseBraceToken);
+                    }
+                    N(SyntaxKind.TemplateDeclaration);
+                    {
+                        N(SyntaxKind.TemplateKeyword);
+                        N(SyntaxKind.IdentifierToken);
+                        N(SyntaxKind.OpenBraceToken);
+                        N(SyntaxKind.ClassDeclaration);
+                        {
+                            N(SyntaxKind.ClassKeyword);
+                            N(SyntaxKind.IdentifierToken);
+                            N(SyntaxKind.OpenBraceToken);
+                            N(SyntaxKind.FieldDeclaration);
+                            {
+                                N(SyntaxKind.VariableDeclaration);
+                                {
+                                    N(SyntaxKind.PredefinedType);
+                                    {
+                                        N(SyntaxKind.IntKeyword);
+                                    }
+                                    N(SyntaxKind.VariableDeclarator);
+                                    {
+                                        N(SyntaxKind.IdentifierToken);
+                                    }
+                                }
+                                N(SyntaxKind.SemicolonToken);
+                            }
+                            N(SyntaxKind.CloseBraceToken);
+                        }
+                        N(SyntaxKind.CloseBraceToken);
+                    }
+                    N(SyntaxKind.InstStatement);
+                    {
+                        N(SyntaxKind.InstKeyword);
+                        N(SyntaxKind.IdentifierName);
+                        {
+                            N(SyntaxKind.IdentifierToken);
+                        }
+                        N(SyntaxKind.CommaToken);
+                        N(SyntaxKind.IdentifierName);
+                        {
+                            N(SyntaxKind.IdentifierToken);
+                        }
+                        N(SyntaxKind.OpenBraceToken);
+                        N(SyntaxKind.ClassRenameStatement);
+                        {
+                            N(SyntaxKind.RenameStatement);
+                            {
+                                N(SyntaxKind.QualifiedName);
+                                {
+                                    N(SyntaxKind.IdentifierName);
+                                    {
+                                        N(SyntaxKind.IdentifierToken);
+                                    }
+                                    N(SyntaxKind.DotToken);
+                                    N(SyntaxKind.IdentifierName);
+                                    {
+                                        N(SyntaxKind.IdentifierToken);
+                                    }
+                                }
+                                N(SyntaxKind.TildeGreaterThanToken);
+                                N(SyntaxKind.IdentifierToken);
+                            }
+                            N(SyntaxKind.OpenParenToken);
+                            N(SyntaxKind.RenameStatement);
+                            {
+                               N(SyntaxKind.IdentifierName);
+                               {
+                                    N(SyntaxKind.IdentifierToken);
+                               }
+                                N(SyntaxKind.TildeGreaterThanToken);
+                                N(SyntaxKind.IdentifierToken);
+                            }
+                            N(SyntaxKind.CommaToken);
+                            N(SyntaxKind.RenameStatement);
+                            {
+                                N(SyntaxKind.IdentifierName);
+                                {
+                                    N(SyntaxKind.IdentifierToken);
+                                }
+                                N(SyntaxKind.TildeGreaterThanToken);
+                                N(SyntaxKind.IdentifierToken);
+                            }
+                            N(SyntaxKind.CloseParenToken);
+                            N(SyntaxKind.SemicolonToken);
+                        }
+                        N(SyntaxKind.ClassRenameStatement);
+                        {
+                            N(SyntaxKind.RenameStatement);
+                            {
+                                N(SyntaxKind.QualifiedName);
+                                {
+                                    N(SyntaxKind.IdentifierName);
+                                    {
+                                        N(SyntaxKind.IdentifierToken);
+                                    }
+                                    N(SyntaxKind.DotToken);
+                                    N(SyntaxKind.IdentifierName);
+                                    {
+                                        N(SyntaxKind.IdentifierToken);
+                                    }
+                                }
+                                N(SyntaxKind.TildeGreaterThanToken);
+                                N(SyntaxKind.IdentifierToken);
+                            }
+                            N(SyntaxKind.OpenParenToken);
+                            N(SyntaxKind.RenameStatement);
+                            {
+                                N(SyntaxKind.IdentifierName);
+                                {
+                                    N(SyntaxKind.IdentifierToken);
+                                }
+                                N(SyntaxKind.TildeGreaterThanToken);
+                                N(SyntaxKind.IdentifierToken);
+                            }
+                            N(SyntaxKind.CloseParenToken);
+                            N(SyntaxKind.SemicolonToken);
+                        }
+                        N(SyntaxKind.AddsStatement);
+                        {
+                            N(SyntaxKind.IdentifierToken);
+                            N(SyntaxKind.OpenBraceToken);
+                            N(SyntaxKind.FieldDeclaration);
+                            {
+                                N(SyntaxKind.VariableDeclaration);
+                                {
+                                    N(SyntaxKind.PredefinedType);
+                                    {
+                                        N(SyntaxKind.IntKeyword);
+                                    }
+                                    N(SyntaxKind.VariableDeclarator);
+                                    {
+                                        N(SyntaxKind.IdentifierToken);
+                                    }
+                                }
+                                N(SyntaxKind.SemicolonToken);
+                            }
+                            N(SyntaxKind.CloseBraceToken);
+                            N(SyntaxKind.SemicolonToken);
+                        }
+                        N(SyntaxKind.CloseBraceToken);
+                        N(SyntaxKind.SemicolonToken);
+                    }
+                    N(SyntaxKind.CloseBraceToken);
+                }
+            }
+        }
         #endregion
 
 
