@@ -1540,8 +1540,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         #region Package Template Errors
         ERR_InvalidClassRenameStatement = 8400,
-        ERR_InvalidAddsStatement = 8401,
-        ERR_InvalidAddsMember = 8402,
+        ERR_InvalidMemberRenameStatement = 8401,
+        ERR_InvalidAddsStatement = 8402,
+        ERR_InvalidAddsMember = 8403,
         #endregion
     }
 }
