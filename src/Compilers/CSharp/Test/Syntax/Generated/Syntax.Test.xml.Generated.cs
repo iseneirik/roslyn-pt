@@ -1051,7 +1051,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         
         private static Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.InstStatementSyntax GenerateInstStatement()
         {
-            return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.InstStatement(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.InstKeyword), new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.NameSyntax>(), null, new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.ClassRenameStatementSyntax>(), null, null, Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.InstStatement(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.InstKeyword), new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.NameSyntax>(), null, new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.ClassRenameStatementSyntax>(), new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.AddsStatementSyntax>(), null, Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.SemicolonToken));
         }
         #endregion Green Generators
         
@@ -3706,7 +3706,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.NotNull(node.Templates);
             Assert.Null(node.OpenBraceToken);
             Assert.NotNull(node.RenameList);
-            Assert.Null(node.AddsList);
+            Assert.NotNull(node.AddsList);
             Assert.Null(node.CloseBraceToken);
             Assert.Equal(SyntaxKind.SemicolonToken, node.SemicolonToken.Kind);
             
@@ -10196,7 +10196,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         
         private static InstStatementSyntax GenerateInstStatement()
         {
-            return SyntaxFactory.InstStatement(SyntaxFactory.Token(SyntaxKind.InstKeyword), new SeparatedSyntaxList<NameSyntax>(), default(SyntaxToken), new SyntaxList<ClassRenameStatementSyntax>(), default(SyntaxList<AddsStatementSyntax>), default(SyntaxToken), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            return SyntaxFactory.InstStatement(SyntaxFactory.Token(SyntaxKind.InstKeyword), new SeparatedSyntaxList<NameSyntax>(), default(SyntaxToken), new SyntaxList<ClassRenameStatementSyntax>(), new SyntaxList<AddsStatementSyntax>(), default(SyntaxToken), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
         }
         #endregion Red Generators
         
@@ -12851,7 +12851,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.NotNull(node.Templates);
             Assert.Equal(SyntaxKind.None, node.OpenBraceToken.Kind());
             Assert.NotNull(node.RenameList);
-            Assert.Null(node.AddsList);
+            Assert.NotNull(node.AddsList);
             Assert.Equal(SyntaxKind.None, node.CloseBraceToken.Kind());
             Assert.Equal(SyntaxKind.SemicolonToken, node.SemicolonToken.Kind());
             var newNode = node.WithInstKeyword(node.InstKeyword).WithTemplates(node.Templates).WithOpenBraceToken(node.OpenBraceToken).WithRenameList(node.RenameList).WithAddsList(node.AddsList).WithCloseBraceToken(node.CloseBraceToken).WithSemicolonToken(node.SemicolonToken);

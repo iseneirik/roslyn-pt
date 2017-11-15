@@ -4400,7 +4400,7 @@
       <Kind Name="OpenBraceToken"/>
     </Field>
     <Field Name="RenameList" Type="SyntaxList&lt;ClassRenameStatementSyntax&gt;"/>
-    <Field Name="AddsList" Type="SyntaxList&lt;AddsStatementSyntax&gt;" Optional="true"/>
+    <Field Name="AddsList" Type="SyntaxList&lt;AddsStatementSyntax&gt;"/>
     <Field Name="CloseBraceToken" Type="SyntaxToken" Optional="true">
       <Kind Name="CloseBraceToken"/>
     </Field>
