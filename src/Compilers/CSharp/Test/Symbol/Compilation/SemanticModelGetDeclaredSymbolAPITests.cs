@@ -15,6 +15,26 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
 {
     public partial class SemanticModelTests : CSharpTestBase
     {
+        #region Package Template SemanticModelTests
+        [Fact]
+        public void GetDeclaredSymbolFromTemplate()
+        {
+            var compilation = CreateStandardCompilation(@"
+template T
+{
+}
+");
+            var tree = compilation.SyntaxTrees[0];
+            var root = tree.GetCompilationUnitRoot();
+            var decl = (TemplateDeclarationSyntax) root.Members[0];
+            var model = compilation.GetSemanticModel(tree);
+            var symbol = model.GetDeclaredSymbol(decl);
+            Assert.NotNull(symbol);
+            Assert.Equal("T", symbol.Name);
+        }
+        #endregion
+
+        #region Other tests
         [Fact]
         public void TestGetDeclaredSymbolFromNamespace()
         {
@@ -5147,4 +5167,5 @@ class C
             }
         }
     }
+    #endregion
 }
