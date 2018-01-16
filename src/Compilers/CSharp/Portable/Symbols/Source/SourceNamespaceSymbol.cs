@@ -413,6 +413,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 case DeclarationKind.Enum:
                 case DeclarationKind.Delegate:
                 case DeclarationKind.Class:
+                #region Package Template - BuildSymbol
+                case DeclarationKind.Template:
+                #endregion
                     return new SourceNamedTypeSymbol(this, (MergedTypeDeclaration)declaration, diagnostics);
 
                 case DeclarationKind.Script:
