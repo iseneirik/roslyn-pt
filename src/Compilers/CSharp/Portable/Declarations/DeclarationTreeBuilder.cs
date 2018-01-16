@@ -271,6 +271,63 @@ namespace Microsoft.CodeAnalysis.CSharp
                 diagnostics: diagnostics.ToReadOnlyAndFree());
         }
 
+        #region Package Template - VisitTemplate++
+        // TODO: Package Template - Consider making SingleTemplateDeclaration class, use SingleTypeDeclaration for now...
+        public override SingleNamespaceOrTypeDeclaration VisitTemplateDeclaration(TemplateDeclarationSyntax node)
+        {
+            // Modifiers for templates not implemented
+            var modifiers = DeclarationModifiers.None;
+
+            // Parameters for templates not implemented
+            var arity = 0;
+
+            // TODO: what is this used for?
+            var declFlags = SingleTypeDeclaration.TypeDeclarationFlags.None;
+
+            // Non-type members are not supported in templates
+            var memberNames = Array.Empty<string>();
+
+            return new SingleTypeDeclaration(
+                kind: DeclarationKind.Template,
+                name: node.Name.ValueText,
+                modifiers: modifiers,
+                arity: arity,
+                declFlags: declFlags,
+                syntaxReference: _syntaxTree.GetReference(node),
+                nameLocation: new SourceLocation(node.Name),
+                memberNames: memberNames,
+                children: VisitTemplateChildren(node),
+                diagnostics: DiagnosticBag.GetInstance().ToReadOnlyAndFree());
+        }
+
+        private ImmutableArray<SingleTypeDeclaration> VisitTemplateChildren(TemplateDeclarationSyntax node)
+        {
+            // No members, we're good!
+            if (node.Members.Count == 0)
+            {
+                return ImmutableArray<SingleTypeDeclaration>.Empty;
+            }
+
+            // Visit each member and add it to children afterwards
+            var children = ArrayBuilder<SingleTypeDeclaration>.GetInstance();
+            foreach (var member in node.Members)
+            {
+                var typeDecl = Visit(member) as SingleTypeDeclaration;
+                if (typeDecl != null)
+                {
+                    children.Add(typeDecl);
+                }
+                else
+                {
+                    // Templates can only contain TypeDeclarations, so if we get here, something is wrong...
+                    throw new Exception("VisitTemplateChildren(): Encountered non-type-member!");
+                }
+            }
+
+            return children.ToImmutableAndFree();
+        }
+        #endregion
+
         private static bool ContainsAlias(NameSyntax name)
         {
             switch (name.Kind())

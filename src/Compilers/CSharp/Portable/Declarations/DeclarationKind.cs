@@ -17,7 +17,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         Delegate,
         Script,
         Submission,
-        ImplicitClass
+        ImplicitClass,
+        #region Package Template - DeclarationKind
+        Template
+        #endregion
     }
 
     internal static partial class EnumConversions
@@ -32,6 +35,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.NamespaceDeclaration: return DeclarationKind.Namespace;
                 case SyntaxKind.EnumDeclaration: return DeclarationKind.Enum;
                 case SyntaxKind.DelegateDeclaration: return DeclarationKind.Delegate;
+                #region Package Template - DeclarationKind conversion
+                case SyntaxKind.TemplateDeclaration: return DeclarationKind.Template;
+                #endregion
                 default:
                     throw ExceptionUtilities.UnexpectedValue(kind);
             }

@@ -1576,10 +1576,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.EventFieldDeclaration:
                 case SyntaxKind.FieldDeclaration:
                     throw new ArgumentException(CSharpResources.InvalidGetDeclarationNameMultipleDeclarators);
-
+                
                 case SyntaxKind.IncompleteMember:
                     // There is no name - that's why it's an incomplete member.
                     return null;
+
+                #region Package Template GetDeclaredNamespaceOrType
+                case SyntaxKind.TemplateDeclaration:
+                    return ((TemplateDeclarationSyntax) declaration).Name.ValueText;
+                #endregion
 
                 default:
                     throw ExceptionUtilities.UnexpectedValue(declaration.Kind());
