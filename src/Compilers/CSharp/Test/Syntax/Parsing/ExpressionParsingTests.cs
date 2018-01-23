@@ -23,9 +23,6 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             return SyntaxFactory.ParseExpression(text, options: options);
         }
 
-        #region Package Template expression parsing 
-        #endregion
-
         #region Other Tests
         [Fact]
         public void TestEmptyString()

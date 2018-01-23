@@ -1937,7 +1937,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             }
         }
 
-        #region PackageTemplate SkipBadAddsMember()
+        #region Package Template SkipBadAddsMember()
         private void SkipBadAddsMember(ref SyntaxToken openBrace, SyntaxListBuilder members)
         {
             if (members.Count > 0)

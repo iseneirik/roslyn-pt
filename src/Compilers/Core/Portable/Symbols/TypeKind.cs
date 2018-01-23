@@ -80,11 +80,11 @@ namespace Microsoft.CodeAnalysis
         /// </summary>
         Submission = 12,
 
-        #region
+        #region Package Template - TypeKind Enum
         /// <summary>
         /// Type is a template.
         /// </summary>
         Template = 13,
-        #endregion PackageTemplate - TypeKind Enum
+        #endregion
     }
 }
