@@ -353,6 +353,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 case TypeKind.Struct:
                 case TypeKind.Interface:
                 case TypeKind.Submission: // we have to check that "override" is not used 
+                case TypeKind.Template: // TODO: Package Template - Quick fix, revisit later!
                     break;
 
                 default:

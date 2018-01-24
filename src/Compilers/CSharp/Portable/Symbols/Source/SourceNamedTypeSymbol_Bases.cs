@@ -614,6 +614,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 switch (typeKind)
                 {
                     case TypeKind.Class:
+                    case TypeKind.Template: // TODO: Package Template - Quick fix, revisit later!
 
                         if (this.SpecialType == SpecialType.System_Object)
                         {
