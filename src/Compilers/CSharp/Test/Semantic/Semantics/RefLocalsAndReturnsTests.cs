@@ -2678,13 +2678,13 @@ class TestClass
     {
         Save(1) = await Task.FromResult(0);
 
-        var inst = new TestClass();
+        var a = new TestClass();
 
         // valid
-        inst[1] = await Task.FromResult(1);
+        a[1] = await Task.FromResult(1);
 
         // invalid
-        inst[1, 2] = await Task.FromResult(1);
+        a[1, 2] = await Task.FromResult(1);
     }
 }";
             CreateCompilationWithMscorlib45(code).VerifyEmitDiagnostics(
@@ -2692,7 +2692,7 @@ class TestClass
                     //         Save(1) = await Task.FromResult(0);
                     Diagnostic(ErrorCode.ERR_RefReturningCallAndAwait, "await Task.FromResult(0)").WithArguments("TestClass.Save(int)").WithLocation(28, 19),
                     // (36,22): error CS8178: 'await' cannot be used in an expression containing a call to 'TestClass.this[int, int].get' because it returns by reference
-                    //         inst[1, 2] = await Task.FromResult(1);
+                    //         a[1, 2] = await Task.FromResult(1);
                     Diagnostic(ErrorCode.ERR_RefReturningCallAndAwait, "await Task.FromResult(1)").WithArguments("TestClass.this[int, int].get").WithLocation(36, 22)
             );
         }
