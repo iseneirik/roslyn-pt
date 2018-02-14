@@ -66,12 +66,17 @@ namespace Microsoft.CodeAnalysis
         /// <summary>The name of a type parameter.</summary>
         TypeParameterName = 26,
         /// <summary>The name of a query range variable..</summary>
-        RangeVariableName = 27
+        RangeVariableName = 27,
+
+        #region Package Template - SymbolDisplayPartKind
+        /// <summary>The name of a template.</summary>
+        TemplateName = 28,
+        #endregion
     }
 
     internal static class InternalSymbolDisplayPartKind
     {
-        private const SymbolDisplayPartKind @base = SymbolDisplayPartKind.RangeVariableName + 1;
+        private const SymbolDisplayPartKind @base = SymbolDisplayPartKind.TemplateName + 1;
         public const SymbolDisplayPartKind Arity = @base + 0;
         public const SymbolDisplayPartKind Other = @base + 1;
     }
@@ -80,7 +85,7 @@ namespace Microsoft.CodeAnalysis
     {
         internal static bool IsValid(this SymbolDisplayPartKind value)
         {
-            return (value >= SymbolDisplayPartKind.AliasName && value <= SymbolDisplayPartKind.RangeVariableName) ||
+            return (value >= SymbolDisplayPartKind.AliasName && value <= SymbolDisplayPartKind.TemplateName) ||
                 (value >= InternalSymbolDisplayPartKind.Arity && value <= InternalSymbolDisplayPartKind.Other);
         }
     }
