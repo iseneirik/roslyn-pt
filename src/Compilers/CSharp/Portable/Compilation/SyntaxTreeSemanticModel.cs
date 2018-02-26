@@ -1583,7 +1583,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 #region Package Template GetDeclaredNamespaceOrType
                 case SyntaxKind.TemplateDeclaration:
-                    return ((TemplateDeclarationSyntax) declaration).Name.ValueText;
+                    return ((TemplateDeclarationSyntax) declaration).Name.GetUnqualifiedName().Identifier.ValueText;
                 #endregion
 
                 default:

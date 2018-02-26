@@ -1654,7 +1654,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             Debug.Assert(!IsInAsync);
 
             var templateToken = this.EatToken();
-            var name = this.ParseIdentifierToken();
+            var name = this.ParseQualifiedName();
 
             // Parse template body
             bool parseMembers = true;
@@ -1728,8 +1728,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 }
 
                 // Generate a TemplateDeclaration from the given info
-                return _syntaxFactory.TemplateDeclaration(templateToken, name, openBrace, members, closeBrace,
-                    semicolon);
+                return _syntaxFactory.TemplateDeclaration(templateToken, name, openBrace, members, closeBrace, semicolon);
             }
             finally
             {

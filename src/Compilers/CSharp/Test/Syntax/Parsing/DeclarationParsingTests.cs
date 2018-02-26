@@ -547,7 +547,10 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
                     N(SyntaxKind.TemplateDeclaration);
                     {
                         N(SyntaxKind.TemplateKeyword);
-                        N(SyntaxKind.IdentifierToken);
+                        N(SyntaxKind.IdentifierName);
+                        {
+                            N(SyntaxKind.IdentifierToken);
+                        }
                         N(SyntaxKind.OpenBraceToken);
                         N(SyntaxKind.ClassDeclaration);
                         {
@@ -591,7 +594,10 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
                     N(SyntaxKind.TemplateDeclaration);
                     {
                         N(SyntaxKind.TemplateKeyword);
-                        N(SyntaxKind.IdentifierToken);
+                        N(SyntaxKind.IdentifierName);
+                        {
+                            N(SyntaxKind.IdentifierToken);
+                        }
                         N(SyntaxKind.OpenBraceToken);
                         N(SyntaxKind.ClassDeclaration);
                         {

@@ -1031,7 +1031,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         
         private static Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.TemplateDeclarationSyntax GenerateTemplateDeclaration()
         {
-            return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.TemplateDeclaration(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.TemplateKeyword), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Identifier("Name"), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.OpenBraceToken), new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.MemberDeclarationSyntax>(), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.CloseBraceToken), null);
+            return Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.TemplateDeclaration(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.TemplateKeyword), GenerateIdentifierName(), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.OpenBraceToken), new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.MemberDeclarationSyntax>(), Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.Token(SyntaxKind.CloseBraceToken), null);
         }
         
         private static Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.RenameStatementSyntax GenerateRenameStatement()
@@ -3648,7 +3648,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             var node = GenerateTemplateDeclaration();
             
             Assert.Equal(SyntaxKind.TemplateKeyword, node.TemplateKeyword.Kind);
-            Assert.Equal(SyntaxKind.IdentifierToken, node.Name.Kind);
+            Assert.NotNull(node.Name);
             Assert.Equal(SyntaxKind.OpenBraceToken, node.OpenBraceToken.Kind);
             Assert.NotNull(node.Members);
             Assert.Equal(SyntaxKind.CloseBraceToken, node.CloseBraceToken.Kind);
@@ -10176,7 +10176,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
         
         private static TemplateDeclarationSyntax GenerateTemplateDeclaration()
         {
-            return SyntaxFactory.TemplateDeclaration(SyntaxFactory.Token(SyntaxKind.TemplateKeyword), SyntaxFactory.Identifier("Name"), SyntaxFactory.Token(SyntaxKind.OpenBraceToken), new SyntaxList<MemberDeclarationSyntax>(), SyntaxFactory.Token(SyntaxKind.CloseBraceToken), default(SyntaxToken));
+            return SyntaxFactory.TemplateDeclaration(SyntaxFactory.Token(SyntaxKind.TemplateKeyword), GenerateIdentifierName(), SyntaxFactory.Token(SyntaxKind.OpenBraceToken), new SyntaxList<MemberDeclarationSyntax>(), SyntaxFactory.Token(SyntaxKind.CloseBraceToken), default(SyntaxToken));
         }
         
         private static RenameStatementSyntax GenerateRenameStatement()
@@ -12793,7 +12793,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             var node = GenerateTemplateDeclaration();
             
             Assert.Equal(SyntaxKind.TemplateKeyword, node.TemplateKeyword.Kind());
-            Assert.Equal(SyntaxKind.IdentifierToken, node.Name.Kind());
+            Assert.NotNull(node.Name);
             Assert.Equal(SyntaxKind.OpenBraceToken, node.OpenBraceToken.Kind());
             Assert.NotNull(node.Members);
             Assert.Equal(SyntaxKind.CloseBraceToken, node.CloseBraceToken.Kind());

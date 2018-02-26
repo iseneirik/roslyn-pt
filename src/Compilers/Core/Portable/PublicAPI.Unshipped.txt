@@ -51,6 +51,7 @@ Microsoft.CodeAnalysis.IOperation.Syntax.get -> Microsoft.CodeAnalysis.SyntaxNod
 Microsoft.CodeAnalysis.IOperation.Type.get -> Microsoft.CodeAnalysis.ITypeSymbol
 Microsoft.CodeAnalysis.IPropertySymbol.RefKind.get -> Microsoft.CodeAnalysis.RefKind
 Microsoft.CodeAnalysis.IPropertySymbol.ReturnsByRefReadonly.get -> bool
+Microsoft.CodeAnalysis.ITemplateSymbol
 Microsoft.CodeAnalysis.OperationKind
 Microsoft.CodeAnalysis.OperationKind.AddressOfExpression = 515 -> Microsoft.CodeAnalysis.OperationKind
 Microsoft.CodeAnalysis.OperationKind.AnonymousFunctionExpression = 273 -> Microsoft.CodeAnalysis.OperationKind
@@ -477,6 +478,8 @@ Microsoft.CodeAnalysis.Semantics.UnaryOperatorKind.None = 0 -> Microsoft.CodeAna
 Microsoft.CodeAnalysis.Semantics.UnaryOperatorKind.Not = 2 -> Microsoft.CodeAnalysis.Semantics.UnaryOperatorKind
 Microsoft.CodeAnalysis.Semantics.UnaryOperatorKind.Plus = 3 -> Microsoft.CodeAnalysis.Semantics.UnaryOperatorKind
 Microsoft.CodeAnalysis.Semantics.UnaryOperatorKind.True = 5 -> Microsoft.CodeAnalysis.Semantics.UnaryOperatorKind
+Microsoft.CodeAnalysis.SymbolDisplayPartKind.TemplateName = 28 -> Microsoft.CodeAnalysis.SymbolDisplayPartKind
+Microsoft.CodeAnalysis.SymbolKind.Template = 20 -> Microsoft.CodeAnalysis.SymbolKind
 Microsoft.CodeAnalysis.SyntaxList<TNode>.SyntaxList(System.Collections.Generic.IEnumerable<TNode> nodes) -> void
 Microsoft.CodeAnalysis.SyntaxList<TNode>.SyntaxList(TNode node) -> void
 Microsoft.CodeAnalysis.SyntaxNodeOrTokenList.SyntaxNodeOrTokenList(System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.SyntaxNodeOrToken> nodesAndTokens) -> void
@@ -487,7 +490,6 @@ Microsoft.CodeAnalysis.SyntaxTokenList.SyntaxTokenList(params Microsoft.CodeAnal
 Microsoft.CodeAnalysis.SyntaxTriviaList.SyntaxTriviaList(Microsoft.CodeAnalysis.SyntaxTrivia trivia) -> void
 Microsoft.CodeAnalysis.SyntaxTriviaList.SyntaxTriviaList(System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.SyntaxTrivia> trivias) -> void
 Microsoft.CodeAnalysis.SyntaxTriviaList.SyntaxTriviaList(params Microsoft.CodeAnalysis.SyntaxTrivia[] trivias) -> void
-Microsoft.CodeAnalysis.TypeKind.Template = 13 -> Microsoft.CodeAnalysis.TypeKind
 abstract Microsoft.CodeAnalysis.Diagnostics.OperationBlockStartAnalysisContext.RegisterOperationAction(System.Action<Microsoft.CodeAnalysis.Diagnostics.OperationAnalysisContext> action, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.OperationKind> operationKinds) -> void
 abstract Microsoft.CodeAnalysis.Diagnostics.OperationBlockStartAnalysisContext.RegisterOperationBlockEndAction(System.Action<Microsoft.CodeAnalysis.Diagnostics.OperationBlockAnalysisContext> action) -> void
 abstract Microsoft.CodeAnalysis.SemanticModel.GetOperationCore(Microsoft.CodeAnalysis.SyntaxNode node, System.Threading.CancellationToken cancellationToken) -> Microsoft.CodeAnalysis.IOperation
@@ -687,3 +689,5 @@ virtual Microsoft.CodeAnalysis.Semantics.OperationVisitor<TArgument, TResult>.Vi
 virtual Microsoft.CodeAnalysis.Semantics.OperationVisitor<TArgument, TResult>.VisitVariableDeclarationStatement(Microsoft.CodeAnalysis.Semantics.IVariableDeclarationStatement operation, TArgument argument) -> TResult
 virtual Microsoft.CodeAnalysis.Semantics.OperationVisitor<TArgument, TResult>.VisitWhileLoopStatement(Microsoft.CodeAnalysis.Semantics.IWhileLoopStatement operation, TArgument argument) -> TResult
 virtual Microsoft.CodeAnalysis.Semantics.OperationVisitor<TArgument, TResult>.VisitYieldBreakStatement(Microsoft.CodeAnalysis.Semantics.IReturnStatement operation, TArgument argument) -> TResult
+virtual Microsoft.CodeAnalysis.SymbolVisitor.VisitTemplate(Microsoft.CodeAnalysis.ITemplateSymbol symbol) -> void
+virtual Microsoft.CodeAnalysis.SymbolVisitor<TResult>.VisitTemplate(Microsoft.CodeAnalysis.ITemplateSymbol symbol) -> TResult

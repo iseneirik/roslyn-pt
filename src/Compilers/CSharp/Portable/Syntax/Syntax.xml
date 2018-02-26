@@ -4309,9 +4309,7 @@
     <Field Name="TemplateKeyword" Type="SyntaxToken">
       <Kind Name="TemplateKeyword"/>
     </Field>
-    <Field Name="Name" Type="SyntaxToken">
-      <Kind Name="IdentifierToken"/>
-    </Field>
+    <Field Name="Name" Type="NameSyntax"/>
     <Field Name="OpenBraceToken" Type="SyntaxToken">
       <Kind Name="OpenBraceToken"/>
     </Field>
