@@ -303,8 +303,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
-        // TODO: Package Template - Are templates declarations or more like namespaces?
-        // Treat templates as a type declaration for now...
         public static bool IsTypeDeclaration(SyntaxKind kind)
         {
             switch (kind)
@@ -314,9 +312,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.ClassDeclaration:
                 case SyntaxKind.StructDeclaration:
                 case SyntaxKind.InterfaceDeclaration:
-                #region Package Template IsTypeDeclaration
-                case SyntaxKind.TemplateDeclaration:
-                #endregion
                     return true;
 
                 default:

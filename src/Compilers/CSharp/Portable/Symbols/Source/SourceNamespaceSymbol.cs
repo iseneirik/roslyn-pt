@@ -267,13 +267,24 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                     bool hasType = false;
                     bool hasNamespace = false;
+                    #region Package Template - SourceNamespaceSymbol hasTemplate
+                    bool hasTemplate = false;
+                    #endregion
 
                     foreach (var symbol in members)
                     {
                         if (symbol.Kind == SymbolKind.NamedType)
                         {
                             hasType = true;
-                            if (hasNamespace)
+                            if (hasNamespace || hasTemplate)
+                            {
+                                break;
+                            }
+                        }
+                        else if (symbol.Kind == SymbolKind.Template)
+                        {
+                            hasTemplate = true;
+                            if (hasType)
                             {
                                 break;
                             }
@@ -291,7 +302,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                     if (hasType)
                     {
-                        if (hasNamespace)
+                        if (hasNamespace || hasTemplate)
                         {
                             dictionary.Add(kvp.Key, members.OfType<NamedTypeSymbol>().AsImmutable());
                         }
@@ -408,14 +419,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 case DeclarationKind.Namespace:
                     return new SourceNamespaceSymbol(_module, this, (MergedNamespaceDeclaration)declaration, diagnostics);
 
+                #region Package Template - BuildSymbol
+                case DeclarationKind.Template:
+                    return new TemplateSymbol(this, (MergedTemplateDeclaration)declaration);
+                #endregion
+
                 case DeclarationKind.Struct:
                 case DeclarationKind.Interface:
                 case DeclarationKind.Enum:
                 case DeclarationKind.Delegate:
                 case DeclarationKind.Class:
-                #region Package Template - BuildSymbol
-                case DeclarationKind.Template:
-                #endregion
                     return new SourceNamedTypeSymbol(this, (MergedTypeDeclaration)declaration, diagnostics);
 
                 case DeclarationKind.Script:
@@ -548,9 +561,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     else
                     {
                         NamespaceOrTypeSymbol symbol = (NamespaceOrTypeSymbol)value;
-                        members = symbol.Kind == SymbolKind.Namespace
+
+                        #region PackageTemplate - SourceNamespaceSymbol - SymbolKind.Template
+                        members = (symbol.Kind == SymbolKind.Namespace || symbol.Kind == SymbolKind.Template)
                             ? ImmutableArray.Create<NamespaceOrTypeSymbol>(symbol)
                             : StaticCast<NamespaceOrTypeSymbol>.From(ImmutableArray.Create<NamedTypeSymbol>((NamedTypeSymbol)symbol));
+                        #endregion
                     }
 
                     result.Add(kvp.Key, members);

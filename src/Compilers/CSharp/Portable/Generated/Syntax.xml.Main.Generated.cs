@@ -4281,7 +4281,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     public override SyntaxNode VisitTemplateDeclaration(TemplateDeclarationSyntax node)
     {
       var templateKeyword = this.VisitToken(node.TemplateKeyword);
-      var name = this.VisitToken(node.Name);
+      var name = (NameSyntax)this.Visit(node.Name);
       var openBraceToken = this.VisitToken(node.OpenBraceToken);
       var members = this.VisitList(node.Members);
       var closeBraceToken = this.VisitToken(node.CloseBraceToken);
@@ -10982,7 +10982,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     }
 
     /// <summary>Creates a new TemplateDeclarationSyntax instance.</summary>
-    public static TemplateDeclarationSyntax TemplateDeclaration(SyntaxToken templateKeyword, SyntaxToken name, SyntaxToken openBraceToken, SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    public static TemplateDeclarationSyntax TemplateDeclaration(SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
     {
       switch (templateKeyword.Kind())
       {
@@ -10991,13 +10991,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         default:
           throw new ArgumentException("templateKeyword");
       }
-      switch (name.Kind())
-      {
-        case SyntaxKind.IdentifierToken:
-          break;
-        default:
-          throw new ArgumentException("name");
-      }
+      if (name == null)
+        throw new ArgumentNullException(nameof(name));
       switch (openBraceToken.Kind())
       {
         case SyntaxKind.OpenBraceToken:
@@ -11020,26 +11015,20 @@ namespace Microsoft.CodeAnalysis.CSharp
         default:
           throw new ArgumentException("semicolonToken");
       }
-      return (TemplateDeclarationSyntax)Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.TemplateDeclaration((Syntax.InternalSyntax.SyntaxToken)templateKeyword.Node, (Syntax.InternalSyntax.SyntaxToken)name.Node, (Syntax.InternalSyntax.SyntaxToken)openBraceToken.Node, members.Node.ToGreenList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.MemberDeclarationSyntax>(), (Syntax.InternalSyntax.SyntaxToken)closeBraceToken.Node, (Syntax.InternalSyntax.SyntaxToken)semicolonToken.Node).CreateRed();
+      return (TemplateDeclarationSyntax)Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.SyntaxFactory.TemplateDeclaration((Syntax.InternalSyntax.SyntaxToken)templateKeyword.Node, name == null ? null : (Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.NameSyntax)name.Green, (Syntax.InternalSyntax.SyntaxToken)openBraceToken.Node, members.Node.ToGreenList<Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.MemberDeclarationSyntax>(), (Syntax.InternalSyntax.SyntaxToken)closeBraceToken.Node, (Syntax.InternalSyntax.SyntaxToken)semicolonToken.Node).CreateRed();
     }
 
 
     /// <summary>Creates a new TemplateDeclarationSyntax instance.</summary>
-    public static TemplateDeclarationSyntax TemplateDeclaration(SyntaxToken name, SyntaxList<MemberDeclarationSyntax> members)
+    public static TemplateDeclarationSyntax TemplateDeclaration(NameSyntax name, SyntaxList<MemberDeclarationSyntax> members)
     {
       return SyntaxFactory.TemplateDeclaration(SyntaxFactory.Token(SyntaxKind.TemplateKeyword), name, SyntaxFactory.Token(SyntaxKind.OpenBraceToken), members, SyntaxFactory.Token(SyntaxKind.CloseBraceToken), default(SyntaxToken));
     }
 
     /// <summary>Creates a new TemplateDeclarationSyntax instance.</summary>
-    public static TemplateDeclarationSyntax TemplateDeclaration(SyntaxToken name)
+    public static TemplateDeclarationSyntax TemplateDeclaration(NameSyntax name)
     {
       return SyntaxFactory.TemplateDeclaration(SyntaxFactory.Token(SyntaxKind.TemplateKeyword), name, SyntaxFactory.Token(SyntaxKind.OpenBraceToken), default(SyntaxList<MemberDeclarationSyntax>), SyntaxFactory.Token(SyntaxKind.CloseBraceToken), default(SyntaxToken));
-    }
-
-    /// <summary>Creates a new TemplateDeclarationSyntax instance.</summary>
-    public static TemplateDeclarationSyntax TemplateDeclaration(string name)
-    {
-      return SyntaxFactory.TemplateDeclaration(SyntaxFactory.Token(SyntaxKind.TemplateKeyword), SyntaxFactory.Identifier(name), SyntaxFactory.Token(SyntaxKind.OpenBraceToken), default(SyntaxList<MemberDeclarationSyntax>), SyntaxFactory.Token(SyntaxKind.CloseBraceToken), default(SyntaxToken));
     }
 
     /// <summary>Creates a new RenameStatementSyntax instance.</summary>

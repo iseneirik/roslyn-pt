@@ -81,6 +81,13 @@ namespace Microsoft.CodeAnalysis
             return DefaultVisit(symbol);
         }
 
+        #region Package Template - SymbolVisitor VisitTemplate
+        public virtual TResult VisitTemplate(ITemplateSymbol symbol)
+        {
+            return DefaultVisit(symbol);
+        }
+        #endregion
+
         public virtual TResult VisitParameter(IParameterSymbol symbol)
         {
             return DefaultVisit(symbol);

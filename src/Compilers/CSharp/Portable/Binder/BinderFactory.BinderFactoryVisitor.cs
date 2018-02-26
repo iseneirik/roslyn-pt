@@ -716,6 +716,44 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return VisitTypeDeclarationCore(node);
             }
 
+            #region Package Template - BinderFactoryVisitor VisitTemplateDeclaration
+            public override Binder VisitTemplateDeclaration(TemplateDeclarationSyntax parent)
+            {
+                return VisitTemplateDeclaration(parent, _position);
+            }
+
+            internal InContainerBinder VisitTemplateDeclaration(TemplateDeclarationSyntax parent, int position)
+            {
+                var extraInfo = NodeUsage.NamespaceBody;
+                var key = CreateBinderCacheKey(parent, extraInfo);
+
+                Binder result;
+                if (!binderCache.TryGetValue(key, out result))
+                {
+                    InContainerBinder outer;
+                    var container = parent.Parent;
+
+                    if (InScript && container.Kind() == SyntaxKind.CompilationUnit)
+                    {
+                        // Although namespaces are not allowed in script code we still bind them so that we don't report useless errors.
+                        // A namespace in script code is not bound within the scope of a Script class, 
+                        // but still within scope of compilation unit extern aliases and usings.
+                        outer = VisitCompilationUnit((CompilationUnitSyntax)container, inUsing: false, inScript: false);
+                    }
+                    else
+                    {
+                        outer = (InContainerBinder)_factory.GetBinder(parent.Parent, position);
+                    }
+
+                    result = MakeTemplateBinder(parent, parent.Name, outer);
+
+                    binderCache.TryAdd(key, result);
+                }
+
+                return (InContainerBinder)result;
+            }
+            #endregion
+
             public override Binder VisitNamespaceDeclaration(NamespaceDeclarationSyntax parent)
             {
                 if (!LookupPosition.IsInNamespaceDeclaration(_position, parent))
@@ -773,6 +811,23 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 return (InContainerBinder)result;
             }
+
+            #region Package Template - BinderFactoryVisitor MakeTemplateBinder
+            private InContainerBinder MakeTemplateBinder(CSharpSyntaxNode node, NameSyntax name, InContainerBinder outer)
+            {
+                QualifiedNameSyntax dotted;
+                while ((dotted = name as QualifiedNameSyntax) != null)
+                {
+                    outer = MakeNamespaceBinder(dotted.Left, dotted.Left, outer, inUsing: false);
+                    name = dotted.Right;
+                }
+
+                NamespaceOrTypeSymbol container = outer.Container;
+                TemplateSymbol ts = ((NamespaceSymbol)container).GetNestedTemplate(name);
+                if ((object)ts == null) throw new InvalidOperationException($"Could not find template {name} in namespace {container}");
+                return new InContainerBinder(ts, outer, node, inUsing: false);
+            }
+            #endregion
 
             private InContainerBinder MakeNamespaceBinder(CSharpSyntaxNode node, NameSyntax name, InContainerBinder outer, bool inUsing)
             {

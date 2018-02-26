@@ -1311,8 +1311,43 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return GetDeclaredType(delegateDeclarationSyntax);
             }
 
+            #region Package Template - GetDeclaredNamespaceOrType()
+            var templateDeclarationSyntax = declarationSyntax as TemplateDeclarationSyntax;
+            if (templateDeclarationSyntax != null)
+            {
+                return GetDeclaredTemplate(templateDeclarationSyntax);
+            }
+            #endregion
+
             return null;
         }
+
+        #region Package Template - GetDeclaredTemplate()
+        private NamespaceOrTypeSymbol GetDeclaredTemplate(TemplateDeclarationSyntax declarationSyntax)
+        {
+            Debug.Assert(declarationSyntax != null);
+
+            NamespaceOrTypeSymbol container;
+
+            if (declarationSyntax.Parent.Kind() == SyntaxKind.CompilationUnit)
+            {
+                container = _compilation.Assembly.GlobalNamespace;
+            }
+            else
+            {
+                container = GetDeclaredNamespaceOrType(declarationSyntax.Parent);
+            }
+
+            Debug.Assert((object)container != null);
+
+            var symbol = (TemplateSymbol)GetDeclaredMember(container, declarationSyntax.Span, declarationSyntax.Name);
+            Debug.Assert((object)symbol != null);
+
+            // TODO: _compilation.GetCompilationNamespace(symbol);
+
+            return symbol;
+        }
+        #endregion
 
         /// <summary>
         /// Given an member declaration syntax, get the corresponding symbol.
@@ -1583,7 +1618,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 #region Package Template GetDeclaredNamespaceOrType
                 case SyntaxKind.TemplateDeclaration:
-                    return ((TemplateDeclarationSyntax) declaration).Name.ValueText;
+                    return ((TemplateDeclarationSyntax) declaration).Name.GetUnqualifiedName().Identifier.ValueText;
                 #endregion
 
                 default:
@@ -2117,6 +2152,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return _compilation.Assembly.GlobalNamespace;
                 }
 
+                #region Package Template - GetDeclaredTypeMemberContainer
+                // top-level template
+                if (memberDeclaration.Kind() == SyntaxKind.TemplateDeclaration)
+                {
+                    return _compilation.Assembly.GlobalNamespace;
+                }
+                #endregion
+
                 // top-level members in script or interactive code:
                 if (this.SyntaxTree.Options.Kind != SourceCodeKind.Regular)
                 {
@@ -2136,7 +2179,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var container = GetDeclaredNamespaceOrType(memberDeclaration.Parent);
             Debug.Assert((object)container != null);
 
-            // member in a type:
+            // member in a type or template:
             if (!container.IsNamespace)
             {
                 return container;

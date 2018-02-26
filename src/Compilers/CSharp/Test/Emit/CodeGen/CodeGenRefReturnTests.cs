@@ -1728,20 +1728,20 @@ class Program
     {
         class C1<T> where T : IDisposable
         {
-            T inst = default(T);
+            T ins = default(T);
 
             public ref T GetDisposable()
             {
-                return ref inst;
+                return ref ins;
             }
 
             public void Test()
             {
                 GetDisposable().Dispose();
-                System.Console.Write(inst.ToString());
+                System.Console.Write(ins.ToString());
 
                 GetDisposable()?.Dispose();
-                System.Console.Write(inst.ToString());
+                System.Console.Write(ins.ToString());
             }
         }
 
@@ -1779,7 +1779,7 @@ class Program
   IL_0006:  constrained. ""T""
   IL_000c:  callvirt   ""void System.IDisposable.Dispose()""
   IL_0011:  ldarg.0
-  IL_0012:  ldflda     ""T Program.C1<T>.inst""
+  IL_0012:  ldflda     ""T Program.C1<T>.ins""
   IL_0017:  constrained. ""T""
   IL_001d:  callvirt   ""string object.ToString()""
   IL_0022:  call       ""void System.Console.Write(string)""
@@ -1801,7 +1801,7 @@ class Program
   IL_0050:  constrained. ""T""
   IL_0056:  callvirt   ""void System.IDisposable.Dispose()""
   IL_005b:  ldarg.0
-  IL_005c:  ldflda     ""T Program.C1<T>.inst""
+  IL_005c:  ldflda     ""T Program.C1<T>.ins""
   IL_0061:  constrained. ""T""
   IL_0067:  callvirt   ""string object.ToString()""
   IL_006c:  call       ""void System.Console.Write(string)""
@@ -1819,7 +1819,7 @@ class Program
 {
     class C1<T> where T : IDisposable
     {
-        T inst = default(T);
+        T ins = default(T);
 
         public ref T GetDisposable(ref T arg)
         {
@@ -1828,12 +1828,12 @@ class Program
 
         public void Test()
         {
-            ref T temp = ref GetDisposable(ref inst);
+            ref T temp = ref GetDisposable(ref ins);
             temp.Dispose();
-            System.Console.Write(inst.ToString());
+            System.Console.Write(ins.ToString());
 
             temp?.Dispose();
-            System.Console.Write(inst.ToString());
+            System.Console.Write(ins.ToString());
         }
     }
 
@@ -1868,13 +1868,13 @@ struct Mutable : IDisposable
   .locals init (T V_0)
   IL_0000:  ldarg.0
   IL_0001:  ldarg.0
-  IL_0002:  ldflda     ""T Program.C1<T>.inst""
+  IL_0002:  ldflda     ""T Program.C1<T>.ins""
   IL_0007:  call       ""ref T Program.C1<T>.GetDisposable(ref T)""
   IL_000c:  dup
   IL_000d:  constrained. ""T""
   IL_0013:  callvirt   ""void System.IDisposable.Dispose()""
   IL_0018:  ldarg.0
-  IL_0019:  ldflda     ""T Program.C1<T>.inst""
+  IL_0019:  ldflda     ""T Program.C1<T>.ins""
   IL_001e:  constrained. ""T""
   IL_0024:  callvirt   ""string object.ToString()""
   IL_0029:  call       ""void System.Console.Write(string)""
@@ -1894,7 +1894,7 @@ struct Mutable : IDisposable
   IL_0051:  constrained. ""T""
   IL_0057:  callvirt   ""void System.IDisposable.Dispose()""
   IL_005c:  ldarg.0
-  IL_005d:  ldflda     ""T Program.C1<T>.inst""
+  IL_005d:  ldflda     ""T Program.C1<T>.ins""
   IL_0062:  constrained. ""T""
   IL_0068:  callvirt   ""string object.ToString()""
   IL_006d:  call       ""void System.Console.Write(string)""
@@ -1912,7 +1912,7 @@ class Program
 {
     class C1<T> where T : IDisposable
     {
-        T inst = default(T);
+        T ins = default(T);
 
         public ref T GetDisposable(ref T arg)
         {
@@ -1921,16 +1921,16 @@ class Program
 
         public void Test()
         {
-            ref T temp = ref GetDisposable(ref inst);
+            ref T temp = ref GetDisposable(ref ins);
 
             // prevent eliding of temp 
             for(int i = 0; i < 2; i++)
             {
                 temp.Dispose();
-                System.Console.Write(inst.ToString());
+                System.Console.Write(ins.ToString());
 
                 temp?.Dispose();
-                System.Console.Write(inst.ToString());
+                System.Console.Write(ins.ToString());
             }
         }
     }
@@ -1968,7 +1968,7 @@ struct Mutable : IDisposable
                 T V_2)
   IL_0000:  ldarg.0
   IL_0001:  ldarg.0
-  IL_0002:  ldflda     ""T Program.C1<T>.inst""
+  IL_0002:  ldflda     ""T Program.C1<T>.ins""
   IL_0007:  call       ""ref T Program.C1<T>.GetDisposable(ref T)""
   IL_000c:  stloc.0
   IL_000d:  ldc.i4.0
@@ -1978,7 +1978,7 @@ struct Mutable : IDisposable
   IL_0012:  constrained. ""T""
   IL_0018:  callvirt   ""void System.IDisposable.Dispose()""
   IL_001d:  ldarg.0
-  IL_001e:  ldflda     ""T Program.C1<T>.inst""
+  IL_001e:  ldflda     ""T Program.C1<T>.ins""
   IL_0023:  constrained. ""T""
   IL_0029:  callvirt   ""string object.ToString()""
   IL_002e:  call       ""void System.Console.Write(string)""
@@ -1999,7 +1999,7 @@ struct Mutable : IDisposable
   IL_0057:  constrained. ""T""
   IL_005d:  callvirt   ""void System.IDisposable.Dispose()""
   IL_0062:  ldarg.0
-  IL_0063:  ldflda     ""T Program.C1<T>.inst""
+  IL_0063:  ldflda     ""T Program.C1<T>.ins""
   IL_0068:  constrained. ""T""
   IL_006e:  callvirt   ""string object.ToString()""
   IL_0073:  call       ""void System.Console.Write(string)""
@@ -2024,7 +2024,7 @@ class Program
 {
     class C1<T> where T : IGoo<T>, new()
     {
-        T inst = new T();
+        T ins = new T();
 
         public ref T GetDisposable(ref T arg)
         {
@@ -2033,8 +2033,8 @@ class Program
 
         public void Test()
         {
-            GetDisposable(ref inst)?.Blah(ref inst);
-            System.Console.Write(inst == null);
+            GetDisposable(ref ins)?.Blah(ref ins);
+            System.Console.Write(ins == null);
         }
     }
 
@@ -2071,7 +2071,7 @@ class Goo : IGoo<Goo>
   .locals init (T V_0)
   IL_0000:  ldarg.0
   IL_0001:  ldarg.0
-  IL_0002:  ldflda     ""T Program.C1<T>.inst""
+  IL_0002:  ldflda     ""T Program.C1<T>.ins""
   IL_0007:  call       ""ref T Program.C1<T>.GetDisposable(ref T)""
   IL_000c:  ldloca.s   V_0
   IL_000e:  initobj    ""T""
@@ -2087,11 +2087,11 @@ class Goo : IGoo<Goo>
   IL_002c:  pop
   IL_002d:  br.s       IL_0040
   IL_002f:  ldarg.0
-  IL_0030:  ldflda     ""T Program.C1<T>.inst""
+  IL_0030:  ldflda     ""T Program.C1<T>.ins""
   IL_0035:  constrained. ""T""
   IL_003b:  callvirt   ""void IGoo<T>.Blah(ref T)""
   IL_0040:  ldarg.0
-  IL_0041:  ldfld      ""T Program.C1<T>.inst""
+  IL_0041:  ldfld      ""T Program.C1<T>.ins""
   IL_0046:  box        ""T""
   IL_004b:  ldnull
   IL_004c:  ceq
@@ -2110,7 +2110,7 @@ class Program
 {
     class C1<T> where T : IGoo<T>, new()
     {
-        T inst = new T();
+        T ins = new T();
 
         public ref T GetDisposable(ref T arg)
         {
@@ -2119,19 +2119,19 @@ class Program
 
         public void Test()
         {
-            ref T temp = ref GetDisposable(ref inst);
+            ref T temp = ref GetDisposable(ref ins);
 
             // prevent eliding of temp 
             for(int i = 0; i < 2; i++)
             {
                 temp?.Blah(ref temp);
                 System.Console.Write(temp == null);
-                System.Console.Write(inst == null);
+                System.Console.Write(ins == null);
 
-                inst = new T();
+                ins = new T();
                 temp?.Blah(ref temp);
                 System.Console.Write(temp == null);
-                System.Console.Write(inst == null);
+                System.Console.Write(ins == null);
             }
         }
     }
@@ -2171,7 +2171,7 @@ class Goo : IGoo<Goo>
                 T V_2)
   IL_0000:  ldarg.0
   IL_0001:  ldarg.0
-  IL_0002:  ldflda     ""T Program.C1<T>.inst""
+  IL_0002:  ldflda     ""T Program.C1<T>.ins""
   IL_0007:  call       ""ref T Program.C1<T>.GetDisposable(ref T)""
   IL_000c:  stloc.0
   IL_000d:  ldc.i4.0
@@ -2201,14 +2201,14 @@ class Goo : IGoo<Goo>
   IL_0050:  ceq
   IL_0052:  call       ""void System.Console.Write(bool)""
   IL_0057:  ldarg.0
-  IL_0058:  ldfld      ""T Program.C1<T>.inst""
+  IL_0058:  ldfld      ""T Program.C1<T>.ins""
   IL_005d:  box        ""T""
   IL_0062:  ldnull
   IL_0063:  ceq
   IL_0065:  call       ""void System.Console.Write(bool)""
   IL_006a:  ldarg.0
   IL_006b:  call       ""T System.Activator.CreateInstance<T>()""
-  IL_0070:  stfld      ""T Program.C1<T>.inst""
+  IL_0070:  stfld      ""T Program.C1<T>.ins""
   IL_0075:  ldloc.0
   IL_0076:  ldloca.s   V_2
   IL_0078:  initobj    ""T""
@@ -2233,7 +2233,7 @@ class Goo : IGoo<Goo>
   IL_00b1:  ceq
   IL_00b3:  call       ""void System.Console.Write(bool)""
   IL_00b8:  ldarg.0
-  IL_00b9:  ldfld      ""T Program.C1<T>.inst""
+  IL_00b9:  ldfld      ""T Program.C1<T>.ins""
   IL_00be:  box        ""T""
   IL_00c3:  ldnull
   IL_00c4:  ceq

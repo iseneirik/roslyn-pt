@@ -83,6 +83,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             return DefaultVisit(symbol);
         }
 
+        #region Package Template - SymbolVisitor VisitTemplate
+        public virtual TResult VisitTemplate(TemplateSymbol symbol)
+        {
+            return DefaultVisit(symbol);
+        }
+        #endregion
+
         public virtual TResult VisitParameter(ParameterSymbol symbol)
         {
             return DefaultVisit(symbol);

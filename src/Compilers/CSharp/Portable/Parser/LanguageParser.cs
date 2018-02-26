@@ -631,12 +631,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                             goto default;
 
                         default:
-                            /* TODO: Package Templates -> Alternative 2: Add parsing of templates here
-                             *  Adding package templates as a member of a namespace seems more correct.
-                             *  In C#, namespaces simply help differ between names, so having templates
-                             *  as a namespace member, can let us create different templates with the same
-                             *  name and having them in different namespaces.
-                             */
                             var memberOrStatement = this.ParseMemberDeclarationOrStatement(parentKind);
                             if (memberOrStatement == null)
                             {
@@ -1432,14 +1426,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             switch (this.CurrentToken.Kind)
             {
-                #region Package Template ParseTypeDeclaration()
-                case SyntaxKind.TemplateKeyword:
-                    return this.ParseTemplateDeclaration();
-
-                case SyntaxKind.InstKeyword:
-                    return this.ParseInstStatement();
-                #endregion
-
                 case SyntaxKind.ClassKeyword:
                     // report use of "static class" if feature is unsupported 
                     CheckForVersionSpecificModifiers(modifiers, SyntaxKind.StaticKeyword, MessageID.IDS_FeatureStaticClasses);
@@ -1668,7 +1654,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             Debug.Assert(!IsInAsync);
 
             var templateToken = this.EatToken();
-            var name = this.ParseIdentifierToken();
+            var name = this.ParseQualifiedName();
 
             // Parse template body
             bool parseMembers = true;
@@ -1742,8 +1728,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 }
 
                 // Generate a TemplateDeclaration from the given info
-                return _syntaxFactory.TemplateDeclaration(templateToken, name, openBrace, members, closeBrace,
-                    semicolon);
+                return _syntaxFactory.TemplateDeclaration(templateToken, name, openBrace, members, closeBrace, semicolon);
             }
             finally
             {
@@ -2728,7 +2713,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             }
 
             // if it's neither a class declaration or inst statement, we have an error
-            /* TODO: Handle errors
+            /* TODO: Package Template - Handle errors
              * This might be easier to do when we have implemented parsing legal template class declarations
              * and legal template inst statments, then we can resume parsing at the next legal syntax.
              */
@@ -2932,8 +2917,24 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                     return namespaceDecl;
                 }
 
+                #region Package Template - ParseMemberDeclarationOrStatement()
+                // Template declarations and inst statements are allowed in namespaces and globally.
+                if (parentKind == SyntaxKind.CompilationUnit || parentKind == SyntaxKind.NamespaceDeclaration)
+                {
+                    if (IsTemplateDeclarationStart())
+                    {
+                        return this.ParseTemplateDeclaration();
+                    } 
+                    
+                    if (IsInstStatementStart())
+                    {
+                        return this.ParseInstStatement();
+                    }
+                }
+                #endregion
+
                 // It's valid to have a type declaration here -- check for those
-                if (IsTypeDeclarationStart() || IsTemplateDeclarationStart() || IsInstStatementStart())
+                if (IsTypeDeclarationStart())
                 {
                     return this.ParseTypeDeclaration(attributes, modifiers);
                 }

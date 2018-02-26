@@ -33614,13 +33614,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
   internal sealed partial class TemplateDeclarationSyntax : MemberDeclarationSyntax
   {
     internal readonly SyntaxToken templateKeyword;
-    internal readonly SyntaxToken name;
+    internal readonly NameSyntax name;
     internal readonly SyntaxToken openBraceToken;
     internal readonly GreenNode members;
     internal readonly SyntaxToken closeBraceToken;
     internal readonly SyntaxToken semicolonToken;
 
-    internal TemplateDeclarationSyntax(SyntaxKind kind, SyntaxToken templateKeyword, SyntaxToken name, SyntaxToken openBraceToken, GreenNode members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+    internal TemplateDeclarationSyntax(SyntaxKind kind, SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, GreenNode members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
     {
         this.SlotCount = 6;
@@ -33645,7 +33645,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
     }
 
 
-    internal TemplateDeclarationSyntax(SyntaxKind kind, SyntaxToken templateKeyword, SyntaxToken name, SyntaxToken openBraceToken, GreenNode members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken, SyntaxFactoryContext context)
+    internal TemplateDeclarationSyntax(SyntaxKind kind, SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, GreenNode members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken, SyntaxFactoryContext context)
         : base(kind)
     {
         this.SetFactoryContext(context);
@@ -33671,7 +33671,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
     }
 
 
-    internal TemplateDeclarationSyntax(SyntaxKind kind, SyntaxToken templateKeyword, SyntaxToken name, SyntaxToken openBraceToken, GreenNode members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    internal TemplateDeclarationSyntax(SyntaxKind kind, SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, GreenNode members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
         : base(kind)
     {
         this.SlotCount = 6;
@@ -33696,7 +33696,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
     }
 
     public SyntaxToken TemplateKeyword { get { return this.templateKeyword; } }
-    public SyntaxToken Name { get { return this.name; } }
+    public NameSyntax Name { get { return this.name; } }
     public SyntaxToken OpenBraceToken { get { return this.openBraceToken; } }
     public Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<MemberDeclarationSyntax> Members { get { return new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<MemberDeclarationSyntax>(this.members); } }
     public SyntaxToken CloseBraceToken { get { return this.closeBraceToken; } }
@@ -33732,7 +33732,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         visitor.VisitTemplateDeclaration(this);
     }
 
-    public TemplateDeclarationSyntax Update(SyntaxToken templateKeyword, SyntaxToken name, SyntaxToken openBraceToken, Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    public TemplateDeclarationSyntax Update(SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
     {
         if (templateKeyword != this.TemplateKeyword || name != this.Name || openBraceToken != this.OpenBraceToken || members != this.Members || closeBraceToken != this.CloseBraceToken || semicolonToken != this.SemicolonToken)
         {
@@ -33769,7 +33769,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
          AdjustFlagsAndWidth(templateKeyword);
          this.templateKeyword = templateKeyword;
       }
-      var name = (SyntaxToken)reader.ReadValue();
+      var name = (NameSyntax)reader.ReadValue();
       if (name != null)
       {
          AdjustFlagsAndWidth(name);
@@ -38443,7 +38443,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
     public override CSharpSyntaxNode VisitTemplateDeclaration(TemplateDeclarationSyntax node)
     {
       var templateKeyword = (SyntaxToken)this.Visit(node.TemplateKeyword);
-      var name = (SyntaxToken)this.Visit(node.Name);
+      var name = (NameSyntax)this.Visit(node.Name);
       var openBraceToken = (SyntaxToken)this.Visit(node.OpenBraceToken);
       var members = this.VisitList(node.Members);
       var closeBraceToken = (SyntaxToken)this.Visit(node.CloseBraceToken);
@@ -45423,7 +45423,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
       return new ShebangDirectiveTriviaSyntax(SyntaxKind.ShebangDirectiveTrivia, hashToken, exclamationToken, endOfDirectiveToken, isActive, this.context);
     }
 
-    public TemplateDeclarationSyntax TemplateDeclaration(SyntaxToken templateKeyword, SyntaxToken name, SyntaxToken openBraceToken, Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    public TemplateDeclarationSyntax TemplateDeclaration(SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
     {
 #if DEBUG
       if (templateKeyword == null)
@@ -45437,13 +45437,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
       }
       if (name == null)
         throw new ArgumentNullException(nameof(name));
-      switch (name.Kind)
-      {
-        case SyntaxKind.IdentifierToken:
-          break;
-        default:
-          throw new ArgumentException("name");
-      }
       if (openBraceToken == null)
         throw new ArgumentNullException(nameof(openBraceToken));
       switch (openBraceToken.Kind)
@@ -52574,7 +52567,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
       return new ShebangDirectiveTriviaSyntax(SyntaxKind.ShebangDirectiveTrivia, hashToken, exclamationToken, endOfDirectiveToken, isActive);
     }
 
-    public static TemplateDeclarationSyntax TemplateDeclaration(SyntaxToken templateKeyword, SyntaxToken name, SyntaxToken openBraceToken, Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    public static TemplateDeclarationSyntax TemplateDeclaration(SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
     {
 #if DEBUG
       if (templateKeyword == null)
@@ -52588,13 +52581,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
       }
       if (name == null)
         throw new ArgumentNullException(nameof(name));
-      switch (name.Kind)
-      {
-        case SyntaxKind.IdentifierToken:
-          break;
-        default:
-          throw new ArgumentException("name");
-      }
       if (openBraceToken == null)
         throw new ArgumentNullException(nameof(openBraceToken));
       switch (openBraceToken.Kind)

@@ -10017,8 +10017,8 @@ class Test {
 public static int Main() 
 {
 int i, j;
-IGoo inst = new Goo();
-GenDelegate<int> MyDelegate = new GenDelegate<int>(inst.Function<int>);
+IGoo ins = new Goo();
+GenDelegate<int> MyDelegate = new GenDelegate<int>(ins.Function<int>);
 i = MyDelegate(10, out j);
 if ((i != 10) || (j != 10))
 {

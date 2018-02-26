@@ -21281,6 +21281,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
   public sealed partial class TemplateDeclarationSyntax : MemberDeclarationSyntax
   {
+    private NameSyntax name;
     private SyntaxNode members;
 
     internal TemplateDeclarationSyntax(Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.CSharpSyntaxNode green, SyntaxNode parent, int position)
@@ -21293,9 +21294,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
       get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.TemplateDeclarationSyntax)this.Green).templateKeyword, this.Position, 0); }
     }
 
-    public SyntaxToken Name 
+    public NameSyntax Name 
     {
-      get { return new SyntaxToken(this, ((Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax.TemplateDeclarationSyntax)this.Green).name, this.GetChildPosition(1), this.GetChildIndex(1)); }
+        get
+        {
+            return this.GetRed(ref this.name, 1);
+        }
     }
 
     public SyntaxToken OpenBraceToken 
@@ -21333,6 +21337,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     {
         switch (index)
         {
+            case 1: return this.GetRed(ref this.name, 1);
             case 3: return this.GetRed(ref this.members, 3);
             default: return null;
         }
@@ -21341,6 +21346,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     {
         switch (index)
         {
+            case 1: return this.name;
             case 3: return this.members;
             default: return null;
         }
@@ -21356,7 +21362,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         visitor.VisitTemplateDeclaration(this);
     }
 
-    public TemplateDeclarationSyntax Update(SyntaxToken templateKeyword, SyntaxToken name, SyntaxToken openBraceToken, SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
+    public TemplateDeclarationSyntax Update(SyntaxToken templateKeyword, NameSyntax name, SyntaxToken openBraceToken, SyntaxList<MemberDeclarationSyntax> members, SyntaxToken closeBraceToken, SyntaxToken semicolonToken)
     {
         if (templateKeyword != this.TemplateKeyword || name != this.Name || openBraceToken != this.OpenBraceToken || members != this.Members || closeBraceToken != this.CloseBraceToken || semicolonToken != this.SemicolonToken)
         {
@@ -21375,7 +21381,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         return this.Update(templateKeyword, this.Name, this.OpenBraceToken, this.Members, this.CloseBraceToken, this.SemicolonToken);
     }
 
-    public TemplateDeclarationSyntax WithName(SyntaxToken name)
+    public TemplateDeclarationSyntax WithName(NameSyntax name)
     {
         return this.Update(this.TemplateKeyword, name, this.OpenBraceToken, this.Members, this.CloseBraceToken, this.SemicolonToken);
     }
