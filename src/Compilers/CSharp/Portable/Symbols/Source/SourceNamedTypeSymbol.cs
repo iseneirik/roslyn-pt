@@ -79,9 +79,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                          declaration.Kind == DeclarationKind.Interface ||
                          declaration.Kind == DeclarationKind.Enum ||
                          declaration.Kind == DeclarationKind.Delegate ||
-                         #region Package Template - SourceNamedTypeSymbol
-                         declaration.Kind == DeclarationKind.Template ||
-                         #endregion
                          declaration.Kind == DeclarationKind.Class);
             if (containingSymbol.Kind == SymbolKind.NamedType)
             {

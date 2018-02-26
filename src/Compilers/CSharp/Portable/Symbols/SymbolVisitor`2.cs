@@ -52,6 +52,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             return DefaultVisit(symbol, argument);
         }
 
+        #region Package Template - SymbolVisitor VisitTemplate
+        public virtual TResult VisitTemplate(TemplateSymbol symbol, TArgument argument)
+        {
+            return DefaultVisit(symbol, argument);
+        }
+        #endregion
+
         /// <summary>
         /// Called when visiting a <see cref="ModuleSymbol" />; Override this method with specific
         /// implementation; Calling default <see cref="DefaultVisit" /> if it's not overridden 

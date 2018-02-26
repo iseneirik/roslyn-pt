@@ -28,6 +28,9 @@ namespace N
     class C
     {
     }
+    namespace N1
+    {
+    }
 }
 ");
             var tree = compilation.SyntaxTrees[0];
@@ -45,6 +48,83 @@ namespace N
             var templateSymbol = model.GetDeclaredSymbol(templateDecl);
             Assert.NotNull(templateSymbol);
             Assert.Equal("T", templateSymbol.Name);
+        }
+
+        [Fact]
+        public void GetDeclaredSymbolFromClassWithinTemplate()
+        {
+            var compilation = CreateStandardCompilation(@"
+namespace N
+{
+    template T
+    {
+        class C
+        {
+        }
+    }
+}
+");
+            var tree = compilation.SyntaxTrees[0];
+            var root = tree.GetCompilationUnitRoot();
+            var model = compilation.GetSemanticModel(tree);
+            var namespaceDecl = (NamespaceDeclarationSyntax) root.Members[0];
+            var namespaceSymbol = model.GetDeclaredSymbol(namespaceDecl);
+            Assert.NotNull(namespaceSymbol);
+            Assert.Equal("N", namespaceSymbol.Name);
+            var templateDecl = (TemplateDeclarationSyntax) namespaceDecl.Members[0];
+            var templateSymbol = model.GetDeclaredSymbol(templateDecl);
+            Assert.NotNull(templateSymbol);
+            Assert.Equal("T", templateSymbol.Name);
+            var classDecl = (ClassDeclarationSyntax) templateDecl.Members[0];
+            var classSymbol = model.GetDeclaredSymbol(classDecl);
+            Assert.NotNull(classSymbol);
+            Assert.Equal("C", classSymbol.Name);
+
+        }
+
+        [Fact]
+        public void GetClassReferenceFromClassWithinTemplate()
+        {
+            var compilation = CreateStandardCompilation(@"
+namespace N
+{
+    template T
+    {
+        class C
+        {
+        }
+
+        class D
+        {
+            C c;
+        }
+    }
+}
+");
+            var tree = compilation.SyntaxTrees[0];
+            var root = tree.GetCompilationUnitRoot();
+            var model = compilation.GetSemanticModel(tree);
+            var namespaceDecl = (NamespaceDeclarationSyntax) root.Members[0];
+            var namespaceSymbol = model.GetDeclaredSymbol(namespaceDecl);
+            Assert.NotNull(namespaceSymbol);
+            Assert.Equal("N", namespaceSymbol.Name);
+            var templateDecl = (TemplateDeclarationSyntax) namespaceDecl.Members[0];
+            var templateSymbol = model.GetDeclaredSymbol(templateDecl);
+            Assert.NotNull(templateSymbol);
+            Assert.Equal("T", templateSymbol.Name);
+            var classDecl = (ClassDeclarationSyntax) templateDecl.Members[0];
+            var classSymbol = model.GetDeclaredSymbol(classDecl);
+            Assert.NotNull(classSymbol);
+            Assert.Equal("C", classSymbol.Name);
+            var classDecl2 = (ClassDeclarationSyntax) templateDecl.Members[1];
+            var classSymbol2 = model.GetDeclaredSymbol(classDecl2);
+            Assert.NotNull(classSymbol2);
+            Assert.Equal("D", classSymbol2.Name);
+            var memberDecl = ((FieldDeclarationSyntax)classDecl2.Members[0]).Declaration.Variables[0];
+            var memberSymbol = model.GetDeclaredSymbol(memberDecl);
+            Assert.NotNull(memberSymbol);
+            Assert.Equal("c", memberSymbol.Name);
+            compilation.VerifyDiagnostics();
         }
         #endregion
 
@@ -5180,6 +5260,6 @@ class C
                 base.VisitIncompleteMember(node);
             }
         }
+        #endregion
     }
-    #endregion
 }

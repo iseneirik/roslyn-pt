@@ -289,6 +289,39 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             return null;
         }
 
+        #region Package Templates - NamespaceSymbol GetNestedTemplate
+        internal TemplateSymbol GetNestedTemplate(NameSyntax name)
+        {
+            switch (name.Kind())
+            {
+                case SyntaxKind.GenericName:
+                case SyntaxKind.IdentifierName:
+                    return this.GetNestedTemplate(((SimpleNameSyntax)name).Identifier.ValueText);
+
+                case SyntaxKind.QualifiedName:
+                    throw new System.NotImplementedException("NamespaceSymbol - GetNestedTemplate of QualifiedName");
+
+                case SyntaxKind.AliasQualifiedName:
+                    throw new System.NotImplementedException("NamespaceSymbol - GetNestedTemplate of AliasQualifiedName");
+            }
+
+            return null;
+        }
+
+        internal TemplateSymbol GetNestedTemplate(string name)
+        {
+            foreach (var sym in this.GetMembers(name))
+            {
+                if (sym.Kind == SymbolKind.Template)
+                {
+                    return (TemplateSymbol)sym;
+                }
+            }
+
+            return null;
+        }
+        #endregion
+
         internal NamespaceSymbol GetNestedNamespace(NameSyntax name)
         {
             switch (name.Kind())

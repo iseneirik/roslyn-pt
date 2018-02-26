@@ -79,12 +79,5 @@ namespace Microsoft.CodeAnalysis
         /// Type is an interactive submission.
         /// </summary>
         Submission = 12,
-
-        #region Package Template - TypeKind Enum
-        /// <summary>
-        /// Type is a template.
-        /// </summary>
-        Template = 13,
-        #endregion
     }
 }

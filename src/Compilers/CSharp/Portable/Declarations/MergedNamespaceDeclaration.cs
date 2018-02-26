@@ -85,6 +85,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             ArrayBuilder<SingleNamespaceDeclaration> namespaces = null;
             ArrayBuilder<SingleTypeDeclaration> types = null;
+            #region MyRegion
+            ArrayBuilder<TemplateDeclaration> templates = null;
+            #endregion
             bool allNamespacesHaveSameName = true;
             bool allTypesHaveSameIdentity = true;
 
@@ -128,6 +131,21 @@ namespace Microsoft.CodeAnalysis.CSharp
                         continue;
                     }
 
+                    #region PackageTemplate - MergedNamespaceDeclaration.MakeChildren()
+                    // ...or a template?
+                    var asTemplate = child as TemplateDeclaration;
+                    if (asTemplate != null)
+                    {
+                        if (templates == null)
+                        {
+                            templates = ArrayBuilder<TemplateDeclaration>.GetInstance();
+                        }
+
+                        templates.Add(asTemplate);
+                        continue;
+                    }
+                    #endregion
+
                     // Not sure if we can get here, perhaps, if we have errors, 
                     // but we care only about types and namespaces anyways.
                 }
@@ -170,6 +188,18 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 }
             }
+
+            #region Package Template - MergedNamespaceDeclaration MakeChildren()
+            if (templates != null)
+            {
+                foreach (var templateDeclaration in templates)
+                {
+                    children.Add(new MergedTemplateDeclaration(templateDeclaration));
+                }
+
+                templates.Free();
+            }
+            #endregion
 
             return children.ToImmutableAndFree();
         }

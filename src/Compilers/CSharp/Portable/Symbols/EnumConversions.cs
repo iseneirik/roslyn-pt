@@ -30,11 +30,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 case DeclarationKind.Struct:
                     return TypeKind.Struct;
 
-                #region Package Teamplate - TypeKind Conversion
-                case DeclarationKind.Template:
-                    return TypeKind.Template;
-                #endregion
-
                 default:
                     throw ExceptionUtilities.UnexpectedValue(kind);
             }

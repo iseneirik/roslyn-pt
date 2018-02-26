@@ -78,6 +78,13 @@ namespace Microsoft.CodeAnalysis
             DefaultVisit(symbol);
         }
 
+        #region Package Template - SymbolVisitor VisitTemplate
+        public virtual void VisitTemplate(ITemplateSymbol symbol)
+        {
+            DefaultVisit(symbol);
+        }
+        #endregion
+
         public virtual void VisitParameter(IParameterSymbol symbol)
         {
             DefaultVisit(symbol);
