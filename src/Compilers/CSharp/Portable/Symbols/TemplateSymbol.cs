@@ -51,7 +51,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public override void Accept(CSharpSymbolVisitor visitor)
         {
-            throw new System.NotImplementedException("TemplateSymbol: Accept(CSharpSymbolVisitor visitor)");
+            visitor.VisitTemplate(this);
         }
 
         public override TResult Accept<TResult>(CSharpSymbolVisitor<TResult> visitor)
@@ -59,9 +59,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             throw new System.NotImplementedException("TemplateSymbol: Accept<TResult>(CSharpSymbolVisitor<TResult> visitor)");
         }
 
-        internal override TResult Accept<TArgument, TResult>(CSharpSymbolVisitor<TArgument, TResult> visitor, TArgument a)
+        internal override TResult Accept<TArgument, TResult>(CSharpSymbolVisitor<TArgument, TResult> visitor, TArgument argument)
         {
-            throw new System.NotImplementedException("TemplateSymbol: Accept<TArgument, TResult>(CSharpSymbolVisitor<TArgument, TResult> visitor, TArgument a)");
+            return visitor.VisitTemplate(this, argument);
         }
 
         public override ImmutableArray<Symbol> GetMembers()
