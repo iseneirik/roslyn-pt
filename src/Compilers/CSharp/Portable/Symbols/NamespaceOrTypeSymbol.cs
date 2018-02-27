@@ -25,7 +25,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         }
 
         /// <summary>
-        /// Returns true if this symbol is a namespace. If it is not a namespace, it must be a type.
+        /// Returns true if this symbol is a namespace.
         /// </summary>
         public bool IsNamespace
         {
@@ -36,13 +36,24 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         }
 
         /// <summary>
-        /// Returns true if this symbols is a type. Equivalent to !IsNamespace.
+        /// Returns true if this symbol is a template.
+        /// </summary>
+        public bool IsTemplate
+        {
+            get
+            {
+                return Kind == SymbolKind.Template;
+            }
+        }
+
+        /// <summary>
+        /// Returns true if this symbols is a type.
         /// </summary>
         public bool IsType
         {
             get
             {
-                return !IsNamespace;
+                return !IsNamespace && !IsTemplate;
             }
         }
 

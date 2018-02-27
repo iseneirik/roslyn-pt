@@ -36,7 +36,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Classification.Classifiers
             ArrayBuilder<ClassifiedSpan> result,
             CancellationToken cancellationToken)
         {
-            if (!IsNamespaceName(name))
+            if (!IsNamespaceOrTemplateName(name))
             {
                 var symbolInfo = semanticModel.GetSymbolInfo(name, cancellationToken);
 
@@ -48,15 +48,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Classification.Classifiers
             }
         }
 
-        private static bool IsNamespaceName(NameSyntax name)
+        #region Package Template - NameSyntaxClassifier IsNamespaceOrTemplateName
+        private static bool IsNamespaceOrTemplateName(NameSyntax name)
         {
             while (name.Parent is NameSyntax)
             {
                 name = (NameSyntax)name.Parent;
             }
 
-            return name.IsParentKind(SyntaxKind.NamespaceDeclaration);
+            return name.IsParentKind(SyntaxKind.NamespaceDeclaration) || name.IsParentKind(SyntaxKind.TemplateDeclaration);
         }
+        #endregion
 
         private bool TryClassifySymbol(
             NameSyntax name,

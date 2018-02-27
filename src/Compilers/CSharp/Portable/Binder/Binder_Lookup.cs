@@ -160,11 +160,30 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 LookupMembersInNamespace(result, (NamespaceSymbol)nsOrType, name, arity, options, originalBinder, diagnose, ref useSiteDiagnostics);
             }
+            #region Package Template - Binder_Lookup LookupMembersInternal()
+            else if (nsOrType.IsTemplate)
+            {
+                LookupMembersInTemplate(result, (TemplateSymbol) nsOrType, name, arity, options, originalBinder, diagnose, ref useSiteDiagnostics);
+            }
+            #endregion
             else
             {
                 this.LookupMembersInType(result, (TypeSymbol)nsOrType, name, arity, basesBeingResolved, options, originalBinder, diagnose, ref useSiteDiagnostics);
             }
         }
+
+        #region Package Template - Binder_Lookup LookupMembersInTemplate()
+        private void LookupMembersInTemplate(LookupResult result, TemplateSymbol t, string name, int arity, LookupOptions options, Binder originalBinder, bool diagnose, ref HashSet<DiagnosticInfo> useSiteDiagnostics)
+        {
+            var members = GetCandidateMembers(t, name, options, originalBinder);
+
+            foreach (Symbol member in members)
+            {
+                SingleLookupResult resultOfThisMember = originalBinder.CheckViability(member, arity, options, null, diagnose, ref useSiteDiagnostics);
+                result.MergeEqual(resultOfThisMember);
+            }
+        }
+        #endregion
 
         // Looks up a member of given name and arity in a particular type.
         protected void LookupMembersInType(LookupResult result, TypeSymbol type, string name, int arity, ConsList<Symbol> basesBeingResolved, LookupOptions options, Binder originalBinder, bool diagnose, ref HashSet<DiagnosticInfo> useSiteDiagnostics)

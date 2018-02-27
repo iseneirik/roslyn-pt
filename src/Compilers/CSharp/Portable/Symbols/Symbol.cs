@@ -412,6 +412,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                         // never imported, and always references by name.
                         return true;
 
+                    #region Package Template - Symbol CanBeReferencedByName()
+                    case SymbolKind.Template:
+                    #endregion
                     case SymbolKind.Namespace:
                     case SymbolKind.Field:
                     case SymbolKind.ErrorType:
