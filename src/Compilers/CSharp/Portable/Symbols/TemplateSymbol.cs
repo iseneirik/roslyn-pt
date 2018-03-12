@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Roslyn.Utilities;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
@@ -14,6 +15,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private readonly Symbol _containingSymbol;
         private readonly TemplateDeclaration _declaration;
 
+        private SymbolCompletionState _state;
         private ImmutableArray<Symbol> _lazyAllMembers;
         private Dictionary<string, ImmutableArray<NamespaceOrTypeSymbol>> _nameToMembersMap;
         private Dictionary<string, ImmutableArray<NamedTypeSymbol>> _nameToTypeMembersMap;
@@ -38,6 +40,88 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         public override bool IsStatic => true;
         public override bool IsAbstract => false;
         public override bool IsSealed => true;
+
+        internal override void ForceComplete(SourceLocation locationOpt, CancellationToken cancellationToken)
+        {
+            while (true)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var incompletePart = _state.NextIncompletePart;
+                switch (incompletePart)
+                {
+                    case CompletionPart.NameToMembersMap:
+                        {
+                            var tmp = GetNameToMembersMap();
+                        }
+                        break;
+
+                    case CompletionPart.MembersCompleted:
+                        {
+                            var members = this.GetMembers();
+
+                            bool allCompleted = true;
+
+                            if (this.DeclaringCompilation.Options.ConcurrentBuild)
+                            {
+                                var po = cancellationToken.CanBeCanceled
+                                    ? new ParallelOptions() { CancellationToken = cancellationToken }
+                                    : CSharpCompilation.DefaultParallelOptions;
+
+                                Parallel.For(0, members.Length, po, UICultureUtilities.WithCurrentUICulture<int>(i =>
+                                {
+                                    var member = members[i];
+                                    ForceCompleteMemberByLocation(locationOpt, member, cancellationToken);
+                                }));
+
+                                foreach (var member in members)
+                                {
+                                    if (!member.HasComplete(CompletionPart.All))
+                                    {
+                                        allCompleted = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                foreach (var member in members)
+                                {
+                                    ForceCompleteMemberByLocation(locationOpt, member, cancellationToken);
+                                    allCompleted = allCompleted && member.HasComplete(CompletionPart.All);
+                                }
+                            }
+
+                            if (allCompleted)
+                            {
+                                _state.NotePartComplete(CompletionPart.MembersCompleted);
+                                break;
+                            }
+                            else
+                            {
+                                // NOTE: we're going to kick out of the completion part loop after this,
+                                // so not making progress isn't a problem.
+                                goto done;
+                            }
+                        }
+
+                    case CompletionPart.None:
+                        return;
+
+                    default:
+                        // any other values are completion parts intended for other kinds of symbols
+                        _state.NotePartComplete(CompletionPart.All & ~CompletionPart.NamespaceSymbolAll);
+                        break;
+                }
+
+                _state.SpinWaitComplete(incompletePart, cancellationToken);
+            }
+
+        done:
+            // Don't return until we've seen all of the CompletionParts. This ensures all
+            // diagnostics have been reported (not necessarily on this thread).
+            CompletionPart allParts = (locationOpt == null) ? CompletionPart.NamespaceSymbolAll : CompletionPart.NamespaceSymbolAll & ~CompletionPart.MembersCompleted;
+            _state.SpinWaitComplete(allParts, cancellationToken);
+        }
 
         public override void Accept(SymbolVisitor visitor)
         {
@@ -66,7 +150,36 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public override ImmutableArray<Symbol> GetMembers()
         {
-            throw new System.NotImplementedException("TemplateSymbol: ImmutableArray<Symbol> GetMembers()");
+            var allMembers = this.GetMembersUnordered();
+
+            if (allMembers.Length >= 2)
+            {
+                // The array isn't sorted. Sort it and remember that we sorted it.
+                allMembers = allMembers.Sort(LexicalOrderSymbolComparer.Instance);
+                ImmutableInterlocked.InterlockedExchange(ref _lazyAllMembers, allMembers);
+            }
+
+            return allMembers;
+        }
+        
+        internal override ImmutableArray<Symbol> GetMembersUnordered()
+        {
+            var result = _lazyAllMembers;
+
+            if (result.IsDefault)
+            {
+                var members = StaticCast<Symbol>.From(this.GetNameToMembersMap().Flatten(null));  // don't sort.
+                ImmutableInterlocked.InterlockedInitialize(ref _lazyAllMembers, members);
+                result = _lazyAllMembers;
+            }
+
+#if DEBUG
+            // In DEBUG, swap first and last elements so that use of Unordered in a place it isn't warranted is caught
+            // more obviously.
+            return result.DeOrder();
+#else
+            return result;
+#endif
         }
 
         public override ImmutableArray<Symbol> GetMembers(string name)
@@ -82,6 +195,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             throw new System.NotImplementedException("TemplateSymbol: ImmutableArray<NamedTypeSymbol> GetTypeMembers()");
         }
 
+
+
         public override ImmutableArray<NamedTypeSymbol> GetTypeMembers(string name)
         {
             ImmutableArray<NamedTypeSymbol> members;
@@ -95,7 +210,20 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (_nameToMembersMap == null)
             {
                 var diagnostics = DiagnosticBag.GetInstance();
-                _nameToMembersMap = MakeNameToMembersMap(diagnostics);
+                if (Interlocked.CompareExchange(ref _nameToMembersMap, MakeNameToMembersMap(diagnostics), null) == null)
+                {
+                    // NOTE: the following is not cancellable.  Once we've set the
+                    // members, we *must* do the following to make sure we're in a consistent state.
+                    this.DeclaringCompilation.DeclarationDiagnostics.AddRange(diagnostics);
+                    //RegisterDeclaredCorTypes();
+
+                    // We may produce a SymbolDeclaredEvent for the enclosing namespace before events for its contained members
+                    DeclaringCompilation.SymbolDeclaredEvent(this);
+                    var wasSetThisThread = _state.NotePartComplete(CompletionPart.NameToMembersMap);
+                    Debug.Assert(wasSetThisThread);
+                }
+
+                diagnostics.Free();
             }
 
             return _nameToMembersMap;

@@ -126,6 +126,25 @@ namespace N
             Assert.Equal("c", memberSymbol.Name);
             compilation.VerifyDiagnostics();
         }
+
+        [Fact]
+        public void TestBindingInSimpleTemplate()
+        {
+            var text = @"
+template N
+{
+    public class C1
+    {
+    }
+
+    public class C2
+    {
+        C1 _cccc = new C1();
+    }
+}";
+            CreateStandardCompilation(text).VerifyDiagnostics();
+        }
+
         #endregion
 
         #region Other tests
